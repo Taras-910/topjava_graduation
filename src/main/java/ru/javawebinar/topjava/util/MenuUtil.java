@@ -1,5 +1,6 @@
 package ru.javawebinar.topjava.util;
 
+import ru.javawebinar.topjava.model.Dish;
 import ru.javawebinar.topjava.model.Restaurant;
 import ru.javawebinar.topjava.model.Vote;
 import ru.javawebinar.topjava.to.Menu;
@@ -27,24 +28,12 @@ public class MenuUtil {
         }
     }
 
-    public static boolean countWithin(Restaurant restaurant, Restaurant repository){
-       return repository == null ? count(restaurant) >=2 && count(restaurant) <=5 :
-               commonCount(restaurant, repository) >= 2 && commonCount(restaurant, repository) <= 5;
+    public static boolean countWithin(List<Dish> newDishes, List<Dish> storedDishes){
+       return storedDishes == null ? newDishes.size() >=2 && newDishes.size() <=5 :
+               newDishes.size() + storedDishes.size() >=2 && newDishes.size() + storedDishes.size() <=5;
     }
 
-    public static int count(Restaurant restaurant){ return restaurant.getDishes().size(); }
-
-    public static int commonCount(Restaurant restaurant, Restaurant repository){
-        return restaurant.getDishes().size() + repository.getDishes().size(); }
-
-    public static boolean countUpperLimit(Restaurant restaurant){
-        return restaurant.getDishes().size() == 5;
+    public static boolean countLowerLimit(List<Dish> newDishes){
+        return newDishes.size() == 2;
     }
-
-    public static boolean countLowerLimit(Restaurant restaurant){
-        return restaurant.getDishes().size() == 2;
-    }
-
-
-
 }

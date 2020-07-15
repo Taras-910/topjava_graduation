@@ -14,6 +14,7 @@ import static ru.javawebinar.topjava.util.ValidationUtil.*;
 @Controller
 public class AdminUserController {
     protected final Logger log = LoggerFactory.getLogger(getClass());
+
     private final UserRepository userRepository;
 
     public AdminUserController(UserRepository userRepository) {
@@ -32,8 +33,8 @@ public class AdminUserController {
 
     public User create(User user) {
         log.info("create {}", user);
-        Assert.notNull(user, "user must not be null");
-        checkNew(user);
+//        Assert.notNull(user, "user must not be null");
+//        checkNew(user);
         return userRepository.save(user);
     }
 

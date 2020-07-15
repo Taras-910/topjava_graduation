@@ -11,9 +11,17 @@ import java.time.format.DateTimeFormatter;
 public class DateTimeUtil {
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
-    public static final LocalTime forChangeVoteUpToTime = LocalTime.of(11, 0);
+    public static LocalTime сhangeVoteTime = LocalTime.of(11, 0);
     /*public static final LocalDate thisDay = LocalDate.now();*/
-    public static final LocalDate thisDay = LocalDate.of(2020,07,30);
+    public static LocalDate thisDay = LocalDate.of(2020,07,30);
+
+    public static LocalTime getСhangeVoteTime() { return сhangeVoteTime; }
+
+    public static void setСhangeVoteTime(LocalTime сhangeVoteTime) { DateTimeUtil.сhangeVoteTime = сhangeVoteTime; }
+
+    public static LocalDate getThisDay() { return thisDay; }
+
+    public static void setThisDay(LocalDate thisDay) { DateTimeUtil.thisDay = thisDay; }
 
     private DateTimeUtil() {
     }

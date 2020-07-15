@@ -26,7 +26,7 @@ public class DataJpaDishRepository implements DishRepository {
     public Dish save(Dish dish, int restaurantId) {
         Restaurant restaurant = restaurantRepository.getOne(restaurantId);
         dish.setRestaurant(restaurant);
-        return dish.isNew() || get(dish.id()) != null ? dishRepository.save(dish) : null; }
+        return dish.isNew() || get(dish.id(), restaurant.getId()) != null ? dishRepository.save(dish) : null; }
 
     @Override
     public List<Dish> saveAll(List<Dish> dishes) {
@@ -42,12 +42,8 @@ public class DataJpaDishRepository implements DishRepository {
     }
 
     @Override
-    public Dish get(int id) {
-        return dishRepository.findById(id).orElse(null);
-    }
+    public Dish get(int id, int restaurantId) { return dishRepository.get(id, restaurantId); }
 
     @Override
-    public List<Dish> getAll() {
-        return dishRepository.findAll();
-    }
+    public List<Dish> getAll(int restaurantId) { return dishRepository.getAll(restaurantId); }
 }

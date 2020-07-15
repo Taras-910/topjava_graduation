@@ -12,7 +12,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
-import static ru.javawebinar.topjava.util.DateTimeUtil.forChangeVoteUpToTime;
+import static ru.javawebinar.topjava.util.DateTimeUtil.сhangeVoteTime;
 import static ru.javawebinar.topjava.util.ValidationUtil.*;
 
 @Controller
@@ -60,7 +60,7 @@ public class VoteController {
         log.info("update vote {} with id {} for userId {}", vote, id, userId);
         Assert.notNull(vote, "vote must not be null");
         assureIdConsistent(vote, id);
-        checkNotFound(LocalTime.now().isBefore(forChangeVoteUpToTime), id +" for change vote up to 11:00");
+        checkNotFound(LocalTime.now().isBefore(сhangeVoteTime), id +" for change vote up to 11:00");
         checkNotFoundWithId(voteRepository.save(vote, userId), vote.id());
     }
 

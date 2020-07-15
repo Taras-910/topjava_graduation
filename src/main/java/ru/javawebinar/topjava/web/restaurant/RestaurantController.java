@@ -18,6 +18,7 @@ import static ru.javawebinar.topjava.util.ValidationUtil.*;
 @Controller
 public class RestaurantController {
     private static final Logger log = LoggerFactory.getLogger(DishController.class);
+
     private final RestaurantRepository repository;
 
     public RestaurantController(RestaurantRepository repository) {
@@ -47,9 +48,10 @@ public class RestaurantController {
         checkNotFoundWithId(repository.delete(id), id);
     }
 
-    public Restaurant get(int id) {
+    @CacheEvict(value = "restaurants", allEntries = true)
+    public Restaurant findById(int id) {
         log.info("get restaurant for id {}", id);
-        return checkNotFoundWithId(repository.get(id), id);
+        return checkNotFoundWithId(repository.findById(id), id);
     }
 
     public List<Restaurant> getAll() {
@@ -58,13 +60,13 @@ public class RestaurantController {
     }
 
     @Cacheable("restaurants")
-    public List<Restaurant> getWithDishes(LocalDate date) {
+    public List<Restaurant> getAllByDateWithDishes(LocalDate date) {
         log.info("getWithDishesForDate with date {}",date);
-        return repository.getWithDishes(date);
+        return repository.getAllByDateWithDishes(date);
     }
 
-    public Restaurant getById(int id, LocalDate date) {
-        log.info("getById with id {} and date", id, date);
-        return checkNotFoundWithId(repository.getById(id, date), id);
+    public Restaurant getByIdAndDate(int id, LocalDate date) {
+        log.info("getById with id {} and date {}", id, date);
+        return checkNotFoundWithId(repository.getByIdAndDate(id, date), id);
     }
 }

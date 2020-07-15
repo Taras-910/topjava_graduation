@@ -69,7 +69,7 @@ public class MenuServlet extends HttpServlet {
             case "create", "update" -> {
                 final Dish dish = "create".equals(action) ?
                         new Dish(null, null, LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES).toLocalDate(), 0.0F) :
-                        dishController.get(getId(request));
+                        dishController.get(getId(request),          getId(request));
                 request.setAttribute("dish", dish);
                 request.getRequestDispatcher("/dishForm.jsp").forward(request, response);
             }

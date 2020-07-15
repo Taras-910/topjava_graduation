@@ -2,15 +2,17 @@ package ru.javawebinar.topjava;
 
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import ru.javawebinar.topjava.model.Restaurant;
-import ru.javawebinar.topjava.web.admin.AdminMenuController;
+import ru.javawebinar.topjava.web.admin.AdminUserController;
+import ru.javawebinar.topjava.web.admin.MenuController;
 import ru.javawebinar.topjava.web.dish.DishController;
 import ru.javawebinar.topjava.web.restaurant.RestaurantController;
+import ru.javawebinar.topjava.web.testdata.RestaurantTestData;
+import ru.javawebinar.topjava.web.user.ProfileController;
 
 import java.time.LocalDate;
 import java.time.Month;
 
-import static ru.javawebinar.topjava.DishTestData.RESTAURANT_ID;
+import static ru.javawebinar.topjava.web.testdata.RestaurantTestData.RESTAURANT1_ID;
 
 public class SpringMain {
     public static void main(String[] args) {
@@ -30,6 +32,12 @@ public class SpringMain {
         for(String s : appCtx.getBeanDefinitionNames()) {
             System.out.println(s);
         }*/
+        DishController dishController = appCtx.getBean(DishController.class);
+        LocalDate today = LocalDate.of(2020, Month.JULY, 30);
+        MenuController menuController = appCtx.getBean(MenuController.class);
+        RestaurantController restaurantController = appCtx.getBean(RestaurantController.class);
+        AdminUserController adminUserController = appCtx.getBean(AdminUserController.class);
+        ProfileController profileController = appCtx.getBean(ProfileController.class);
 
 
 /*
@@ -76,41 +84,40 @@ public class SpringMain {
 //        MenuController menuController = appCtx.getBean(MenuController.class);
 
 
-/*
-        restaurantController.create(new Restaurant(null,"Созданный ресторан"));
-        System.out.println(restaurantController.getAll());
-        System.out.println(restaurantController.get(RESTAURANT_ID));
-        restaurantController.update(new Restaurant(RESTAURANT_ID,"Обновленный ресторан"), RESTAURANT_ID);
-        restaurantController.delete(RESTAURANT_ID+1);
- */
-
-//        VoteController voteController = appCtx.getBean(VoteController.class);
-//        voteController.create(new Vote(null, now(), RESTAURANT2_ID, ADMIN_ID));
-//        voteController.delete(100016);
-//        System.out.println(voteController.get(VOTE2_ID));
-//        voteController.update(new Vote(VOTE2_ID, LocalDate.of(2020, Month.JUNE, 28), RESTAURANT2_ID, USER_ID),VOTE2_ID);
-//        System.out.println(voteController.getAll());
-//        System.out.println(voteController.getForLoggedUser());
- //       System.out.println(voteController.get(VOTE2_ID));
-//        System.out.println(voteController.getBetween(LocalDate.of(2020, Month.JULY, 28),
-//                LocalDate.of(2020, Month.JULY, 29)));
 
 
-//        ProfileController profileController = appCtx.getBean(ProfileController.class);
-/*
-        UserController userController = appCtx.getBean(UserController.class);
 
-        System.out.println(userController.getAllMenus());
-*/      DishController dishController = appCtx.getBean(DishController.class);
-        LocalDate today = LocalDate.of(2020, Month.JULY, 30);
-        AdminMenuController adminMenuController = appCtx.getBean(AdminMenuController.class);
-        RestaurantController restaurantController = appCtx.getBean(RestaurantController.class);
+        System.out.println(restaurantController.create(RestaurantTestData.getNew()));
 
-        Restaurant newRestaurant = new Restaurant(null,"Pizza");
+//        restaurantController.create(new Restaurant(null,"Созданный ресторан"));
 
-        Restaurant restaurant = restaurantController.get(RESTAURANT_ID);
-        restaurant.setName("Калинка");
-        adminMenuController.updateRestaurant(restaurant, RESTAURANT_ID);
+        restaurantController.delete(RESTAURANT1_ID);
+//        System.out.println(restaurantController.getAll());
+//        System.out.println(restaurantController.findById(RESTAURANT1_ID));
+//        restaurantController.update(new Restaurant(RESTAURANT1_ID,"Обновленный ресторан"), RESTAURANT1_ID);
+//        restaurantController.delete(RESTAURANT1_ID+1);
+
+
+
+
+
+
+
+
+
+
+//        System.out.println(adminUserController.create(getNew()));
+//        dishController.delete(DISH1_ID, RESTAURANT1_ID);
+//        System.out.println(dishController.get(DISH1_ID, RESTAURANT1_ID));
+//        System.out.println("========================================");
+//        System.out.println(dishController.getAll(RESTAURANT1_ID));
+
+
+//        Restaurant newRestaurant = new Restaurant(null,"Pizza");
+//
+//        Restaurant restaurant = restaurantController.get(RESTAURANT_ID);
+//        restaurant.setName("Калинка");
+//        adminMenuController.updateRestaurant(restaurant, RESTAURANT_ID);
 /*
 //        restaurantController.create(new Restaurant(null,"Созданный ресторан"));
         Dish DISH1 = new Dish(null, "НовыйСуп", LocalDate.of(2020, Month.JUNE, 14), 0.1F);

@@ -1,5 +1,6 @@
-package ru.javawebinar.topjava;
+package ru.javawebinar.topjava.web.testdata;
 
+import ru.javawebinar.topjava.TestMatcher;
 import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
 
@@ -9,7 +10,7 @@ import java.util.Date;
 import static ru.javawebinar.topjava.model.AbstractBaseEntity.START_SEQ;
 
 public class UserTestData {
-    public static TestMatcher<User> USER_MATCHER = TestMatcher.usingFieldsComparator("registered", "roles");
+    public static TestMatcher<User> USER_MATCHER = TestMatcher.usingFieldsComparator("registered");
 
     public static final int NOT_FOUND = 100;
     public static final int ADMIN_ID = START_SEQ;

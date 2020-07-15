@@ -8,36 +8,41 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.javawebinar.topjava.model.Vote;
 import ru.javawebinar.topjava.to.Menu;
 import ru.javawebinar.topjava.web.SecurityUtil;
-import ru.javawebinar.topjava.web.menu.MenuController;
+import ru.javawebinar.topjava.web.admin.MenuController;
 import ru.javawebinar.topjava.web.vote.VoteController;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
-import static ru.javawebinar.topjava.util.DateTimeUtil.thisDay;
 import static ru.javawebinar.topjava.web.SecurityUtil.authUserId;
 
 @Controller
 public class ProfileController {
-    protected final Logger log = LoggerFactory.getLogger(getClass());
-    private final MenuController menuController;
-    private final VoteController voteController;
+    private static Logger log = LoggerFactory.getLogger("");
+
+    private static MenuController menuController;
+    private static VoteController voteController;
 
     public ProfileController(MenuController menuController, VoteController voteController) {
-        this.menuController = menuController;
-        this.voteController = voteController;
+        ProfileController.menuController = menuController;
+        ProfileController.voteController = voteController;
+    }
+
+    public static  List<Vote> authVote(){
+        return authUserId() != 100000 ? new ArrayList<>() : voteController.getAllForUser(authUserId());
     }
 
     @Transactional
     public List<Menu> getAllMenus() {
         log.info("getAllMenus");
-        return menuController.getAll(voteController.getAllForUser(authUserId()), thisDay);
+        return menuController.getAllMenusOfDay();
     }
 
     @Transactional
-    public Menu getByRestaurantId(int restaurantId) {
+    public Menu getMenuByRestaurantId(int restaurantId) {
         log.info("getByRestaurantId with restaurantId {}", restaurantId);
-        return menuController.getMenuByRestaurantId(restaurantId, voteController.getAllForUser(authUserId()), thisDay);
+        return menuController.getMenuByRestaurantId(restaurantId);
     }
 
     public Vote createVote(Vote vote) {

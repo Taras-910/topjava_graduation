@@ -28,20 +28,18 @@ public class DataJpaRestaurantRepository implements RestaurantRepository {
     }
 
     @Override
-    public Restaurant get(int id) {
-        return restaurantRepository.getOne(id);
-    }
+    public Restaurant findById(int id) { return restaurantRepository.findById(id).orElse(null); }
 
     @Override
     public List<Restaurant> getAll() { return restaurantRepository.findAll(SORT_NAME); }
 
     @Override
-    public List<Restaurant> getWithDishes(LocalDate date) {
-        return restaurantRepository.getWithDishes(date);
+    public List<Restaurant> getAllByDateWithDishes(LocalDate date) {
+        return restaurantRepository.getAllByDateWithDishes(date);
     }
 
     @Override
-    public Restaurant getById(int restaurantId, LocalDate date) {
-        return restaurantRepository.getById(restaurantId, date);
+    public Restaurant getByIdAndDate(int restaurantId, LocalDate date) {
+        return restaurantRepository.getByIdAndDate(restaurantId, date);
     }
 }

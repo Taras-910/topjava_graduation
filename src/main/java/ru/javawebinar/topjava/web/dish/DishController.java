@@ -3,9 +3,11 @@ package ru.javawebinar.topjava.web.dish;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import ru.javawebinar.topjava.model.Dish;
 import ru.javawebinar.topjava.repository.DishRepository;
+import ru.javawebinar.topjava.util.ValidationUtil;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -23,14 +25,14 @@ public class DishController {
         this.repository = repository;
     }
 
-    public Dish get(int id) {
+    public Dish get(int id, int restaurantId) {
         log.info("get dish for id {}", id);
-        return checkNotFoundWithId(repository.get(id), id);
+        return checkNotFoundWithId(repository.get(id, restaurantId), id);
     }
 
-    public List<Dish> getAll() {
+    public List<Dish> getAll(int restaurantId) {
         log.info("getAll dishes");
-        return repository.getAll();
+        return repository.getAll(restaurantId);
     }
 
     public void delete(int id, int restaurantId) {
@@ -50,13 +52,12 @@ public class DishController {
         return repository.save(dish, restaurantId);
     }
 
-    public List<Dish> createAll(List<Dish> newDishes, int restaurantId) {
-        log.info("saveAll for newDishes {} with restaurantId {}", newDishes, restaurantId);
-        Assert.notNull(newDishes, "dish must not be null");
-        newDishes.forEach(newDish -> checkNew(newDish));
-        List<Dish> dishes = new ArrayList<>();
-        newDishes.forEach(newDish -> dishes.add(create(newDish, restaurantId)));
-        return dishes;
+    @Transactional
+    public List<Dish> createAll(List<Dish> dishes, int restaurantId) {
+        dishes.forEach(ValidationUtil::checkNew);
+        List<Dish> createdDishes = new ArrayList<>();
+        dishes.forEach(dish -> createdDishes.add(create(dish, restaurantId)));
+        return createdDishes;
     }
 
     public void update(Dish dish, int dishId, int restaurantId) {

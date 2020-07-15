@@ -1,4 +1,4 @@
-package ru.javawebinar.topjava.web.menu;
+package ru.javawebinar.topjava.web.admin;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -6,7 +6,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import ru.javawebinar.topjava.model.Dish;
 import ru.javawebinar.topjava.model.Restaurant;
-import ru.javawebinar.topjava.model.Vote;
 import ru.javawebinar.topjava.to.Menu;
 import ru.javawebinar.topjava.web.dish.DishController;
 import ru.javawebinar.topjava.web.restaurant.RestaurantController;
@@ -17,10 +16,12 @@ import java.util.List;
 import static ru.javawebinar.topjava.util.DateTimeUtil.thisDay;
 import static ru.javawebinar.topjava.util.MenuUtil.*;
 import static ru.javawebinar.topjava.util.ValidationUtil.checkNotFound;
+import static ru.javawebinar.topjava.web.user.ProfileController.authVote;
 
 @Controller
 public class MenuController {
     private static final Logger log = LoggerFactory.getLogger(DishController.class);
+
     private final DishController dishController;
     private final RestaurantController restaurantController;
 
@@ -29,17 +30,17 @@ public class MenuController {
         this.restaurantController = restaurantController;
     }
 
-    public List<Menu> getAll(List<Vote> votes, LocalDate date) {
-        log.info("getAll menus with votes {} for date {}", votes, date);
-        return toListMenus(restaurantController.getWithDishes(date), votes, date);
+    public List<Menu> getAllMenusOfDay() {
+        log.info("getAllMenus");
+        return toListMenus(restaurantController.getAllByDateWithDishes(thisDay), authVote(), thisDay);
     }
 
-    public Menu getMenuByRestaurantId(int restaurantId, List<Vote> votes, LocalDate date) {
-        log.info("getMenu for restaurantId {} with votes {} for date {}", restaurantId, votes, date);
-        return toMenu(restaurantController.getById(restaurantId, date), votes, date);
+    public Menu getMenuByRestaurantId(int restaurantId) {
+        log.info("getMenu for restaurantId {}", restaurantId);
+        return toMenu(restaurantController.getByIdAndDate(restaurantId, thisDay), authVote(), thisDay);
     }
 
-    public void deleteRestaurant(int id) {
+    public void deleteRestaurantAndDishes(int id) {
         log.info("deleteRestaurant with id {}", id);
         restaurantController.delete(id);
     }
@@ -50,30 +51,31 @@ public class MenuController {
     }
 
     @Transactional
-    public boolean deleteDishById(int dishId, int restaurantId) {
+    public void deleteDishById(int dishId, int restaurantId) {
         log.info("deleteDishById with dishId {} and restaurantId {}", dishId, restaurantId);
-        if (countLowerLimit(restaurantController.getById(restaurantId, thisDay))) {
-            return false;
-        }
+        checkNotFound(countLowerLimit(restaurantController.getByIdAndDate(restaurantId, thisDay).getDishes()),
+                dishId+" so as dishes number of menu should be at least 2 ");
         dishController.delete(dishId, restaurantId);
-        return false;
     }
 
     @Transactional
-    public Restaurant createRestaurantAndDishes(Restaurant newRestaurantWithDishes) {
-        log.info("createRestaurantAndDishes with newRestaurantWithDishes {}", newRestaurantWithDishes);
-        checkNotFound(countWithin(newRestaurantWithDishes, null),
+    public Restaurant createRestaurantAndDishes(Restaurant restaurant) {
+        log.info("createRestaurantAndDishes restaurant {}", restaurant);
+        checkNotFound(countWithin(restaurant.getDishes(), null),
                 "menu so dishes number should be within from 2 to 5");
-        Restaurant restaurant = restaurantController.create(newRestaurantWithDishes);
-        restaurant.setDishes(dishController.createAll(newRestaurantWithDishes.getDishes(), restaurant.getId()));
-        return restaurant;
+        List<Dish> dishes = restaurant.getDishes();
+        Restaurant createdRestaurant = restaurantController.create(restaurant);
+        List<Dish> createdDishes = dishController.createAll(dishes, createdRestaurant.id());
+        createdRestaurant.setDishes(createdDishes);
+        return createdRestaurant;
     }
 
+    @Transactional
     public Restaurant addDishes(Restaurant restaurant) {
         log.info("addDishes for restaurant {}", restaurant);
-        checkNotFound(countWithin(restaurant, restaurantController.getById(restaurant.getId(), thisDay)),
+        checkNotFound(countWithin(restaurant.getDishes(), restaurantController.getByIdAndDate(restaurant.id(), thisDay).getDishes()),
                 "menu so dishes number should be within from 2 to 5");
-        restaurant.setDishes(dishController.createAll(restaurant.getDishes(), restaurant.getId()));
+        restaurant.setDishes(dishController.createAll(restaurant.getDishes(), restaurant.id()));
         return restaurant;
     }
 

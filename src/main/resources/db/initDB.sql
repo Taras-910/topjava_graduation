@@ -38,6 +38,7 @@ CREATE TABLE dishes
     date           TIMESTAMP    NOT NULL,
     price          DECIMAL(5,2) NOT NULL,
     restaurant_id  INTEGER      NOT NULL,
+    CONSTRAINT dishes_idx UNIQUE (date, name),
     FOREIGN KEY (restaurant_id) REFERENCES restaurants (id) ON DELETE CASCADE
 );
 
@@ -49,5 +50,5 @@ CREATE TABLE votes
     user_id            INTEGER   NOT NULL,
     CONSTRAINT votes_idx UNIQUE (date, user_id),
     FOREIGN KEY (restaurant_id) REFERENCES RESTAURANTS (id) ON DELETE CASCADE,
-    FOREIGN KEY (user_id) REFERENCES USERS (id)
+    FOREIGN KEY (user_id) REFERENCES USERS (id) ON DELETE CASCADE
 );

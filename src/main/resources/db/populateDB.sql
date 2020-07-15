@@ -7,7 +7,7 @@ DELETE FROM users;
 ALTER SEQUENCE global_seq RESTART WITH 100000;
 
 INSERT INTO users (name, email, password, registered)
-VALUES ('Admin', 'admin@gmail.com', 'password_admin', '2020-01-30 8:00:00'),
+VALUES ('Admin', 'admin@gmail.com', 'admin', '2020-01-30 8:00:00'),
        ('User', 'user@yandex.ru', 'password', '2020-01-30 8:00:00');
 
 INSERT INTO user_roles (role, user_id)
@@ -33,8 +33,8 @@ VALUES ('Суп','2020-06-29', 0.1, 100002),
 
 
 INSERT INTO votes (date, restaurant_id, user_id)
-VALUES ('2020-07-28', 100002, 100001),
-       ('2020-07-29', 100002, 100000),
-       ('2020-07-29', 100002, 100001),
-       ('2020-07-30', 100002, 100000),
-       ('2020-07-30', 100003, 100001);
+VALUES ('2020-06-28', 100002, 100000),
+       ('2020-06-29', 100002, 100000),
+       ('2020-06-29', 100002, 100001),
+       ('2020-06-30', 100002, 100000),
+       ('2020-06-30', 100003, 100001);
