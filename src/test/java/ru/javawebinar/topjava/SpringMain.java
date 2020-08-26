@@ -6,7 +6,6 @@ import ru.javawebinar.topjava.web.admin.AdminUserController;
 import ru.javawebinar.topjava.web.admin.MenuController;
 import ru.javawebinar.topjava.web.dish.DishController;
 import ru.javawebinar.topjava.web.restaurant.RestaurantController;
-import ru.javawebinar.topjava.web.testdata.RestaurantTestData;
 import ru.javawebinar.topjava.web.user.ProfileController;
 
 import java.time.LocalDate;
@@ -87,16 +86,16 @@ public class SpringMain {
 
 
 
-        System.out.println(restaurantController.create(RestaurantTestData.getNew()));
+//        System.out.println(restaurantController.create(RestaurantTestData.getNew()));
 
 //        restaurantController.create(new Restaurant(null,"Созданный ресторан"));
 
-        restaurantController.delete(RESTAURANT1_ID);
+ //       restaurantController.delete(RESTAURANT1_ID);
 //        System.out.println(restaurantController.getAll());
 //        System.out.println(restaurantController.findById(RESTAURANT1_ID));
 //        restaurantController.update(new Restaurant(RESTAURANT1_ID,"Обновленный ресторан"), RESTAURANT1_ID);
 //        restaurantController.delete(RESTAURANT1_ID+1);
-
+        System.out.println(restaurantController.getByIdWithDishesOfDate(RESTAURANT1_ID, today));
 
 
 

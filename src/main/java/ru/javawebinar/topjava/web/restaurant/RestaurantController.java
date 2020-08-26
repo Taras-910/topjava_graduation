@@ -48,10 +48,9 @@ public class RestaurantController {
         checkNotFoundWithId(repository.delete(id), id);
     }
 
-    @CacheEvict(value = "restaurants", allEntries = true)
-    public Restaurant findById(int id) {
+    public Restaurant getById(int id) {
         log.info("get restaurant for id {}", id);
-        return checkNotFoundWithId(repository.findById(id), id);
+        return checkNotFoundWithId(repository.getById(id), id);
     }
 
     public List<Restaurant> getAll() {
@@ -60,13 +59,13 @@ public class RestaurantController {
     }
 
     @Cacheable("restaurants")
-    public List<Restaurant> getAllByDateWithDishes(LocalDate date) {
+    public List<Restaurant> getAllWithDishesOfDate(LocalDate date) {
         log.info("getWithDishesForDate with date {}",date);
-        return repository.getAllByDateWithDishes(date);
+        return repository.getAllWithDishesOfDate(date);
     }
 
-    public Restaurant getByIdAndDate(int id, LocalDate date) {
+    public Restaurant getByIdWithDishesOfDate(int id, LocalDate date) {
         log.info("getById with id {} and date {}", id, date);
-        return checkNotFoundWithId(repository.getByIdAndDate(id, date), id);
+        return checkNotFoundWithId(repository.getByIdWithDishesOfDate(id, date), id);
     }
 }

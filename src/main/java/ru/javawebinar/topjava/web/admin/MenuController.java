@@ -32,12 +32,12 @@ public class MenuController {
 
     public List<Menu> getAllMenusOfDay() {
         log.info("getAllMenus");
-        return toListMenus(restaurantController.getAllByDateWithDishes(thisDay), authVote(), thisDay);
+        return toListMenus(restaurantController.getAllWithDishesOfDate(thisDay), authVote(), thisDay);
     }
 
     public Menu getMenuByRestaurantId(int restaurantId) {
         log.info("getMenu for restaurantId {}", restaurantId);
-        return toMenu(restaurantController.getByIdAndDate(restaurantId, thisDay), authVote(), thisDay);
+        return toMenu(restaurantController.getByIdWithDishesOfDate(restaurantId, thisDay), authVote(), thisDay);
     }
 
     public void deleteRestaurantAndDishes(int id) {
@@ -53,7 +53,7 @@ public class MenuController {
     @Transactional
     public void deleteDishById(int dishId, int restaurantId) {
         log.info("deleteDishById with dishId {} and restaurantId {}", dishId, restaurantId);
-        checkNotFound(countLowerLimit(restaurantController.getByIdAndDate(restaurantId, thisDay).getDishes()),
+        checkNotFound(countLowerLimit(restaurantController.getByIdWithDishesOfDate(restaurantId, thisDay).getDishes()),
                 dishId+" so as dishes number of menu should be at least 2 ");
         dishController.delete(dishId, restaurantId);
     }
@@ -73,7 +73,7 @@ public class MenuController {
     @Transactional
     public Restaurant addDishes(Restaurant restaurant) {
         log.info("addDishes for restaurant {}", restaurant);
-        checkNotFound(countWithin(restaurant.getDishes(), restaurantController.getByIdAndDate(restaurant.id(), thisDay).getDishes()),
+        checkNotFound(countWithin(restaurant.getDishes(), restaurantController.getByIdWithDishesOfDate(restaurant.id(), thisDay).getDishes()),
                 "menu so dishes number should be within from 2 to 5");
         restaurant.setDishes(dishController.createAll(restaurant.getDishes(), restaurant.id()));
         return restaurant;

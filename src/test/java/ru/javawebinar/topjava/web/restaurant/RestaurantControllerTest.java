@@ -20,18 +20,18 @@ public class RestaurantControllerTest extends AbstractControllerTest {
 
     @Test
     public void findById() throws Exception {
-        Assert.assertEquals(controller.findById(RESTAURANT1_ID), restaurant1WithDishes());
+        Assert.assertEquals(controller.getById(RESTAURANT1_ID), restaurant1WithDishes());
     }
 
     @Test
     public void getNotFound() throws Exception {
-        assertThrows(NotFoundException.class, () -> controller.findById(NOT_FOUND));
+        assertThrows(NotFoundException.class, () -> controller.getById(NOT_FOUND));
     }
 
     @Test
     public void delete() throws Exception {
         controller.delete(RESTAURANT1_ID);
-        assertThrows(NotFoundException.class, () -> controller.findById(RESTAURANT1_ID));
+        assertThrows(NotFoundException.class, () -> controller.getById(RESTAURANT1_ID));
     }
 
     @Test
@@ -43,7 +43,7 @@ public class RestaurantControllerTest extends AbstractControllerTest {
     public void update() throws Exception {
         Restaurant updated = getUpdated();
         controller.update(updated, RESTAURANT1_ID);
-        RESTAURANT_MATCHER.assertMatch(controller.findById(RESTAURANT1_ID), getUpdated());
+        RESTAURANT_MATCHER.assertMatch(controller.getById(RESTAURANT1_ID), getUpdated());
     }
 
     @Test
@@ -53,14 +53,14 @@ public class RestaurantControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    public void getAllByDateWithDishes() throws Exception {
-        List<Restaurant> restaurant = controller.getAllByDateWithDishes(thisDay);
+    public void getAllWithDishesOfDate() throws Exception {
+        List<Restaurant> restaurant = controller.getAllWithDishesOfDate(thisDay);
         RESTAURANT_MATCHER.assertMatch(restaurant, restaurantsWithDishes());
     }
 
     @Test
-    public void getByIdAndDate() throws Exception {
-        Restaurant restaurant = controller.getByIdAndDate(RESTAURANT1_ID, thisDay);
+    public void getByIdWithDishesOfDate() throws Exception {
+        Restaurant restaurant = controller.getByIdWithDishesOfDate(RESTAURANT1_ID, thisDay);
         RESTAURANT_MATCHER.assertMatch(restaurant, RESTAURANT1);
     }
 }

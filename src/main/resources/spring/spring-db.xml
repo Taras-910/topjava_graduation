@@ -11,7 +11,6 @@
        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
        http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd">
 
-
     <context:component-scan base-package="ru.javawebinar.**.repository"/>
     <jpa:repositories base-package="ru.javawebinar.**.repository"/>
 
@@ -43,31 +42,11 @@
         </property>
     </bean>
 
-
         <!--profile="hsqldb" no pooling-->
-        <!--<context:property-placeholder location="classpath:db/hsqldb.properties" system-properties-mode="OVERRIDE"/>
-        <bean id="dataSource"
-              class="org.springframework.jdbc.datasource.DriverManagerDataSource"
-              p:driverClassName="org.hsqldb.jdbcDriver"
-              p:url="${database.url}"
-              p:username="${database.username}"
-              p:password="${database.password}"/>-->
-
-
-        <!--profile="postgres"
-            For postgres driver logging
-            It uses java.util.logging and logged via jul-to-slf4j bridge
-            https://stackoverflow.com/a/27296470/548473
-        -->
-        <bean class="org.springframework.beans.factory.config.MethodInvokingBean">
-            <property name="staticMethod" value="org.slf4j.bridge.SLF4JBridgeHandler.install"/>
-        </bean>
-
-        <context:property-placeholder location="classpath:db/postgres.properties" system-properties-mode="OVERRIDE"/>
-
+        <context:property-placeholder location="classpath:db/hsqldb.properties" system-properties-mode="OVERRIDE"/>
         <bean id="dataSource"
               class="org.apache.tomcat.jdbc.pool.DataSource"
-              p:driverClassName="org.postgresql.Driver"
+              p:driverClassName="org.hsqldb.jdbcDriver"
               p:url="${database.url}"
               p:username="${database.username}"
               p:password="${database.password}"/>
