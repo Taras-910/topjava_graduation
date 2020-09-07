@@ -2,38 +2,34 @@ package ru.javawebinar.topjava.util;
 
 import ru.javawebinar.topjava.model.Dish;
 import ru.javawebinar.topjava.model.Restaurant;
-import ru.javawebinar.topjava.model.Vote;
 import ru.javawebinar.topjava.to.Menu;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static ru.javawebinar.topjava.util.CounterUtil.id;
-
 public class MenuUtil {
 
-    public static List<Menu> toListMenus(List<Restaurant> restaurants, List<Vote> votes, LocalDate date) {
+    public static List<Menu> toListMenus(List<Restaurant> restaurants, boolean voteAuth, LocalDate date) {
         return restaurants.stream()
-                .map(restaurant -> toMenu(restaurant, votes, date))
+                .map(restaurant -> toMenu(restaurant, voteAuth, date))
                 .collect(Collectors.toList());
     }
-    public static Menu toMenu (Restaurant restaurant, List<Vote> votes, LocalDate date){
-        return new Menu(id(), restaurant, date, votes, false);
-    }
-
-    public static void checkNew(Menu menu) {
-        if (menu.getId() != null) {
-            throw new IllegalArgumentException("menu must be new (id=null)");
-        }
+    public static Menu toMenu (Restaurant restaurant, boolean voteAuth, LocalDate date){
+        return new Menu(restaurant, date, voteAuth, false);
     }
 
     public static boolean countWithin(List<Dish> newDishes, List<Dish> storedDishes){
-       return storedDishes == null ? newDishes.size() >=2 && newDishes.size() <=5 :
-               newDishes.size() + storedDishes.size() >=2 && newDishes.size() + storedDishes.size() <=5;
+        return storedDishes == null ? newDishes.size() >=2 && newDishes.size() <=5 :
+                newDishes.size() + storedDishes.size() >=2 && newDishes.size() + storedDishes.size() <=5;
+    }
+
+    public static boolean countWithin(int newDishes, List<Dish> storedDishes){
+        return storedDishes == null ? newDishes >=2 && newDishes <=5 :
+                newDishes + storedDishes.size() >=2 && newDishes + storedDishes.size() <=5;
     }
 
     public static boolean countLowerLimit(List<Dish> newDishes){
-        return newDishes.size() == 2;
+        return newDishes.size() > 2;
     }
 }

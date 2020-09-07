@@ -20,4 +20,6 @@ public interface RestaurantRepository {
     List<Restaurant> getAllWithDishesOfDate(LocalDate date);
 
     Restaurant getByIdWithDishesOfDate(int restaurantId, LocalDate date);
+
+    Restaurant getByName(String name);
 }

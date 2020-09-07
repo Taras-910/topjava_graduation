@@ -11,7 +11,10 @@
         <expiry>
             <ttl unit="minutes">960</ttl>
         </expiry>
-        <heap unit="entries">500</heap>
+        <resources>
+            <heap unit="entries">1000000</heap>
+            <!--<offheap unit="MB">20</offheap>-->
+        </resources>
     </cache-template>
 
     <cache-template name="singleNonExpiryCache">
@@ -22,4 +25,5 @@
     </cache-template>
 
     <cache alias="restaurants" uses-template="expiryCache"/>
+    <cache alias="rest_restaurants" uses-template="expiryCache"/>
 </config>

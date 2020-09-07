@@ -1,5 +1,7 @@
 package ru.javawebinar.topjava.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.List;
@@ -13,6 +15,7 @@ public class Restaurant extends AbstractBaseEntity{
     private String name;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "restaurant", cascade = {CascadeType.PERSIST, CascadeType.REFRESH})
+    @JsonManagedReference
     private List<Dish> dishes;
 
     public Restaurant(Integer id, String name) {

@@ -1,29 +1,21 @@
 package ru.javawebinar.topjava.to;
 
 import ru.javawebinar.topjava.model.Restaurant;
-import ru.javawebinar.topjava.model.Vote;
 
 import java.time.LocalDate;
-import java.util.List;
 
 public class Menu {
-    private Integer id;
     private Restaurant restaurant;
     private LocalDate date;
-    private List<Vote> votes;
-    boolean toVote = false;
+    private boolean voteAuth;
+    private boolean toVote = false;
 
-    public Menu(Integer id, Restaurant restaurant, LocalDate date, List<Vote> votes, boolean toVote) {
-        this.id = id;
+    public Menu(Restaurant restaurant, LocalDate date, boolean voteAuth, boolean toVote) {
         this.restaurant = restaurant;
         this.date = date;
-        this.votes = votes;
+        this.voteAuth = voteAuth;
         this.toVote = toVote;
     }
-
-    public Integer getId() { return id; }
-
-    public void setId(Integer id) { this.id = id; }
 
     public Restaurant getRestaurant() { return restaurant; }
 
@@ -33,9 +25,9 @@ public class Menu {
 
     public void setDate(LocalDate date) { this.date = date; }
 
-    public List<Vote> getVotes() { return votes; }
+    public boolean isVoteAuth() { return voteAuth; }
 
-    public void setVotes(List<Vote> votes) { this.votes = votes; }
+    public void setVoteAuth(boolean voteAuth) { this.voteAuth = voteAuth; }
 
     public boolean isToVote() { return toVote; }
 
@@ -44,10 +36,9 @@ public class Menu {
     @Override
     public String toString() {
         return "Menu{" +
-                "id=" + id +
-                ", " + restaurant +
+                ", restaurant=" + restaurant +
                 ", date=" + date +
-                ", votes=" + votes +
+                ", voteAuth=" + voteAuth +
                 ", toVote=" + toVote +
                 '}';
     }

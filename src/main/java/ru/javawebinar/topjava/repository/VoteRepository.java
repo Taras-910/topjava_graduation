@@ -16,9 +16,15 @@ public interface VoteRepository {
     Vote get(int id, int userId);
 
     // null if not found
-    List<Vote> getForLoggedUser(int userId);
+    List<Vote> getAllForAuthUser(int userId);
 
     List<Vote> getAll();
 
     List<Vote> getBetween(LocalDate startDate, LocalDate endDate, int userId);
+
+    Vote getByDateForAuth(LocalDate date, int userId);
+
+    List<Vote> getByRestaurant(int restaurantId);
+
+    boolean isExistVote(LocalDate date, int authUserId);
 }

@@ -20,7 +20,3 @@ public interface CrudUserRepository extends JpaRepository<User, Integer> {
     @Query("SELECT u FROM User u WHERE u.id=:id")
     User getById(@Param("id") int id);
 }
-/*
-    @Query("SELECT u, v FROM User u LEFT JOIN FETCH u.votes v WHERE u.id=:id ORDER BY v.date DESC ")
-    User getByIdWithVotes(@Param("id") int id);
-*/

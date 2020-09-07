@@ -27,6 +27,9 @@ public class User extends AbstractNamedEntity {
     @Size(min = 5, max = 100)
     private String password;
 
+    @Column(name = "enabled", nullable = false, columnDefinition = "bool default true")
+    private boolean enabled = true;
+
     @Column(name = "registered", nullable = false, columnDefinition = "timestamp default now()")
     @NotNull
     private Date registered = new Date();
@@ -46,17 +49,18 @@ public class User extends AbstractNamedEntity {
     }
 
     public User(User u) {
-        this(u.getId(), u.getName(), u.getEmail(), u.getPassword(), u.getRegistered(), u.getRoles());
+        this(u.getId(), u.getName(), u.getEmail(), u.getPassword(), u.isEnabled(), u.getRegistered(), u.getRoles());
     }
 
     public User(Integer id, String name, String email, String password, Role role, Role... roles) {
-        this(id, name,email, password, new Date(),  EnumSet.of(role, roles));
+        this(id, name,email, password, true, new Date(),  EnumSet.of(role, roles));
     }
 
-    public User(Integer id, String name, String email, String password, Date registered, Collection<Role> roles) {
+    public User(Integer id, String name, String email, String password, boolean enabled, Date registered, Collection<Role> roles) {
         super(id, name);
         this.email = email;
         this.password = password;
+        this.enabled = enabled;
         this.registered = registered;
         setRoles(roles);
     }
@@ -75,6 +79,14 @@ public class User extends AbstractNamedEntity {
 
     public Date getRegistered() {
         return registered;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
     }
 
     public void setRoles(Collection<Role> roles) {

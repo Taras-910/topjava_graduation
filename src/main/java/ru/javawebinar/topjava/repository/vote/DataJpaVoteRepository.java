@@ -9,6 +9,7 @@ import ru.javawebinar.topjava.repository.user.CrudUserRepository;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class DataJpaVoteRepository implements VoteRepository {
@@ -37,8 +38,8 @@ public class DataJpaVoteRepository implements VoteRepository {
     }
 
     @Override
-    public List<Vote> getForLoggedUser(int userId) {
-        return voteRepository.getForLoggedUser(userId);
+    public List<Vote> getAllForAuthUser(int userId) {
+        return voteRepository.getAllForAuthUser(userId);
     }
 
     @Override
@@ -49,5 +50,20 @@ public class DataJpaVoteRepository implements VoteRepository {
     @Override
     public List<Vote> getBetween(LocalDate startDate, LocalDate endDate, int userId) {
         return voteRepository.getBetween(startDate, endDate, userId);
+    }
+
+    @Override
+    public Vote getByDateForAuth(LocalDate date, int userId) {
+        return Optional.ofNullable(voteRepository.getByDateForAuth(date, userId)).orElse(null);
+    }
+
+    @Override
+    public List<Vote> getByRestaurant(int restaurantId) {
+        return voteRepository.getByRestaurant(restaurantId);
+    }
+
+    @Override
+    public boolean isExistVote(LocalDate date, int authUserId) {
+        return getByDateForAuth(date, authUserId) != null;
     }
 }

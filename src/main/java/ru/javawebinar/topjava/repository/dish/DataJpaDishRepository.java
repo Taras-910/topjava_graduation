@@ -10,6 +10,7 @@ import ru.javawebinar.topjava.repository.restaurant.CrudRestaurantRepository;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class DataJpaDishRepository implements DishRepository {
@@ -29,7 +30,9 @@ public class DataJpaDishRepository implements DishRepository {
         return dish.isNew() || get(dish.id(), restaurant.getId()) != null ? dishRepository.save(dish) : null; }
 
     @Override
-    public List<Dish> saveAll(List<Dish> dishes) {
+    public List<Dish> saveAll(List<Dish> dishes, int restaurantId) {
+        Restaurant restaurant = restaurantRepository.getOne(restaurantId);
+        dishes.forEach(dish ->  dish.setRestaurant(restaurant));
         return dishRepository.saveAll(dishes);
     }
 
@@ -38,12 +41,29 @@ public class DataJpaDishRepository implements DishRepository {
 
     @Override
     public boolean delete(int id, int restaurantId) {
-        return dishRepository.delete(id, restaurantId) != 0;
+        int exist = Optional.ofNullable(dishRepository.delete(id, restaurantId)).orElse(0);
+        return exist != 0;
     }
 
     @Override
-    public Dish get(int id, int restaurantId) { return dishRepository.get(id, restaurantId); }
+    public Dish get(int id, int restaurantId) {
+        return Optional.ofNullable(dishRepository.get(id, restaurantId)).orElse(null);
+    }
 
     @Override
-    public List<Dish> getAll(int restaurantId) { return dishRepository.getAll(restaurantId); }
+    public List<Dish> getAll(int restaurantId) {
+        List<Dish> dishes = Optional.ofNullable(dishRepository.getAll(restaurantId)).orElse(null);
+        return dishes.isEmpty() ? null : dishes;
+    }
+
+    @Override
+    public List<Dish> getByRestaurantAndDate(int restaurantId, LocalDate date) {
+        List<Dish> dishes = Optional.ofNullable(dishRepository.getByRestaurantAndDate(restaurantId, date)).orElse(null);
+        return dishes.isEmpty() ? null : dishes;
+    }
+
+    @Override
+    public List<Dish> getAll() {
+        return dishRepository.findAll();
+    }
 }

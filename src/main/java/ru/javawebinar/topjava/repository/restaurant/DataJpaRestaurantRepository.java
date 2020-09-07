@@ -7,6 +7,7 @@ import ru.javawebinar.topjava.repository.RestaurantRepository;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class DataJpaRestaurantRepository implements RestaurantRepository {
@@ -31,6 +32,9 @@ public class DataJpaRestaurantRepository implements RestaurantRepository {
     public Restaurant getById(int id) { return restaurantRepository.findById(id).orElse(null); }
 
     @Override
+    public Restaurant getByName(String name) { return restaurantRepository.getByName(name); }
+
+    @Override
     public List<Restaurant> getAll() { return restaurantRepository.findAll(SORT_NAME); }
 
     @Override
@@ -40,6 +44,6 @@ public class DataJpaRestaurantRepository implements RestaurantRepository {
 
     @Override
     public Restaurant getByIdWithDishesOfDate(int restaurantId, LocalDate date) {
-        return restaurantRepository.getByIdWithDishesOfDate(restaurantId, date);
+        return Optional.ofNullable(restaurantRepository.getByIdWithDishesOfDate(restaurantId, date)).orElse(null);
     }
 }

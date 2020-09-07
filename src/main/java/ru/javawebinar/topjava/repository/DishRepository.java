@@ -1,4 +1,5 @@
 package ru.javawebinar.topjava.repository;
+
 import ru.javawebinar.topjava.model.Dish;
 
 import java.time.LocalDate;
@@ -8,7 +9,7 @@ public interface DishRepository {
 
     Dish save(Dish dish, int restaurantId);
 
-    List<Dish> saveAll(List<Dish> dishes);
+    List<Dish> saveAll(List<Dish> dishes, int restaurantId);
 
     boolean deleteAll(int restaurantId, LocalDate date);
 
@@ -18,4 +19,7 @@ public interface DishRepository {
 
     List<Dish> getAll(int restaurantId);
 
+    List<Dish> getByRestaurantAndDate(int restaurantId, LocalDate date);
+
+    List<Dish> getAll();
 }
