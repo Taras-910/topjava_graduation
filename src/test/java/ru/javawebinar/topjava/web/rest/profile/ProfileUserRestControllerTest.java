@@ -1,4 +1,4 @@
-package ru.javawebinar.topjava.web.rest.user;
+package ru.javawebinar.topjava.web.rest.profile;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,11 +17,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static ru.javawebinar.topjava.TestUtil.userHttpBasic;
 import static ru.javawebinar.topjava.testdata.UserTestData.*;
 
-class ProfileRestControllerTest extends AbstractControllerTest {
-    private static final String REST_URL = ProfileRestController.REST_URL + '/';
+class ProfileUserRestControllerTest extends AbstractControllerTest {
+    private static final String REST_URL = ProfileUserRestController.REST_URL + '/';
 
     @Autowired
-    private ProfileRestController controller;
+    private ProfileUserRestController controller;
 
     @Test
     void get() throws Exception {

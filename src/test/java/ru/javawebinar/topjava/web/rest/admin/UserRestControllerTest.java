@@ -1,4 +1,4 @@
-package ru.javawebinar.topjava.web.rest.user;
+package ru.javawebinar.topjava.web.rest.admin;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,11 +19,11 @@ import static ru.javawebinar.topjava.TestUtil.readFromJson;
 import static ru.javawebinar.topjava.TestUtil.userHttpBasic;
 import static ru.javawebinar.topjava.testdata.UserTestData.*;
 
-class AdminRestControllerTest extends AbstractControllerTest {
-    private static final String REST_URL = AdminRestController.REST_URL + '/';
+class UserRestControllerTest extends AbstractControllerTest {
+    private static final String REST_URL = UserRestController.REST_URL + '/';
 
     @Autowired
-    private AdminRestController controller;
+    private UserRestController controller;
 
     @Test
     void get() throws Exception {

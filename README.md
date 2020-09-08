@@ -1,134 +1,115 @@
-Java Enterprise Online Project
-===============================
+Java Enterprise Project TopJava_graduation
+==========================================
 
-Наиболее востребованные технологии /инструменты / фреймворки Java Enterprise:
-Maven/ Spring/ Security/ JPA(Hibernate)/ REST(Jackson)/ Bootstrap(CSS)/ jQuery + plugins.
+Технологии /инструменты / фреймворки Java Enterprise:
+Maven/ Spring/ Security/ JPA(Hibernate)/ REST(Jackson).
 
-- [Вступительное занятие](https://github.com/JavaOPs/topjava)
-- [Описание и план проекта](https://github.com/JavaOPs/topjava/blob/master/description.md)
-- [Wiki](https://github.com/JavaOPs/topjava/wiki)
-- [Wiki Git](https://github.com/JavaOPs/topjava/wiki/Git)
-- [Wiki IDEA](https://github.com/JavaOPs/topjava/wiki/IDEA)
-- [Демо разрабатываемого приложения](http://topjava.herokuapp.com/)
-
-#### 30.01: Старт проекта
-- Начало проверки [вступительного задания](https://github.com/JavaOPs/topjava#-Домашнее-задание-hw0)
-
-#### 06.02: 1-е занятие
-- Разбор домашнего задания вступительного занятия (вместе с Optional)
-- Обзор используемых в проекте технологий. Интеграция ПО
-- Maven
-- WAR. Веб-контейнер Tomcat. Сервлеты
-- Логирование
-- Уровни и зависимости логгирования. JMX
-- Домашнее задание 1-го занятия (HW1 + Optional)
-
-#### 13.02: 2-е занятие
-- Разбор домашнего задания HW1 + Optional
-- Библиотека vs Фреймворк. Стандартные библиотеки Apache Commons, Guava
-- Слои приложения. Создание каркаса приложения
-- Обзор Spring Framework. Spring Context
-- Пояснения к HW2. Обработка Autowired
-- Домашнее задание (HW2 + Optional)
-
-#### 20.02: 3-е занятие
-- Разбор домашнего задания HW2 + Optional
-- Жизненный цикл Spring контекста
-- Тестирование через JUnit
-- Spring Test
-- Базы данных. Обзор NoSQL и Java persistence solution без ORM
-- Настройка Database в IDEA
-- Скрипты инициализации базы. Spring Jdbc Template
-- Тестирование UserService через AssertJ
-- Логирование тестов
-- Домашнее задание (HW3 + Optional)
-
-#### 27.02: 4-е занятие
-- Разбор домашнего задания HW3 + Optional
-- Методы улучшения качества кода
-- Spring: инициализация и популирование DB
-- Подмена контекста при тестировании
-- ORM. Hibernate. JPA
-- Поддержка HSQLDB
-- Домашнее задание (HW4 + Optional)
-
-#### 05.03: 5-е занятие
-- Обзор JDK 9/11. Миграция Topjava с 1.8 на 11
-- Разбор вопросов
-- Разбор домашнего задания HW4 + Optional
+- основные классы приложения: [Dish, Restaurant, User, Vote]
+- все данные хранятся в базе данных [HSQLDB]
+- для формирования меню ресторанов используется класс [Menu] (Transport Object) 
+- бизнес-логика выполняется в классах:
+             в MenuRestController - проверка количества блюд в меню (от 2 до 5)
+             в VoteRestController - проверка голосований в соответствии с ТЗ
+- репозиторий [Spring Data JPA]
 - Транзакции
-- Профили Maven и Spring
-- Пул коннектов
-- Spring Data JPA
-- Spring кэш
-- Домашнее задание (HW5 + Optional)
+- Пул коннектов [Tomcat]
+- список ресторанов (с едой) кешируется [Spring cache]
+- базовая авторизация [SpringSecurity]
+- тестирование репозитория [Junit4] 
+- тестирование REST контроллеров [Junit5] через матчеры 
+- логирование тестов
+- `curl` тестирования голосований с
+(полный список команд в config.curl.md) :
 
-#### 12.03: 6-е занятие
-- Разбор домашнего задания HW5 + Optional
-- Кэш Hibernate
-- Spring Web
-- JPS, JSTL, internationalization
-- Динамическое изменение профиля при запуске
-- Конфигурирование Tomcat через maven plugin. Jndi-lookup
-- Spring Web MVC
-- Spring Internationalization
-- Домашнее задание (HW6 + Optional)
+#### curl (`topjava_graduation`).
 
-#### Большое ДЗ + выпускной проект + подтягиваем "хвосты".
+#### vote admin getAll
+`curl -L -X GET 'http://localhost:8080/topjava/rest/admin/votes' \
+ -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
 
-#### 26.03: 7-е занятие
-- Разбор домашнего задания HW6 + Optional
-- Автогенерация DDL по модели
-- Тестирование Spring MVC
-- Миграция на JUnit 5
-- Принципы REST. REST контроллеры
-- Тестирование REST контроллеров. Jackson
-- jackson-datatype-hibernate. Тестирование через матчеры
-- Тестирование через SoapUi. UTF-8
-- Домашнее задание (HW7 + Optional)
+#### vote admin getById
+`curl -L -X GET 'http://localhost:8080/topjava/rest/admin/votes/100015' \
+ -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
 
-#### 02.04: 8-е занятие
-- Разбор домашнего задания HW7 + Optional
-- WebJars. jQuery и JavaScript frameworks
-- Bootstrap
-- AJAX. Datatables. jQuery
-- jQuery notifications plugin
-- Добавление Spring Security
-- Домашнее задание (HW8 + Optional)
+#### vote admin getByRestaurantId
+`curl -L -X GET 'http://localhost:8080/topjava/rest/admin/votes/restaurants/100003' \
+ -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
 
-#### 09.04: 9-е занятие
-- Разбор домашнего задания HW8 + Optional
-- Spring Binding
-- Spring Validation
-- Перевод DataTables на Ajax
-- Форма login / logout
-- Реализация собственного провайдера авторицазии
-- Принцип работы Spring Security. Проксирование
-- Spring Security Test
-- Cookie. Session
-- Домашнее задание (HW9 + Optional)
+#### vote admin getByDate
+`curl -L -X GET 'http://localhost:8080/topjava/rest/admin/votes/date/2020-07-29' \
+ -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
 
-#### 16.04: 10-е занятие
-- Разбор домашнего задания HW10 + Optional
-- Кастомизация JSON (@JsonView) и валидации (groups)
-- Рефакторинг: jQuery конверторы и группы валидации по умолчанию
-- Spring Security Taglib. Method Security Expressions
-- Интерсепторы. Редактирование профиля. JSP tag files
-- Форма регистрации
-- Обработка исключений в Spring
-- Encoding password
-- Миграция на Spring 5
-- Защита от межсайтовой подделки запросов (CSRF)
-- Домашнее задание (HW10)
+#### vote admin getAllForUser
+`curl -L -X GET 'http://localhost:8080/topjava/rest/admin/votes/users/100001' \
+ -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
+ 
+#### vote admin isExistForUserByDate
+`curl -L -X GET 'http://localhost:8080/topjava/rest/admin/votes/users/100000/date/2020-07-30' \
+-H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
+ 
+#### vote admin getBetween 
+`curl -L -X GET 'http://localhost:8080/topjava/rest/admin/votes/between/users/100000/?startDate=2020-07-30&endDate=2020-07-30' \
+ -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
 
-#### 23.04: 11-е занятие
-- Разбор домашнего задания HW10 + Optional
-- Локализация datatables, ошибок валидации
-- Защита от XSS (Cross Site Scripting)
-- Обработка ошибок 404 (NotFound)
-- Доступ к AuthorizedUser
-- Ограничение модификации пользователей
-- Деплой [приложения в Heroku](http://topjava.herokuapp.com)
-- Собеседование. Разработка ПО
-- Возможные доработки приложения
-- Домашнее задание по проекту: составление резюме
+#### vote admin delete
+`curl -L -X DELETE 'http://localhost:8080/topjava/rest/admin/votes/100015' \
+ -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
+
+#### vote admin update 
+`curl -L -X PUT 'http://localhost:8080/topjava/rest/admin/votes/100015' \
+ -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu' \
+ -H 'Content-Type: application/json' \
+ --data-raw '{
+         "id": 100015,
+         "date": "2020-06-28",
+         "restaurantId": 100003,
+         "userId": 100000
+     }'`
+
+#### vote admin create
+`curl -L -X POST 'http://localhost:8080/topjava/rest/admin/votes/restaurants/100002/users/100001' \
+ -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
+
+
+#### vote profile get byVoteId
+`curl -L -X GET 'http://localhost:8080/topjava/rest/profile/votes/100016' \
+ -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
+
+#### vote profile getAllForAuth
+`curl -L -X GET 'http://localhost:8080/topjava/rest/profile/votes/auth' \
+ -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
+
+#### vote profile getByRestaurantIdForAuth
+`curl -L -X GET 'http://localhost:8080/topjava/rest/profile/votes/restaurants/100002' \
+ -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
+
+#### vote profile getByDateForAuth for authUser
+`curl -L -X GET 'http://localhost:8080/topjava/rest/profile/votes/date/2020-06-30' \
+ -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
+
+#### vote profile isExistVote
+`curl -L -X GET 'http://localhost:8080/topjava/rest/profile/votes/exist/date/2020-06-30' \
+ -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
+ 
+#### vote profile getBetween 
+`votes/between?startDate=2020-06-30&endDate=2020-07-29' \
+ -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
+
+#### vote profile delete
+`curl -L -X DELETE 'http://localhost:8080/topjava/rest/profile/votes/100016' \
+ -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
+
+#### vote profile update 
+`curl -L -X PUT 'http://localhost:8080/topjava/rest/profile/votes/100016' \
+ -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu' \
+ -H 'Content-Type: application/json' \
+ --data-raw '{
+     "id": 100016,
+     "date": "2020-06-29",
+     "restaurantId": 100003,
+     "userId": 100000
+ }'`
+
+#### vote profile create
+`curl -L -X POST 'http://localhost:8080/topjava/rest/profile/votes/restaurants/100002' \
+ -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`

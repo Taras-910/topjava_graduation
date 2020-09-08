@@ -1,4 +1,4 @@
-package ru.javawebinar.topjava.web.rest;
+package ru.javawebinar.topjava.web.rest.admin;
 
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -8,6 +8,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.javawebinar.topjava.model.Vote;
+import ru.javawebinar.topjava.testdata.VoteTestData;
 import ru.javawebinar.topjava.util.DateTimeUtil;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 import ru.javawebinar.topjava.util.json.JsonUtil;
@@ -26,7 +27,7 @@ import static ru.javawebinar.topjava.TestUtil.readFromJson;
 import static ru.javawebinar.topjava.TestUtil.userHttpBasic;
 import static ru.javawebinar.topjava.testdata.RestaurantTestData.RESTAURANT1_ID;
 import static ru.javawebinar.topjava.testdata.RestaurantTestData.RESTAURANT2_ID;
-import static ru.javawebinar.topjava.testdata.UserTestData.USER;
+import static ru.javawebinar.topjava.testdata.UserTestData.*;
 import static ru.javawebinar.topjava.testdata.VoteTestData.*;
 
 class VoteRestControllerTest extends AbstractControllerTest {
@@ -70,30 +71,30 @@ class VoteRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    void getByDateForAuth() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL + "date/2020-07-30")
+    void getByDate() throws Exception {
+        perform(MockMvcRequestBuilders.get(REST_URL + "date/2020-06-30")
                 .with(userHttpBasic(USER))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(VOTE_MATCHER.contentJson(VOTE7));
+                .andExpect(VOTE_MATCHER.contentJson(VOTE5, VOTE4));
     }
 
-
     @Test
-    void isExistVote() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL + "exist/date/2020-07-30")
+    void isExistForUserByDate() throws Exception {
+        perform(MockMvcRequestBuilders.get(REST_URL + "users/" + USER_ID + "/date/2020-07-30")
                 .with(userHttpBasic(USER))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
-        assertTrue(controller.isExistVote(LocalDate.of(2020,07,30)));
+        assertTrue(controller.isExistForUserByDate(ADMIN_ID, LocalDate.of(2020, 07, 30)));
     }
+
     @Test
-    void getAllForAuth() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL + "auth")
+    void getAllForUser() throws Exception {
+        perform(MockMvcRequestBuilders.get(REST_URL + "/users/" + ADMIN_ID)
                 .with(userHttpBasic(USER))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -103,8 +104,8 @@ class VoteRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    void getBetween() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL + "between")
+    void getBetweenForUser() throws Exception {
+        perform(MockMvcRequestBuilders.get(REST_URL + "between/users/" + ADMIN_ID)
                 .with(userHttpBasic(USER))
                 .param("startDate", "2020-06-28")
                 .param("endDate", "2020-06-29")
@@ -118,7 +119,7 @@ class VoteRestControllerTest extends AbstractControllerTest {
     @Test
     void update() throws Exception {
         DateTimeUtil.setСhangeVoteTime(LocalTime.of(23, 59));
-        Vote updated = getUpdated();
+        Vote updated = VoteTestData.getUpdated();
         perform(MockMvcRequestBuilders.put(REST_URL + VOTE1_ID)
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(userHttpBasic(USER))
@@ -129,8 +130,9 @@ class VoteRestControllerTest extends AbstractControllerTest {
 
     @Test
     void create() throws Exception {
-        Vote newVote = getNew();
-        ResultActions action = perform(MockMvcRequestBuilders.post(REST_URL + "restaurants/" + RESTAURANT2_ID)
+        Vote newVote = VoteTestData.getNew();
+        ResultActions action = perform(MockMvcRequestBuilders.post(
+                REST_URL + "restaurants/" + RESTAURANT2_ID + "/users/" + ADMIN_ID)
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(userHttpBasic(USER))
                 .content(JsonUtil.writeValue(newVote)))
@@ -152,5 +154,4 @@ class VoteRestControllerTest extends AbstractControllerTest {
                 .andExpect(status().isNoContent());
         assertThrows(NotFoundException.class, () -> controller.get(VOTE1_ID));
     }
-
 }

@@ -1,4 +1,4 @@
-package ru.javawebinar.topjava.web.rest.user;
+package ru.javawebinar.topjava.web.rest.anonymous;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,11 +11,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static ru.javawebinar.topjava.testdata.MenuTestData.*;
 import static ru.javawebinar.topjava.testdata.RestaurantTestData.RESTAURANT1_ID;
 
-class FreeUserRestControllerTest extends AbstractControllerTest {
-    private static final String REST_URL = FreeUserRestController.REST_URL + '/';
+class AnonymousMenuRestControllerTest extends AbstractControllerTest {
+    private static final String REST_URL = AnonymousMenuRestController.REST_URL + '/';
 
     @Autowired
-    private FreeUserRestController controller;
+    private AnonymousMenuRestController controller;
 
     @Test
     void getAllMenus() throws Exception {

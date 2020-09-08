@@ -1,4 +1,4 @@
-package ru.javawebinar.topjava.web.rest.user;
+package ru.javawebinar.topjava.web.rest.anonymous;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,13 +14,13 @@ import ru.javawebinar.topjava.web.jpa.MenuController;
 import java.util.List;
 
 @RestController
-@RequestMapping(FreeUserRestController.REST_URL)
-public class FreeUserRestController {
+@RequestMapping(AnonymousMenuRestController.REST_URL)
+public class AnonymousMenuRestController {
     protected final Logger log = LoggerFactory.getLogger(getClass());
-    protected static final String REST_URL = "/rest/free";
+    protected static final String REST_URL = "/rest/anonymous";
     private final MenuController menuController;
 
-    public FreeUserRestController(MenuController menuController) {
+    public AnonymousMenuRestController(MenuController menuController) {
         this.menuController = menuController;
     }
 

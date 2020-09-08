@@ -25,7 +25,7 @@ public class VoteTestData {
     public static final Vote VOTE3 = new Vote(VOTE1_ID + 2, of(2020, Month.JUNE, 29), RESTAURANT1_ID, USER_ID);
     public static final Vote VOTE4 = new Vote(VOTE1_ID + 3, of(2020, Month.JUNE, 30), RESTAURANT1_ID, ADMIN_ID);
     public static final Vote VOTE5 = new Vote(VOTE1_ID + 4, of(2020, Month.JUNE, 30), RESTAURANT2_ID, USER_ID);
-    public static final Vote VOTE6 = new Vote(VOTE1_ID + 5, of(2020, Month.JULY, 30), RESTAURANT2_ID, USER_ID);
+    public static final Vote VOTE6 = new Vote(VOTE1_ID + 5, of(2020, Month.JULY, 29), RESTAURANT2_ID, USER_ID);
     public static final Vote VOTE7 = new Vote(VOTE1_ID + 6, of(2020, Month.JULY, 30), RESTAURANT1_ID, ADMIN_ID);
 
     public static Vote getNew() {
@@ -42,6 +42,10 @@ public class VoteTestData {
 
     public static List<Vote> allForRestaurant(){
         return Arrays.asList(VOTE1, VOTE2, VOTE3, VOTE4, VOTE7);
+    }
+
+    public static List<Vote> allForAuth(){
+        return Arrays.asList(VOTE1, VOTE2, VOTE4, VOTE7);
     }
 
     public static List<Vote> allForAdmin(){

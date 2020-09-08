@@ -16,6 +16,9 @@ public interface VoteRepository {
     Vote get(int id, int userId);
 
     // null if not found
+    Vote get(int id);
+
+    // null if not found
     List<Vote> getAllForAuthUser(int userId);
 
     List<Vote> getAll();
@@ -27,4 +30,8 @@ public interface VoteRepository {
     List<Vote> getByRestaurant(int restaurantId);
 
     boolean isExistVote(LocalDate date, int authUserId);
+
+    List<Vote> getByRestaurantAuth(int id, int authUserId);
+
+    List<Vote> getByDate(LocalDate date);
 }

@@ -1,4 +1,4 @@
-package ru.javawebinar.topjava.web.rest.user;
+package ru.javawebinar.topjava.web.rest.profile;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,13 +13,13 @@ import static ru.javawebinar.topjava.util.ValidationUtil.assureIdConsistent;
 import static ru.javawebinar.topjava.util.ValidationUtil.checkNotFoundWithId;
 
 @RestController
-@RequestMapping(ProfileRestController.REST_URL)
-public class ProfileRestController {
+@RequestMapping(ProfileUserRestController.REST_URL)
+public class ProfileUserRestController {
     protected final Logger log = LoggerFactory.getLogger(getClass());
     protected static final String REST_URL = "/rest/profile";
     private final UserRepository repository;
 
-    public ProfileRestController(UserRepository repository) {
+    public ProfileUserRestController(UserRepository repository) {
         this.repository = repository;
     }
 
@@ -43,16 +43,4 @@ public class ProfileRestController {
         assureIdConsistent(user, id);
         repository.save(user);
     }
-/*
-    private User prepareAndSave(User user) {
-        return repository.save(prepareToSave(user, passwordEncoder));
-    }
-
-    public static User prepareToSave(User user, PasswordEncoder passwordEncoder) {
-        String password = user.getPassword();
-        user.setPassword(StringUtils.hasText(password) ? passwordEncoder.encode(password) : password);
-        user.setEmail(user.getEmail().toLowerCase());
-        return user;
-    }
-*/
 }

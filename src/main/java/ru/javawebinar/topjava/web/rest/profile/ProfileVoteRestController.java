@@ -1,4 +1,4 @@
-package ru.javawebinar.topjava.web.rest;
+package ru.javawebinar.topjava.web.rest.profile;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,56 +21,50 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
-import static ru.javawebinar.topjava.util.DateTimeUtil.thisDay;
+import static java.time.LocalDate.now;
 import static ru.javawebinar.topjava.util.DateTimeUtil.сhangeVoteTime;
 import static ru.javawebinar.topjava.util.SecurityUtil.authUserId;
 import static ru.javawebinar.topjava.util.ValidationUtil.*;
 
 @RestController
-@RequestMapping(value = VoteRestController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
-public class VoteRestController {
+@RequestMapping(value = ProfileVoteRestController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
+public class ProfileVoteRestController {
     protected final Logger log = LoggerFactory.getLogger(getClass());
     protected static final String REST_URL = "/rest/profile/votes";
     private final VoteRepository voteRepository;
 
-    public VoteRestController(VoteRepository voteRepository) {
+    public ProfileVoteRestController(VoteRepository voteRepository) {
         this.voteRepository = voteRepository;
     }
 
     @GetMapping(value = "/{id}")
-    public Vote get(@PathVariable Integer id) {
-        log.info("get vote {} ", id);
-        return checkNotFoundWithId(voteRepository.get(id, SecurityUtil.authUserId()), id);
-    }
-
-    @GetMapping
-    public List<Vote> getAll() {
-        log.info("getAll votes");
-        return voteRepository.getAll();
-    }
-
-    @GetMapping(value = "/restaurants/{id}")
-    public List<Vote> getByRestaurant(@PathVariable int id) {
-        log.info("get all for restaurant {}", id);
-        return voteRepository.getByRestaurant(id);
-    }
-
-    @GetMapping(value = "date/{date}")
-    public Vote getByDateForAuth(@PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
-        log.info("get for user {} by date {}", SecurityUtil.authUserId(), date);
-        return voteRepository.getByDateForAuth(date, SecurityUtil.authUserId());
-    }
-
-    @GetMapping(value = "exist/date/{date}")
-    public boolean isExistVote(@PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
-        log.info("get for user {} by date {}", SecurityUtil.authUserId(), date);
-        return voteRepository.isExistVote(date, SecurityUtil.authUserId());
+    public Vote get(@PathVariable(name = "id") Integer voteId) {
+        log.info("get vote {} ", voteId);
+        return checkNotFoundWithId(voteRepository.get(voteId, SecurityUtil.authUserId()), voteId);
     }
 
     @GetMapping(value = "/auth")
     public List<Vote> getAllForAuth() {
         log.info("getAllForUser with userId {}", SecurityUtil.authUserId());
         return voteRepository.getAllForAuthUser(SecurityUtil.authUserId());
+    }
+
+    @GetMapping(value = "/restaurants/{id}")
+    public List<Vote> getByRestaurantAuth(@PathVariable(name = "id") int restaurantId) {
+        log.info("get all of restaurant {}", restaurantId);
+        return checkNotFound(voteRepository.getByRestaurantAuth(restaurantId, authUserId()), " for restaurant " + restaurantId);
+    }
+
+    @GetMapping(value = "date/{date}")
+    public Vote getByDateForAuth(@PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+        log.info("get for user {} by date {}", SecurityUtil.authUserId(), date);
+        return checkNotFound(voteRepository.getByDateForAuth(date, SecurityUtil.authUserId()), "for date " + date);
+    }
+
+    @GetMapping(value = "exist/date/{date}")
+    public boolean isExistVote(@PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+        log.info("get for user {} by date {}", SecurityUtil.authUserId(), date);
+        return voteRepository.isExistVote(date, SecurityUtil.authUserId());
     }
 
     @GetMapping(value = "/between")
@@ -82,38 +76,36 @@ public class VoteRestController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable int id) {
+    public void delete(@PathVariable(name = "id") int voteId) {
         int userId = SecurityUtil.authUserId();
-        log.info("delete vote {} for userId {}", id, userId);
-        checkNotFoundWithId(voteRepository.delete(id, userId), id);
+        log.info("delete vote {} for userId {}", voteId, userId);
+        checkNotFoundWithId(voteRepository.delete(voteId, userId), voteId);
     }
 
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    public void update(@Valid @RequestBody Vote vote, @PathVariable int id) {
-        log.info("update vote {} with id {} for userId {}", vote, id, authUserId());
+    public void update(@Valid @RequestBody Vote vote, @PathVariable(name = "id") int voteId) {
+        log.info("update vote {} with id {} for userId {}", vote, voteId, authUserId());
         Assert.notNull(vote, "vote must not be null");
-        assureIdConsistent(vote, id);
-        checkNotFound(LocalTime.now().isBefore(сhangeVoteTime), id +" for change vote up to 11:00");
-        checkNotFoundWithId(voteRepository.save(vote, authUserId()), vote.id());
+        assureIdConsistent(vote, voteId);
+        checkNotFound(LocalTime.now().isBefore(сhangeVoteTime), voteId +" for change vote up to 11:00");
+        Vote vote1 = voteRepository.save(vote, authUserId());
+        log.info("vote1 {}", vote1);
+        checkNotFoundWithId(vote1, voteId);
     }
 
     @PostMapping(value = "/restaurants/{id}")
-    public ResponseEntity<Vote> create(@Valid @PathVariable(name = "id") int restaurantId) {
-        log.info("create Vote {} for restaurantId", restaurantId);
-        Vote created = null;
+    public ResponseEntity<Vote> create(@PathVariable(name = "id") int restaurantId) {
+        log.info("create Vote for restaurantId {} ", restaurantId);
+        Vote createdVote = null;
         try {
-            created = voteRepository.save(new Vote(null, thisDay, restaurantId, authUserId()), authUserId());
+            createdVote = voteRepository.save(new Vote(null, now(), restaurantId, authUserId()), authUserId());
         } catch (Exception e) {
-            throw new NotFoundException("vote for this date (" + thisDay + ") already exist");
+            throw new NotFoundException("vote for this date (" + now() + ") already exist");
         }
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path(REST_URL + "/{id}")
-                .buildAndExpand(created.getId()).toUri();
-        return ResponseEntity.created(uriOfNewResource).body(created);
-    }
-
-    public boolean authVote(){
-        return isExistVote(thisDay);
+                .buildAndExpand(createdVote.getId()).toUri();
+        return ResponseEntity.created(uriOfNewResource).body(createdVote);
     }
 }

@@ -1,4 +1,4 @@
-package ru.javawebinar.topjava.web.rest.user;
+package ru.javawebinar.topjava.web.rest.admin;
 
 
 import org.slf4j.Logger;
@@ -19,14 +19,14 @@ import java.util.List;
 import static ru.javawebinar.topjava.util.ValidationUtil.assureIdConsistent;
 import static ru.javawebinar.topjava.util.ValidationUtil.checkNotFoundWithId;
 
-@RestController
-@RequestMapping(value = AdminRestController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
-public class AdminRestController {
-    private Logger log = LoggerFactory.getLogger(AdminRestController.class);
+@RestController("adminRestController")
+@RequestMapping(value = UserRestController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
+public class UserRestController {
+    private Logger log = LoggerFactory.getLogger(UserRestController.class);
     protected static final String REST_URL = "/rest/admin/users";
     private final UserRepository repository;
 
-    public AdminRestController(UserRepository userRepository) {
+    public UserRestController(UserRepository userRepository) {
         this.repository = userRepository;
     }
 

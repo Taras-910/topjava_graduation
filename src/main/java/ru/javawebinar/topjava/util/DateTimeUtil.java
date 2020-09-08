@@ -12,7 +12,7 @@ public class DateTimeUtil {
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-    public static LocalTime сhangeVoteTime = LocalTime.of(11, 0);
+    public static LocalTime сhangeVoteTime = LocalTime.of(21, 0);
 
     /*public static LocalDate thisDay = LocalDate.now();*/
     public static LocalDate thisDay = LocalDate.of(2020,07,30);

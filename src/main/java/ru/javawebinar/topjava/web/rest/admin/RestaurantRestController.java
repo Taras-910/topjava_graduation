@@ -1,4 +1,4 @@
-package ru.javawebinar.topjava.web.rest;
+package ru.javawebinar.topjava.web.rest.admin;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

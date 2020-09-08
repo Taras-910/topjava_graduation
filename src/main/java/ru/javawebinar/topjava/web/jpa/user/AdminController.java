@@ -2,6 +2,9 @@ package ru.javawebinar.topjava.web.jpa.user;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.Assert;
 import ru.javawebinar.topjava.model.User;
@@ -12,7 +15,7 @@ import java.util.List;
 import static ru.javawebinar.topjava.util.ValidationUtil.*;
 
 @Controller
-public class AdminController {
+public class AdminController implements UserDetailsService {
     protected final Logger log = LoggerFactory.getLogger(getClass());
     private final UserRepository userRepository;
 
@@ -53,5 +56,10 @@ public class AdminController {
         log.info("getByEmail {}", email);
         Assert.notNull(email, "email must not be null");
         return checkNotFound(userRepository.getByEmail(email), "email=" + email);
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return null;
     }
 }

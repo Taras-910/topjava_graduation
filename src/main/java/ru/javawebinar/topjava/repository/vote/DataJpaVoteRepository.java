@@ -24,8 +24,11 @@ public class DataJpaVoteRepository implements VoteRepository {
 
     @Override
     public Vote save(Vote vote, int userId) {
+        log.info("vote {}", vote);
         vote.setUserId(userRepository.getOne(userId).getId());
-        return vote.isNew() || get(vote.id(), userId) != null ? voteRepository.save(vote) : null;
+        Vote result =  voteRepository.save(vote);
+        log.info("result {}", result);
+        return vote.isNew() || get(vote.id(), userId) != null ? result : null;
     }
 
     @Override
@@ -35,6 +38,11 @@ public class DataJpaVoteRepository implements VoteRepository {
     public Vote get(int id, int userId) {
         Vote vote = voteRepository.findById(id).orElse(null);
         return vote != null && vote.getUserId() == userId ? vote : null;
+    }
+
+    @Override
+    public Vote get(int id) {
+        return voteRepository.findById(id).orElse(null);
     }
 
     @Override
@@ -65,5 +73,15 @@ public class DataJpaVoteRepository implements VoteRepository {
     @Override
     public boolean isExistVote(LocalDate date, int authUserId) {
         return getByDateForAuth(date, authUserId) != null;
+    }
+
+    @Override
+    public List<Vote> getByRestaurantAuth(int restaurantId, int authUserId) {
+        return voteRepository.getByRestaurantAuth(restaurantId, authUserId);
+    }
+
+    @Override
+    public List<Vote> getByDate(LocalDate date) {
+        return Optional.ofNullable(voteRepository.getByDate(date)).orElse(null);
     }
 }
