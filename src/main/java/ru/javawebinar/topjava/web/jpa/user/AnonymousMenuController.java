@@ -10,12 +10,12 @@ import ru.javawebinar.topjava.web.jpa.MenuController;
 import java.util.List;
 
 @Controller
-public class FreeUserController {
+public class AnonymousMenuController {
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
     private final MenuController menuController;
 
-    public FreeUserController(MenuController menuController) {
+    public AnonymousMenuController(MenuController menuController) {
         this.menuController = menuController;
     }
 

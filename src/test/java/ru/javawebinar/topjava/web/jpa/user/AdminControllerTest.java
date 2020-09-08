@@ -13,7 +13,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static ru.javawebinar.topjava.testdata.UserTestData.*;
 
-public class AdminUserControllerTest extends AbstractJpaControllerTest {
+public class AdminControllerTest extends AbstractJpaControllerTest {
 
     @Autowired
     AdminController controller;

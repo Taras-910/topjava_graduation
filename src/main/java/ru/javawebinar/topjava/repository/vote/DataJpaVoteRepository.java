@@ -26,9 +26,7 @@ public class DataJpaVoteRepository implements VoteRepository {
     public Vote save(Vote vote, int userId) {
         log.info("vote {}", vote);
         vote.setUserId(userRepository.getOne(userId).getId());
-        Vote result =  voteRepository.save(vote);
-        log.info("result {}", result);
-        return vote.isNew() || get(vote.id(), userId) != null ? result : null;
+        return vote.isNew() || get(vote.id(), userId) != null ? voteRepository.save(vote) : null;
     }
 
     @Override

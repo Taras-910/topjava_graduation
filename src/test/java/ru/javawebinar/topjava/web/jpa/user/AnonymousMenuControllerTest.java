@@ -11,7 +11,7 @@ import java.util.List;
 import static ru.javawebinar.topjava.testdata.MenuTestData.*;
 import static ru.javawebinar.topjava.testdata.RestaurantTestData.RESTAURANT1_ID;
 
-public class FreeUserControllerTest extends AbstractJpaControllerTest {
+public class AnonymousMenuControllerTest extends AbstractJpaControllerTest {
 
     @Autowired
     MenuController controller;

@@ -30,6 +30,12 @@ public class RootController {
         return "users";
     }
 
+    @GetMapping("/login")
+    public String login() {
+        log.info("RootController login");
+        return "login";
+    }
+
     @PostMapping("/users")
     public String setUser(HttpServletRequest request) {
         log.info("RootController setUsers");

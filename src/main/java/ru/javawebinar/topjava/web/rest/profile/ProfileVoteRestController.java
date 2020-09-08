@@ -89,9 +89,7 @@ public class ProfileVoteRestController {
         Assert.notNull(vote, "vote must not be null");
         assureIdConsistent(vote, voteId);
         checkNotFound(LocalTime.now().isBefore(сhangeVoteTime), voteId +" for change vote up to 11:00");
-        Vote vote1 = voteRepository.save(vote, authUserId());
-        log.info("vote1 {}", vote1);
-        checkNotFoundWithId(vote1, voteId);
+        checkNotFoundWithId(voteRepository.save(vote, authUserId()), voteId);
     }
 
     @PostMapping(value = "/restaurants/{id}")

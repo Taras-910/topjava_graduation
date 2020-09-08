@@ -81,9 +81,9 @@ public class MenuRestController {
     @Transactional
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<Dish>> createMenuForNewRestaurant(@Valid @RequestBody List<Dish> dishes,
-                                                                 @RequestParam String name){
-        log.info("create Menu for newRestaurant {} with quantity Dishes {}", name, dishes.size());
-        Restaurant createdRestaurant = restaurantRestController.create(new Restaurant(null, name)).getBody();
+                                                                 @RequestParam(name = "name") String restaurantName){
+        log.info("create Menu for newRestaurant {} with quantity Dishes {}", restaurantName, dishes.size());
+        Restaurant createdRestaurant = restaurantRestController.create(new Restaurant(null, restaurantName)).getBody();
         return dishRestController.createAllForMenu(dishes, createdRestaurant.id());
       }
 

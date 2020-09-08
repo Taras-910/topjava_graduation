@@ -2,12 +2,19 @@ package ru.javawebinar.topjava.to;
 
 import ru.javawebinar.topjava.model.Restaurant;
 
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 public class Menu {
+
+    @NotNull
     private Restaurant restaurant;
-    private LocalDate date;
+
+    @NotNull
+    private LocalDate date = LocalDate.now();
+
     private boolean voteAuth;
+
     private boolean toVote = false;
 
     public Menu(Restaurant restaurant, LocalDate date, boolean voteAuth, boolean toVote) {
