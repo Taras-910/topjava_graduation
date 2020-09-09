@@ -55,7 +55,7 @@ public class RestaurantControllerTest extends AbstractJpaControllerTest {
     @Test
     public void getAllWithDishesOfDate() throws Exception {
         List<Restaurant> restaurant = controller.getAllWithDishesOfDate(thisDay);
-        RESTAURANT_MATCHER.assertMatch(restaurant, restaurantsWithDishes());
+        RESTAURANT_MATCHER.assertMatch(restaurant, withDishesByDate());
     }
 
     @Test

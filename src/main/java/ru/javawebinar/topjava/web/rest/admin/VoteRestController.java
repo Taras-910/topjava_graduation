@@ -21,8 +21,8 @@ import java.util.List;
 
 import static ru.javawebinar.topjava.util.DateTimeUtil.thisDay;
 import static ru.javawebinar.topjava.util.DateTimeUtil.сhangeVoteTime;
-import static ru.javawebinar.topjava.util.SecurityUtil.authUserId;
 import static ru.javawebinar.topjava.util.ValidationUtil.*;
+import static ru.javawebinar.topjava.web.SecurityUtil.authUserId;
 
 @RestController
 @RequestMapping(value = VoteRestController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)

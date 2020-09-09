@@ -7,7 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.util.Assert;
 import ru.javawebinar.topjava.model.Vote;
 import ru.javawebinar.topjava.repository.VoteRepository;
-import ru.javawebinar.topjava.util.SecurityUtil;
+import ru.javawebinar.topjava.web.SecurityUtil;
 
 import java.time.LocalDate;
 import java.time.LocalTime;

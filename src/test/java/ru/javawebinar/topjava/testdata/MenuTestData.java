@@ -15,7 +15,7 @@ import static ru.javawebinar.topjava.testdata.RestaurantTestData.RESTAURANT1;
 import static ru.javawebinar.topjava.testdata.RestaurantTestData.RESTAURANT2;
 
 public class MenuTestData {
-    public static TestMatcher<Menu> MENU_MATCHER = TestMatcher.usingFieldsComparator(Menu.class,"id");
+    public static TestMatcher<Menu> MENU_MATCHER = TestMatcher.usingFieldsComparator(Menu.class,"voteAuth");
 
     public static Dish getNew() {
         return new Dish("Созданный ужин", of(2020, Month.FEBRUARY, 1), 5.0F);

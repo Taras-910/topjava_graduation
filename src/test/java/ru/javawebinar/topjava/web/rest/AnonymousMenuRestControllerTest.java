@@ -1,4 +1,4 @@
-package ru.javawebinar.topjava.web.rest.anonymous;
+package ru.javawebinar.topjava.web.rest;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

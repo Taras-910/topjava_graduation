@@ -75,6 +75,17 @@ class RestaurantRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
+    void getAllWithDishes() throws Exception {
+        perform(MockMvcRequestBuilders.get(REST_URL + "all")
+                .with(userHttpBasic(USER))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(RESTAURANT_MATCHER.contentJson(allWithDishes()));
+    }
+
+    @Test
     void getAllWithDishesOfDate() throws Exception {
         perform(MockMvcRequestBuilders.get(REST_URL + "menus")
                 .with(userHttpBasic(USER))
@@ -83,7 +94,7 @@ class RestaurantRestControllerTest extends AbstractControllerTest {
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(RESTAURANT_MATCHER.contentJson(restaurantsWithDishes()));
+                .andExpect(RESTAURANT_MATCHER.contentJson(withDishesByDate()));
     }
 
     @Test

@@ -2,7 +2,6 @@ package ru.javawebinar.topjava.web;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
@@ -12,11 +11,11 @@ public class RootController {
 
     @GetMapping("/")
     public String root() {
-        return "redirect:menus";
+        return "redirect:rest/admin/restaurants/all";
     }
 
     //    @Secured("ROLE_ADMIN")
-    @PreAuthorize("hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/users")
     public String getUsers() {
         return "users";
@@ -29,6 +28,6 @@ public class RootController {
 
     @GetMapping("/meals")
     public String getMeals() {
-        return "menus";
+        return "rest/admin/restaurants/all";
     }
 }

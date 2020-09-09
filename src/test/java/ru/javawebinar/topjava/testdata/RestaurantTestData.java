@@ -19,8 +19,14 @@ public class RestaurantTestData {
     public static final Restaurant RESTAURANT1 = new Restaurant(RESTAURANT1_ID, "Дубок");
     public static final Restaurant RESTAURANT2 = new Restaurant(RESTAURANT2_ID, "Прага");
 
-    public static List<Restaurant> restaurantsWithDishes() {
+    public static List<Restaurant> withDishesByDate() {
         RESTAURANT1.setDishes(Arrays.asList(DISH5, DISH6));
+        RESTAURANT2.setDishes(Arrays.asList(DISH7, DISH8, DISH9, DISH10, DISH11));
+        return Arrays.asList(RESTAURANT1, RESTAURANT2);
+    }
+
+    public static List<Restaurant> allWithDishes() {
+        RESTAURANT1.setDishes(Arrays.asList(DISH1, DISH2, DISH3, DISH4, DISH5, DISH6));
         RESTAURANT2.setDishes(Arrays.asList(DISH7, DISH8, DISH9, DISH10, DISH11));
         return Arrays.asList(RESTAURANT1, RESTAURANT2);
     }

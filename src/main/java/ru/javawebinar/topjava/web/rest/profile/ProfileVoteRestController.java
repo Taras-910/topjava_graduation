@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.javawebinar.topjava.model.Vote;
 import ru.javawebinar.topjava.repository.VoteRepository;
-import ru.javawebinar.topjava.util.SecurityUtil;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import javax.validation.Valid;
@@ -22,8 +21,8 @@ import java.util.List;
 
 import static java.time.LocalDate.now;
 import static ru.javawebinar.topjava.util.DateTimeUtil.сhangeVoteTime;
-import static ru.javawebinar.topjava.util.SecurityUtil.authUserId;
 import static ru.javawebinar.topjava.util.ValidationUtil.*;
+import static ru.javawebinar.topjava.web.SecurityUtil.authUserId;
 
 @RestController
 @RequestMapping(value = ProfileVoteRestController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -56,7 +55,7 @@ public class ProfileVoteRestController {
 
     @GetMapping(value = "date/{date}")
     public Vote getByDateForAuth(@PathVariable LocalDate date) {
-        log.info("get for user {} by date {}", SecurityUtil.authUserId(), date);
+        log.info("get for user {} by date {}", authUserId(), date);
         return checkNotFound(voteRepository.getByDateForAuth(date, authUserId()), "for date " + date);
     }
 
@@ -75,7 +74,7 @@ public class ProfileVoteRestController {
     @DeleteMapping("/{id}")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void delete(@PathVariable(name = "id") int voteId) {
-        int userId = SecurityUtil.authUserId();
+        int userId = authUserId();
         log.info("delete vote {} for userId {}", voteId, userId);
         checkNotFoundWithId(voteRepository.delete(voteId, userId), voteId);
     }

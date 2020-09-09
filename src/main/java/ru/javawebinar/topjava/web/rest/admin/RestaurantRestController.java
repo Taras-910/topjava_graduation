@@ -57,6 +57,12 @@ public class RestaurantRestController {
         return checkNotFoundWithId(repository.getByIdWithDishesOfDate(id, date), id);
     }
 
+    @GetMapping("/all")
+    public List<Restaurant> getAllWithDishes() {
+        log.info("get Restaurants With Dishes");
+        return repository.getAllWithDishes();
+    }
+
     @Cacheable("rest_restaurants")
     @GetMapping("/menus")
     public List<Restaurant> getAllWithDishesOfDate(@RequestParam LocalDate date) {
