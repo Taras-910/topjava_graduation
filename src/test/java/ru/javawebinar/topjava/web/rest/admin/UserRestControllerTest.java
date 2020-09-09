@@ -1,11 +1,14 @@
 package ru.javawebinar.topjava.web.rest.admin;
 
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.javawebinar.topjava.model.User;
+import ru.javawebinar.topjava.testdata.UserTestData;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 import ru.javawebinar.topjava.util.json.JsonUtil;
 import ru.javawebinar.topjava.web.AbstractControllerTest;
@@ -21,7 +24,7 @@ import static ru.javawebinar.topjava.testdata.UserTestData.*;
 
 class UserRestControllerTest extends AbstractControllerTest {
     private static final String REST_URL = UserRestController.REST_URL + '/';
-
+    private Logger log = LoggerFactory.getLogger(getClass());
     @Autowired
     private UserRestController controller;
 
@@ -67,16 +70,17 @@ class UserRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    void createWithLocation() throws Exception {
+    void create() throws Exception {
         User newUser = getNew();
         ResultActions action = perform(MockMvcRequestBuilders.post(REST_URL)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(JsonUtil.writeValue(newUser))
-                .with(userHttpBasic(ADMIN)))
+                .with(userHttpBasic(ADMIN))
+                .content(UserTestData.jsonWithPassword(newUser, "newPass")))
                 .andExpect(status().isCreated());
 
         User created = readFromJson(action, User.class);
-        int newId = created.id();
+        log.info("created {}", created);
+        int newId = created.getId();
         newUser.setId(newId);
         USER_MATCHER.assertMatch(created, newUser);
         USER_MATCHER.assertMatch(controller.get(newId), newUser);

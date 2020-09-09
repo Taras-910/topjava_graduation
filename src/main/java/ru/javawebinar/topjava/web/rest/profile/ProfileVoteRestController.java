@@ -2,7 +2,6 @@ package ru.javawebinar.topjava.web.rest.profile;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -56,22 +55,21 @@ public class ProfileVoteRestController {
     }
 
     @GetMapping(value = "date/{date}")
-    public Vote getByDateForAuth(@PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+    public Vote getByDateForAuth(@PathVariable LocalDate date) {
         log.info("get for user {} by date {}", SecurityUtil.authUserId(), date);
-        return checkNotFound(voteRepository.getByDateForAuth(date, SecurityUtil.authUserId()), "for date " + date);
+        return checkNotFound(voteRepository.getByDateForAuth(date, authUserId()), "for date " + date);
     }
 
     @GetMapping(value = "exist/date/{date}")
-    public boolean isExistVote(@PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
-        log.info("get for user {} by date {}", SecurityUtil.authUserId(), date);
-        return voteRepository.isExistVote(date, SecurityUtil.authUserId());
+    public boolean isExistVote(@PathVariable LocalDate date) {
+        log.info("get for user {} by date {}", authUserId(), date);
+        return voteRepository.isExistVote(date, authUserId());
     }
 
     @GetMapping(value = "/between")
-    public List<Vote> getBetween(@RequestParam @Nullable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-                                 @RequestParam @Nullable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
-        log.info("getBetween with dates({} - {}) for userId {}", startDate, endDate, SecurityUtil.authUserId());
-        return voteRepository.getBetween(startDate, endDate, SecurityUtil.authUserId());
+    public List<Vote> getBetween(@RequestParam @Nullable LocalDate startDate, @RequestParam @Nullable LocalDate endDate) {
+        log.info("getBetween with dates({} - {}) for userId {}", startDate, endDate, authUserId());
+        return voteRepository.getBetween(startDate, endDate, authUserId());
     }
 
     @DeleteMapping("/{id}")

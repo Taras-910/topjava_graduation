@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -53,15 +52,14 @@ public class RestaurantRestController {
     }
 
     @GetMapping("/{id}/menus")
-    public Restaurant getByIdWithDishesOfDate(@PathVariable int id,
-                                              @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+    public Restaurant getByIdWithDishesOfDate(@PathVariable int id, @RequestParam LocalDate date) {
         log.info("getById with id {} and date {}", id, DateTimeUtil.toString(date));
         return checkNotFoundWithId(repository.getByIdWithDishesOfDate(id, date), id);
     }
 
     @Cacheable("rest_restaurants")
     @GetMapping("/menus")
-    public List<Restaurant> getAllWithDishesOfDate(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+    public List<Restaurant> getAllWithDishesOfDate(@RequestParam LocalDate date) {
         if (date == null ){
             date = thisDay;
         }

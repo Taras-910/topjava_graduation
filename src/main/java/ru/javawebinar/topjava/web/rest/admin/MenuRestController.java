@@ -2,7 +2,6 @@ package ru.javawebinar.topjava.web.rest.admin;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -48,16 +47,14 @@ public class MenuRestController {
 
     @Transactional
     @GetMapping("/restaurants/{id}")
-    public Menu getByRestaurantIdAndDate(@PathVariable(name = "id") int restaurantId,
-                                         @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+    public Menu getByRestaurantIdAndDate(@PathVariable(name = "id") int restaurantId, @RequestParam LocalDate date) {
         log.info("getTodayMenu for restaurant {}", restaurantId);
         return toMenu(restaurantRestController.getByIdWithDishesOfDate(restaurantId, date), voteRestController.authVote(), thisDay);
     }
 
     @Transactional
     @GetMapping("/restaurants/names/{name}")
-    public Menu getByNameWithDishesAndDate(@PathVariable String name,
-                                         @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+    public Menu getByNameWithDishesAndDate(@PathVariable String name, @RequestParam LocalDate date) {
         log.info("getTodayMenu for restaurant {}", name);
         Restaurant restaurantDB = restaurantRestController.getByName(name);
         return toMenu(restaurantRestController.getByIdWithDishesOfDate(restaurantDB.id(), date), voteRestController.authVote(), thisDay);
@@ -65,15 +62,14 @@ public class MenuRestController {
 
     @Transactional
     @GetMapping(value = "/date/{date}")
-    public List<Menu> getAllByDate(@PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date){
+    public List<Menu> getAllByDate(@PathVariable LocalDate date){
         log.info("getMenusToday date {}", date);
         return toListMenus(restaurantRestController.getAllWithDishesOfDate(date), voteRestController.authVote(), date);
     }
 
     @DeleteMapping("/restaurants/{id}/date/{date}")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    public void deleteByRestaurantAndDate(@PathVariable(name = "id") int restaurantId,
-                                          @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+    public void deleteByRestaurantAndDate(@PathVariable(name = "id") int restaurantId, @PathVariable LocalDate date) {
         log.info("delete by restaurant {} and date {}", restaurantId, date);
         dishRestController.deleteAllForRestaurantByDate(restaurantId, date);
     }

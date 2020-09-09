@@ -2,7 +2,6 @@ package ru.javawebinar.topjava.web.rest.admin;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -58,7 +57,7 @@ public class DishRestController {
 
     @GetMapping(value = "/restaurants/{id}/date/{date}")
     public List<Dish> getByRestaurantAndDate(@PathVariable(name = "id") int restaurantId,
-                                             @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+                                             @PathVariable LocalDate date) {
         log.info("getAll dishes for restaurant {}", restaurantId);
 
         return checkNotFoundWithId(repository.getByRestaurantAndDate(restaurantId, date), restaurantId);
@@ -77,7 +76,7 @@ public class DishRestController {
     @DeleteMapping("restaurants/{id}/date/{date}")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void deleteAllForRestaurantByDate(@PathVariable(name = "id") @Nullable int restaurantId,
-                                @PathVariable @Nullable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+                                @PathVariable @Nullable LocalDate date) {
         log.info("deleteAll for restaurantId {} and date {}", restaurantId, date);
         checkNotFoundWithId(repository.deleteAll(restaurantId, date), restaurantId);
     }

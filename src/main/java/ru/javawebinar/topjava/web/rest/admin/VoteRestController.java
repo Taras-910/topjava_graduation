@@ -2,7 +2,6 @@ package ru.javawebinar.topjava.web.rest.admin;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -55,14 +54,13 @@ public class VoteRestController {
     }
 
     @GetMapping(value = "/date/{date}")
-    public List<Vote> getByDate(@PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+    public List<Vote> getByDate(@PathVariable LocalDate date) {
         log.info("get by date {}", date);
         return repository.getByDate(date);
     }
 
     @GetMapping(value = "/users/{id}/date/{date}")
-    public boolean isExistForUserByDate(@PathVariable(name = "id") int userId,
-            @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+    public boolean isExistForUserByDate(@PathVariable(name = "id") int userId, @PathVariable LocalDate date) {
         log.info("get for user {} by date {}", userId, date);
         return repository.isExistVote(date, userId );
     }
@@ -74,8 +72,7 @@ public class VoteRestController {
     }
 
     @GetMapping(value = "/between/users/{id}")
-    public List<Vote> getBetweenForUser(@RequestParam @Nullable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-                                        @RequestParam @Nullable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+    public List<Vote> getBetweenForUser(@RequestParam @Nullable LocalDate startDate, @RequestParam @Nullable LocalDate endDate,
                                         @PathVariable(name = "id") int userId) {
         log.info("getBetween with dates({} - {}) for userId {}", startDate, endDate, userId);
         return repository.getBetween(startDate, endDate, userId);

@@ -26,6 +26,7 @@
             <div class="message"><spring:message code="${param.message}"/></div>
         </c:if>
         <br/>
+<%--
         <p>
             <button type="submit" class="btn btn-lg btn-primary" onclick="login('user@yandex.ru', 'password')">
                 Log-in User
@@ -34,6 +35,7 @@
                 Log-in Admin
             </button>
         </p>
+--%>
         <br/>
         <div class="lead py-4">Стек<br>
             <a href="http://projects.spring.io/spring-security/">Spring Security</a>,

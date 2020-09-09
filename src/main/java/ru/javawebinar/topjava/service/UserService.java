@@ -32,8 +32,7 @@ public class UserService implements UserDetailsService {
 
     public User create(User user) {
         Assert.notNull(user, "user must not be null");
-        return prepareToSave(user, passwordEncoder);
- //       return repository.save(user);
+        return repository.save(prepareToSave(user, passwordEncoder));
     }
 
     public void delete(int id) {
@@ -56,8 +55,7 @@ public class UserService implements UserDetailsService {
     public void update(User user) {
         Assert.notNull(user, "user must not be null");
 //      checkNotFoundWithId : check works only for JDBC, disabled
-        prepareToSave(user, passwordEncoder);
-        repository.save(user);
+        repository.save(prepareToSave(user, passwordEncoder));
     }
 
     @Transactional

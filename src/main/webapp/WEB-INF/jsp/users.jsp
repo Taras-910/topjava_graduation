@@ -12,7 +12,7 @@
 <body>
 <ul>
     <section>
-        <h3><a href="index.jsp">Home</a></h3>
+        <h3><a href="/topjava/menus">Menus</a></h3>
         <hr/>
         <h2>Users</h2>
         <button><a href="users?action=create">Add User</a></button>

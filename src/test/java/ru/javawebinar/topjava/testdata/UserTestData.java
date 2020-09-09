@@ -3,6 +3,7 @@ package ru.javawebinar.topjava.testdata;
 import ru.javawebinar.topjava.TestMatcher;
 import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
+import ru.javawebinar.topjava.util.json.JsonUtil;
 
 import java.util.Collections;
 import java.util.Date;
@@ -28,4 +29,9 @@ public class UserTestData {
         updated.setName("UpdatedName");
         return updated;
     }
+
+    public static String jsonWithPassword(User user, String passw) {
+        return JsonUtil.writeAdditionProps(user, "password", passw);
+    }
+
 }
