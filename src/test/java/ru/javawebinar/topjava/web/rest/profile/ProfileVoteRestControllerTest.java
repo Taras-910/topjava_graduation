@@ -26,6 +26,7 @@ import static ru.javawebinar.topjava.TestUtil.readFromJson;
 import static ru.javawebinar.topjava.TestUtil.userHttpBasic;
 import static ru.javawebinar.topjava.testdata.RestaurantTestData.RESTAURANT1_ID;
 import static ru.javawebinar.topjava.testdata.RestaurantTestData.RESTAURANT2_ID;
+import static ru.javawebinar.topjava.testdata.UserTestData.ADMIN;
 import static ru.javawebinar.topjava.testdata.UserTestData.USER;
 import static ru.javawebinar.topjava.testdata.VoteTestData.*;
 import static ru.javawebinar.topjava.util.DateTimeUtil.TIME_TEST;
@@ -41,7 +42,7 @@ class ProfileVoteRestControllerTest extends AbstractControllerTest {
     @Test
     void get() throws Exception {
         perform(MockMvcRequestBuilders.get(REST_URL + VOTE1_ID)
-                .with(userHttpBasic(USER))
+                .with(userHttpBasic(ADMIN))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andDo(print())

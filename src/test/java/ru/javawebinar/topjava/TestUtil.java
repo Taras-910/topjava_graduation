@@ -3,6 +3,7 @@ package ru.javawebinar.topjava;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
@@ -32,10 +33,10 @@ public class TestUtil {
         return JsonUtil.readValues(getContent(result), clazz);
     }
 
-/*   public static void mockAuthorize(User user) {
+   public static void mockAuthorize(User user) {
         SecurityContextHolder.getContext().setAuthentication(
                 new UsernamePasswordAuthenticationToken(new AuthorizedUser(user), null, user.getRoles()));
-    }*/
+    }
 
     public static RequestPostProcessor userHttpBasic(User user) {
         return SecurityMockMvcRequestPostProcessors.httpBasic(user.getEmail(), user.getPassword());

@@ -28,17 +28,16 @@ public class AnonymousMenuRestController {
         this.restaurantController = restaurantController;
     }
 
-
     @Transactional
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<Menu> getAllMenus() {
+    public List<Menu> getAllMenusThisDay() {
         log.info("getAllMenus");
         return toListMenus(restaurantController.getAllWithDishesOfDate(thisDay), false, thisDay);
     }
 
     @Transactional
     @GetMapping(value = "/restaurants/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Menu getMenuByRestaurantId(@PathVariable(name = "id") int restaurantId) {
+    public Menu getMenuByRestaurantIdThisDay(@PathVariable(name = "id") int restaurantId) {
         log.info("getMenu by restaurant id {}", restaurantId);
         return toMenu(restaurantController.getByIdWithDishesOfDate(restaurantId, thisDay),false,thisDay);
     }

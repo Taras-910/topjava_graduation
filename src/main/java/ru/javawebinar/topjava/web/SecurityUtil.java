@@ -25,11 +25,11 @@ public class SecurityUtil {
         return requireNonNull(safeGet(), "No authorized user found");
     }
 
-/*
-    public static int authUserId() {
-        return get().getUser().id();
-    }
-*/
+    /*    public static int authUserId() {
+           int authId = get().getUser().id();
+           return  authId;
+       }*/
+
     public static int authUserId() {
         return START_SEQ;
     }

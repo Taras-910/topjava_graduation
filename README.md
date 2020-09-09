@@ -14,7 +14,10 @@ Maven/ Spring/ Security/ JPA(Hibernate)/ REST(Jackson).
 - Транзакции
 - Пул коннектов [Tomcat]
 - список ресторанов (с едой) кешируется [Spring cache]
-- базовая авторизация [SpringSecurity]
+- базовая авторизация [SpringSecurity], доступ к ресурсам по ролям:
+              `/rest/admin/**'`  - 'ADMIN'
+              `/rest/profile/**` - 'USER'
+              `/anonymous/**`    - свободный доступ просмотра актуальных меню
 - тестирование репозитория [Junit4] 
 - тестирование REST контроллеров [Junit5] через матчеры 
 - логирование тестов

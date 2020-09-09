@@ -20,20 +20,20 @@ class AnonymousMenuRestControllerTest extends AbstractControllerTest {
     private AnonymousMenuRestController controller;
 
     @Test
-    void getAllMenus() throws Exception {
+    void getAllMenusThisDay() throws Exception {
         setThisDay(DATE_TEST);
         perform(MockMvcRequestBuilders.get(REST_URL))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
-        MENU_MATCHER.assertMatch(controller.getAllMenus(), allMenusOfDay());
+        MENU_MATCHER.assertMatch(controller.getAllMenusThisDay(), allMenusOfDay());
     }
 
     @Test
-    void getMenuByRestaurantId() throws Exception {
+    void getMenuByRestaurantIdThisDay() throws Exception {
         setThisDay(DATE_TEST);
         perform(MockMvcRequestBuilders.get(REST_URL + "restaurants/" + RESTAURANT1_ID))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
-        MENU_MATCHER.contentJson(controller.getMenuByRestaurantId(RESTAURANT1_ID), menuOfDay());
+        MENU_MATCHER.contentJson(controller.getMenuByRestaurantIdThisDay(RESTAURANT1_ID), menuOfDay());
     }
 }

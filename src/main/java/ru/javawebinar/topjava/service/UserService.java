@@ -54,7 +54,6 @@ public class UserService implements UserDetailsService {
 
     public void update(User user) {
         Assert.notNull(user, "user must not be null");
-//      checkNotFoundWithId : check works only for JDBC, disabled
         repository.save(prepareToSave(user, passwordEncoder));
     }
 
@@ -62,7 +61,7 @@ public class UserService implements UserDetailsService {
     public void enable(int id, boolean enabled) {
         User user = get(id);
         user.setEnabled(enabled);
-        repository.save(user);  // !! need only for JDBC implementation
+        repository.save(user);
     }
 
     @Override
