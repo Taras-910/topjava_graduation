@@ -29,6 +29,8 @@ import static ru.javawebinar.topjava.testdata.RestaurantTestData.RESTAURANT1_ID;
 import static ru.javawebinar.topjava.testdata.RestaurantTestData.RESTAURANT2_ID;
 import static ru.javawebinar.topjava.testdata.UserTestData.*;
 import static ru.javawebinar.topjava.testdata.VoteTestData.*;
+import static ru.javawebinar.topjava.util.DateTimeUtil.TIME_TEST;
+import static ru.javawebinar.topjava.util.DateTimeUtil.setСhangeVoteTime;
 
 class VoteRestControllerTest extends AbstractControllerTest {
     private Logger log = LoggerFactory.getLogger(getClass());
@@ -130,6 +132,7 @@ class VoteRestControllerTest extends AbstractControllerTest {
 
     @Test
     void create() throws Exception {
+        setСhangeVoteTime(TIME_TEST);
         Vote newVote = VoteTestData.getNew();
         ResultActions action = perform(MockMvcRequestBuilders.post(
                 REST_URL + "restaurants/" + RESTAURANT2_ID + "/users/" + ADMIN_ID)
@@ -138,7 +141,6 @@ class VoteRestControllerTest extends AbstractControllerTest {
                 .content(JsonUtil.writeValue(newVote)))
                 .andExpect(status().isCreated());
         Vote created = readFromJson(action, Vote.class);
-        log.info("created {}", created);
         int newId = created.id();
         newVote.setId(newId);
         VOTE_MATCHER.assertMatch(created, newVote);
@@ -147,6 +149,7 @@ class VoteRestControllerTest extends AbstractControllerTest {
 
     @Test
     void delete() throws Exception {
+        setСhangeVoteTime(TIME_TEST);
         perform(MockMvcRequestBuilders.delete(REST_URL + VOTE1_ID)
                 .param("restaurantId", valueOf(RESTAURANT1_ID))
                 .with(userHttpBasic(USER))

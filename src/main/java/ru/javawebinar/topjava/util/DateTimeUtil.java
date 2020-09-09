@@ -11,17 +11,14 @@ import java.time.format.DateTimeFormatter;
 public class DateTimeUtil {
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    public static final LocalDate DATE_TEST = LocalDate.of(2020,07,30);
+    public static final LocalTime TIME_TEST = LocalTime.now().plusMinutes(10);
 
     public static LocalTime сhangeVoteTime = LocalTime.of(11, 0);
 
-    /*public static LocalDate thisDay = LocalDate.now();*/
-    public static LocalDate thisDay = LocalDate.of(2020,07,30);
-
-    public static LocalTime getСhangeVoteTime() { return сhangeVoteTime; }
+    public static LocalDate thisDay = LocalDate.now();
 
     public static void setСhangeVoteTime(LocalTime сhangeVoteTime) { DateTimeUtil.сhangeVoteTime = сhangeVoteTime; }
-
-    public static LocalDate getThisDay() { return thisDay; }
 
     public static void setThisDay(LocalDate thisDay) { DateTimeUtil.thisDay = thisDay; }
 

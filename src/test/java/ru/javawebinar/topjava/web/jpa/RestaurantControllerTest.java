@@ -11,7 +11,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static ru.javawebinar.topjava.testdata.RestaurantTestData.*;
-import static ru.javawebinar.topjava.util.DateTimeUtil.thisDay;
+import static ru.javawebinar.topjava.util.DateTimeUtil.*;
 
 public class RestaurantControllerTest extends AbstractJpaControllerTest {
 
@@ -60,6 +60,7 @@ public class RestaurantControllerTest extends AbstractJpaControllerTest {
 
     @Test
     public void getByIdWithDishesOfDate() throws Exception {
+        setThisDay(DATE_TEST);
         Restaurant restaurant = controller.getByIdWithDishesOfDate(RESTAURANT1_ID, thisDay);
         RESTAURANT_MATCHER.assertMatch(restaurant, RESTAURANT1);
     }

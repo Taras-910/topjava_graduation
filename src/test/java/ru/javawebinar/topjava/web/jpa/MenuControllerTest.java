@@ -18,6 +18,8 @@ import static ru.javawebinar.topjava.testdata.DishTestData.DISH1_ID;
 import static ru.javawebinar.topjava.testdata.MenuTestData.*;
 import static ru.javawebinar.topjava.testdata.RestaurantTestData.NEW_RESTAURANT;
 import static ru.javawebinar.topjava.testdata.RestaurantTestData.RESTAURANT1_ID;
+import static ru.javawebinar.topjava.util.DateTimeUtil.DATE_TEST;
+import static ru.javawebinar.topjava.util.DateTimeUtil.setThisDay;
 
 public class MenuControllerTest extends AbstractJpaControllerTest {
     private Logger log = LoggerFactory.getLogger(getClass());
@@ -35,6 +37,7 @@ public class MenuControllerTest extends AbstractJpaControllerTest {
 
     @Test
     public void getMenuByRestaurantId() {
+        setThisDay(DATE_TEST);
         Menu menu = controller.getMenuByRestaurantId(RESTAURANT1_ID);
         MENU_MATCHER.assertMatch(menu, menuOfDay());
     }

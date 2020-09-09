@@ -10,6 +10,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static ru.javawebinar.topjava.testdata.MenuTestData.*;
 import static ru.javawebinar.topjava.testdata.RestaurantTestData.RESTAURANT1_ID;
+import static ru.javawebinar.topjava.util.DateTimeUtil.DATE_TEST;
+import static ru.javawebinar.topjava.util.DateTimeUtil.setThisDay;
 
 class AnonymousMenuRestControllerTest extends AbstractControllerTest {
     private static final String REST_URL = AnonymousMenuRestController.REST_URL + '/';
@@ -19,6 +21,7 @@ class AnonymousMenuRestControllerTest extends AbstractControllerTest {
 
     @Test
     void getAllMenus() throws Exception {
+        setThisDay(DATE_TEST);
         perform(MockMvcRequestBuilders.get(REST_URL))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
@@ -27,6 +30,7 @@ class AnonymousMenuRestControllerTest extends AbstractControllerTest {
 
     @Test
     void getMenuByRestaurantId() throws Exception {
+        setThisDay(DATE_TEST);
         perform(MockMvcRequestBuilders.get(REST_URL + "restaurants/" + RESTAURANT1_ID))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));

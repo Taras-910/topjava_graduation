@@ -27,10 +27,4 @@ public class SecurityUtil {
     public static int authUserId() {
         return get().getUser().id();
     }
-
-/*
-    public static boolean authVote() {
-        return authUserId() != 0;
-    }
-*/
 }

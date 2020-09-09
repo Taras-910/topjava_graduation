@@ -19,7 +19,8 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
-import static ru.javawebinar.topjava.util.DateTimeUtil.*;
+import static ru.javawebinar.topjava.util.DateTimeUtil.thisDay;
+import static ru.javawebinar.topjava.util.DateTimeUtil.сhangeVoteTime;
 import static ru.javawebinar.topjava.util.SecurityUtil.authUserId;
 import static ru.javawebinar.topjava.util.ValidationUtil.*;
 
@@ -82,6 +83,7 @@ public class VoteRestController {
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void delete(@PathVariable(name = "id") int voteId) {
         log.info("delete vote {} for userId {}", voteId, authUserId());
+        checkNotFound(LocalTime.now().isBefore(сhangeVoteTime), voteId +" for change vote up to 11:00");
         checkNotFoundWithId(repository.delete(voteId, authUserId()), voteId);
     }
 
@@ -91,7 +93,6 @@ public class VoteRestController {
         log.info("update vote {} for userId {}", vote, authUserId());
         Assert.notNull(vote, "vote must not be null");
         assureIdConsistent(vote, voteId);
-        setСhangeVoteTime(LocalTime.of(23,59));
         checkNotFound(LocalTime.now().isBefore(сhangeVoteTime), voteId +" for change vote up to 11:00");
         checkNotFoundWithId(repository.save(vote, authUserId()), vote.id());
     }

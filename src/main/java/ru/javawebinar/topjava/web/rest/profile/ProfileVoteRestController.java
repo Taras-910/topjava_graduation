@@ -39,13 +39,13 @@ public class ProfileVoteRestController {
     @GetMapping(value = "/{id}")
     public Vote get(@PathVariable(name = "id") Integer voteId) {
         log.info("get vote {} ", voteId);
-        return checkNotFoundWithId(voteRepository.get(voteId, SecurityUtil.authUserId()), voteId);
+        return checkNotFoundWithId(voteRepository.get(voteId, authUserId()), voteId);
     }
 
     @GetMapping(value = "/auth")
     public List<Vote> getAllForAuth() {
-        log.info("getAllForUser with userId {}", SecurityUtil.authUserId());
-        return voteRepository.getAllForAuthUser(SecurityUtil.authUserId());
+        log.info("getAllForUser with userId {}", authUserId());
+        return voteRepository.getAllForAuthUser(authUserId());
     }
 
     @GetMapping(value = "/restaurants/{id}")

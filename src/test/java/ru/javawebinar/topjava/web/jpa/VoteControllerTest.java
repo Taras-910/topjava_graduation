@@ -6,7 +6,6 @@ import ru.javawebinar.topjava.model.Vote;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 import ru.javawebinar.topjava.web.AbstractJpaControllerTest;
 
-import java.time.LocalTime;
 import java.time.Month;
 import java.util.List;
 
@@ -17,7 +16,7 @@ import static ru.javawebinar.topjava.testdata.RestaurantTestData.RESTAURANT2_ID;
 import static ru.javawebinar.topjava.testdata.UserTestData.ADMIN_ID;
 import static ru.javawebinar.topjava.testdata.UserTestData.USER_ID;
 import static ru.javawebinar.topjava.testdata.VoteTestData.*;
-import static ru.javawebinar.topjava.util.DateTimeUtil.getСhangeVoteTime;
+import static ru.javawebinar.topjava.util.DateTimeUtil.TIME_TEST;
 import static ru.javawebinar.topjava.util.DateTimeUtil.setСhangeVoteTime;
 
 public class VoteControllerTest extends AbstractJpaControllerTest {
@@ -96,12 +95,10 @@ public class VoteControllerTest extends AbstractJpaControllerTest {
 
     @Test
     public void update() throws Exception {
-        LocalTime voteTime = getСhangeVoteTime();
-        setСhangeVoteTime(LocalTime.now().plusMinutes(5));
+        setСhangeVoteTime(TIME_TEST);
         Vote updated = getUpdated();
         controller.update(updated, VOTE1_ID, ADMIN_ID);
         Vote expected = controller.getById(VOTE1_ID);
-        setСhangeVoteTime(voteTime);
         VOTE_MATCHER.assertMatch(expected, getUpdated());
     }
 }

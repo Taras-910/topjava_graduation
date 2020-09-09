@@ -66,6 +66,7 @@ public class VoteController {
     public void delete(int id) {
         int userId = SecurityUtil.authUserId();
         log.info("delete vote {} for userId {}", id, userId);
+        checkNotFound(LocalTime.now().isBefore(сhangeVoteTime), id +" for change vote up to 11:00");
         checkNotFoundWithId(voteRepository.delete(id, userId), id);
     }
 

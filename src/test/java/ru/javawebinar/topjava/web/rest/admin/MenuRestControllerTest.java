@@ -43,7 +43,7 @@ class MenuRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    void getByNameWithDishesAndDate() throws Exception {
+    void getByRestaurantNameWithDishesAndDate() throws Exception {
         perform(MockMvcRequestBuilders.get(REST_URL + "restaurants/names/" + RESTAURANT1.getName())
                 .with(userHttpBasic(USER))
                 .content(JsonUtil.writeValue(menuOfDay()))

@@ -24,6 +24,8 @@ import static ru.javawebinar.topjava.testdata.DishTestData.*;
 import static ru.javawebinar.topjava.testdata.RestaurantTestData.RESTAURANT1_ID;
 import static ru.javawebinar.topjava.testdata.RestaurantTestData.RESTAURANT2_ID;
 import static ru.javawebinar.topjava.testdata.UserTestData.USER;
+import static ru.javawebinar.topjava.util.DateTimeUtil.DATE_TEST;
+import static ru.javawebinar.topjava.util.DateTimeUtil.setThisDay;
 
 class DishRestControllerTest extends AbstractControllerTest {
     private static final String REST_URL = DishRestController.REST_URL + '/';
@@ -68,6 +70,7 @@ class DishRestControllerTest extends AbstractControllerTest {
 
     @Test
     void create() throws Exception {
+        setThisDay(DATE_TEST);
         Dish newDish = getNew();
         ResultActions action = perform(MockMvcRequestBuilders.post(REST_URL)
                 .param("restaurantId", valueOf(RESTAURANT1_ID))
@@ -111,6 +114,7 @@ class DishRestControllerTest extends AbstractControllerTest {
 
     @Test
     void delete() throws Exception {
+        setThisDay(DATE_TEST);
         perform(MockMvcRequestBuilders.delete(REST_URL + DISH10_ID)
                 .param("restaurantId", valueOf(RESTAURANT2_ID))
                 .with(userHttpBasic(USER))
@@ -121,6 +125,7 @@ class DishRestControllerTest extends AbstractControllerTest {
 
     @Test
     void deleteAll() throws Exception  {
+        setThisDay(DATE_TEST);
         perform(MockMvcRequestBuilders.delete(REST_URL + DISH10_ID)
                 .param("restaurantId", valueOf(RESTAURANT2_ID))
                 .with(userHttpBasic(USER))

@@ -36,6 +36,12 @@
             </button>
         </p>
 --%>
+        <h2>
+            user@yandex.ru      password
+        </h2>
+        <h2>
+            admin@gmail.com     admin
+        </h2>
         <br/>
         <div class="lead py-4">Стек<br>
             <a href="http://projects.spring.io/spring-security/">Spring Security</a>,

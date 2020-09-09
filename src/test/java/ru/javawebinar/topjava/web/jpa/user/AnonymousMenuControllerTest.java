@@ -10,6 +10,8 @@ import java.util.List;
 
 import static ru.javawebinar.topjava.testdata.MenuTestData.*;
 import static ru.javawebinar.topjava.testdata.RestaurantTestData.RESTAURANT1_ID;
+import static ru.javawebinar.topjava.util.DateTimeUtil.DATE_TEST;
+import static ru.javawebinar.topjava.util.DateTimeUtil.setThisDay;
 
 public class AnonymousMenuControllerTest extends AbstractJpaControllerTest {
 
@@ -18,12 +20,14 @@ public class AnonymousMenuControllerTest extends AbstractJpaControllerTest {
 
     @Test
     public void getAllMenus() {
+        setThisDay(DATE_TEST);
         List<Menu> menus = controller.getMenusToday();
         MENU_MATCHER.assertMatch(allMenusOfDay(), menus);
     }
 
     @Test
     public void getMenuByRestaurantId() {
+        setThisDay(DATE_TEST);
         Menu menu = controller.getMenuByRestaurantId(RESTAURANT1_ID);
         MENU_MATCHER.assertMatch(menuOfDay(), menu);
     }

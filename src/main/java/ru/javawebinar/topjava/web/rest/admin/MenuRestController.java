@@ -54,7 +54,7 @@ public class MenuRestController {
 
     @Transactional
     @GetMapping("/restaurants/names/{name}")
-    public Menu getByNameWithDishesAndDate(@PathVariable String name, @RequestParam LocalDate date) {
+    public Menu getByRestaurantNameWithDishesAndDate(@PathVariable String name, @RequestParam LocalDate date) {
         log.info("getTodayMenu for restaurant {}", name);
         Restaurant restaurantDB = restaurantRestController.getByName(name);
         return toMenu(restaurantRestController.getByIdWithDishesOfDate(restaurantDB.id(), date), voteRestController.authVote(), thisDay);
