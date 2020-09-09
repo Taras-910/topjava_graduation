@@ -7,7 +7,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.util.Assert;
 import ru.javawebinar.topjava.model.Vote;
 import ru.javawebinar.topjava.repository.VoteRepository;
-import ru.javawebinar.topjava.web.SecurityUtil;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -16,6 +15,7 @@ import java.util.List;
 import static ru.javawebinar.topjava.util.DateTimeUtil.thisDay;
 import static ru.javawebinar.topjava.util.DateTimeUtil.сhangeVoteTime;
 import static ru.javawebinar.topjava.util.ValidationUtil.*;
+import static ru.javawebinar.topjava.web.SecurityUtil.authUserId;
 
 @Controller
 public class VoteController {
@@ -27,20 +27,18 @@ public class VoteController {
     }
 
     public Vote getById(int id) {
-        int userId = SecurityUtil.authUserId();
-        log.info("get by id {} for user {}", id, userId);
-        return checkNotFoundWithId(voteRepository.get(id, userId), id);
+        log.info("get by id {} for user {}", id, authUserId());
+        return checkNotFoundWithId(voteRepository.get(id, authUserId()), id);
     }
 
     public Vote getByDateForAuth(LocalDate date) {
-        int userId = SecurityUtil.authUserId();
-        log.info("get for user {} by date {}", userId, date);
-        return voteRepository.getByDateForAuth(date, userId);
+        log.info("get for user {} by date {}", authUserId(), date);
+        return voteRepository.getByDateForAuth(date, authUserId());
     }
 
     public boolean isExistVote(LocalDate date) {
-        log.info("isExistVote for user {} by date {}", SecurityUtil.authUserId(), date);
-        return voteRepository.isExistVote(date, SecurityUtil.authUserId());
+        log.info("isExistVote for user {} by date {}", authUserId(), date);
+        return voteRepository.isExistVote(date, authUserId());
     }
 
     public List<Vote> getAllForAuthUser(int userId) {
@@ -64,10 +62,9 @@ public class VoteController {
     }
 
     public void delete(int id) {
-        int userId = SecurityUtil.authUserId();
-        log.info("delete vote {} for userId {}", id, userId);
+        log.info("delete vote {} for userId {}", id, authUserId());
         checkNotFound(LocalTime.now().isBefore(сhangeVoteTime), id +" for change vote up to 11:00");
-        checkNotFoundWithId(voteRepository.delete(id, userId), id);
+        checkNotFoundWithId(voteRepository.delete(id, authUserId()), id);
     }
 
     public Vote create(Vote vote, int userId) {

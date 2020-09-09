@@ -42,7 +42,7 @@ class VoteRestControllerTest extends AbstractControllerTest {
     @Test
     void get() throws Exception {
         perform(MockMvcRequestBuilders.get(REST_URL + VOTE1_ID)
-                .with(userHttpBasic(USER))
+                .with(userHttpBasic(ADMIN))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andDo(print())
@@ -53,7 +53,7 @@ class VoteRestControllerTest extends AbstractControllerTest {
     @Test
     void getAll() throws Exception {
         perform(MockMvcRequestBuilders.get(REST_URL)
-                .with(userHttpBasic(USER))
+                .with(userHttpBasic(ADMIN))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andDo(print())
@@ -64,7 +64,7 @@ class VoteRestControllerTest extends AbstractControllerTest {
     @Test
     void getByRestaurant() throws Exception {
         perform(MockMvcRequestBuilders.get(REST_URL + "restaurants/" + RESTAURANT1_ID)
-                .with(userHttpBasic(USER))
+                .with(userHttpBasic(ADMIN))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andDo(print())
@@ -75,7 +75,7 @@ class VoteRestControllerTest extends AbstractControllerTest {
     @Test
     void getByDate() throws Exception {
         perform(MockMvcRequestBuilders.get(REST_URL + "date/2020-06-30")
-                .with(userHttpBasic(USER))
+                .with(userHttpBasic(ADMIN))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andDo(print())
@@ -86,7 +86,7 @@ class VoteRestControllerTest extends AbstractControllerTest {
     @Test
     void isExistForUserByDate() throws Exception {
         perform(MockMvcRequestBuilders.get(REST_URL + "users/" + USER_ID + "/date/2020-07-30")
-                .with(userHttpBasic(USER))
+                .with(userHttpBasic(ADMIN))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andDo(print())
@@ -97,7 +97,7 @@ class VoteRestControllerTest extends AbstractControllerTest {
     @Test
     void getAllForUser() throws Exception {
         perform(MockMvcRequestBuilders.get(REST_URL + "/users/" + ADMIN_ID)
-                .with(userHttpBasic(USER))
+                .with(userHttpBasic(ADMIN))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andDo(print())
@@ -108,7 +108,7 @@ class VoteRestControllerTest extends AbstractControllerTest {
     @Test
     void getBetweenForUser() throws Exception {
         perform(MockMvcRequestBuilders.get(REST_URL + "between/users/" + ADMIN_ID)
-                .with(userHttpBasic(USER))
+                .with(userHttpBasic(ADMIN))
                 .param("startDate", "2020-06-28")
                 .param("endDate", "2020-06-29")
                 .contentType(MediaType.APPLICATION_JSON))
@@ -124,7 +124,7 @@ class VoteRestControllerTest extends AbstractControllerTest {
         Vote updated = VoteTestData.getUpdated();
         perform(MockMvcRequestBuilders.put(REST_URL + VOTE1_ID)
                 .contentType(MediaType.APPLICATION_JSON)
-                .with(userHttpBasic(USER))
+                .with(userHttpBasic(ADMIN))
                 .content(JsonUtil.writeValue(updated)))
                 .andExpect(status().isNoContent());
         VOTE_MATCHER.assertMatch(controller.get(VOTE1_ID), updated);
@@ -137,7 +137,7 @@ class VoteRestControllerTest extends AbstractControllerTest {
         ResultActions action = perform(MockMvcRequestBuilders.post(
                 REST_URL + "restaurants/" + RESTAURANT2_ID + "/users/" + ADMIN_ID)
                 .contentType(MediaType.APPLICATION_JSON)
-                .with(userHttpBasic(USER))
+                .with(userHttpBasic(ADMIN))
                 .content(JsonUtil.writeValue(newVote)))
                 .andExpect(status().isCreated());
         Vote created = readFromJson(action, Vote.class);
@@ -149,10 +149,10 @@ class VoteRestControllerTest extends AbstractControllerTest {
 
     @Test
     void delete() throws Exception {
-        setСhangeVoteTime(TIME_TEST);
+        setСhangeVoteTime(LocalTime.now().plusMinutes(20));
         perform(MockMvcRequestBuilders.delete(REST_URL + VOTE1_ID)
                 .param("restaurantId", valueOf(RESTAURANT1_ID))
-                .with(userHttpBasic(USER))
+                .with(userHttpBasic(ADMIN))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
         assertThrows(NotFoundException.class, () -> controller.get(VOTE1_ID));

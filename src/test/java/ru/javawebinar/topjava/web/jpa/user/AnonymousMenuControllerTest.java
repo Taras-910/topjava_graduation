@@ -4,7 +4,6 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import ru.javawebinar.topjava.to.Menu;
 import ru.javawebinar.topjava.web.AbstractJpaControllerTest;
-import ru.javawebinar.topjava.web.jpa.MenuController;
 
 import java.util.List;
 
@@ -16,7 +15,7 @@ import static ru.javawebinar.topjava.util.DateTimeUtil.setThisDay;
 public class AnonymousMenuControllerTest extends AbstractJpaControllerTest {
 
     @Autowired
-    MenuController controller;
+    AnonymousMenuController controller;
 
     @Test
     public void getAllMenus() {

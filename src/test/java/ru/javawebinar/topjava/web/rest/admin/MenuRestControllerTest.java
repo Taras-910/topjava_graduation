@@ -23,7 +23,7 @@ import static ru.javawebinar.topjava.testdata.DishTestData.DISH_MATCHER;
 import static ru.javawebinar.topjava.testdata.MenuTestData.*;
 import static ru.javawebinar.topjava.testdata.RestaurantTestData.RESTAURANT1;
 import static ru.javawebinar.topjava.testdata.RestaurantTestData.RESTAURANT1_ID;
-import static ru.javawebinar.topjava.testdata.UserTestData.USER;
+import static ru.javawebinar.topjava.testdata.UserTestData.ADMIN;
 
 class MenuRestControllerTest extends AbstractControllerTest {
     private static final String REST_URL = MenuRestController.REST_URL + '/';
@@ -34,7 +34,7 @@ class MenuRestControllerTest extends AbstractControllerTest {
     @Test
     void getAllToday() throws Exception {
         perform(MockMvcRequestBuilders.get(REST_URL)
-                .with(userHttpBasic(USER))
+                .with(userHttpBasic(ADMIN))
                 .content(JsonUtil.writeValue(allMenusOfDay()))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -45,7 +45,7 @@ class MenuRestControllerTest extends AbstractControllerTest {
     @Test
     void getByRestaurantNameWithDishesAndDate() throws Exception {
         perform(MockMvcRequestBuilders.get(REST_URL + "restaurants/names/" + RESTAURANT1.getName())
-                .with(userHttpBasic(USER))
+                .with(userHttpBasic(ADMIN))
                 .content(JsonUtil.writeValue(menuOfDay()))
                 .param("date", "2020-07-30")
                 .contentType(MediaType.APPLICATION_JSON))
@@ -57,7 +57,7 @@ class MenuRestControllerTest extends AbstractControllerTest {
     @Test
     void getByRestaurantIdAndDate() throws Exception {
         perform(MockMvcRequestBuilders.get(REST_URL + "restaurants/" + RESTAURANT1_ID)
-                .with(userHttpBasic(USER))
+                .with(userHttpBasic(ADMIN))
                 .content(JsonUtil.writeValue(menuOfDay()))
                 .param("date", "2020-07-30")
                 .contentType(MediaType.APPLICATION_JSON))
@@ -69,7 +69,7 @@ class MenuRestControllerTest extends AbstractControllerTest {
     @Test
     void getAllByDate() throws Exception {
         perform(MockMvcRequestBuilders.get(REST_URL + "date/2020-07-30")
-                .with(userHttpBasic(USER))
+                .with(userHttpBasic(ADMIN))
                 .content(JsonUtil.writeValue(allMenusOfDay()))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -80,7 +80,7 @@ class MenuRestControllerTest extends AbstractControllerTest {
     @Test
     void deleteByRestaurantAndDate() throws Exception {
         perform(MockMvcRequestBuilders.delete(REST_URL + "restaurants/" + RESTAURANT1_ID + "/date/2020-06-29")
-                .with(userHttpBasic(USER))
+                .with(userHttpBasic(ADMIN))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
         assertThrows(NotFoundException.class, () -> controller.getByRestaurantIdAndDate(RESTAURANT1_ID, of(2020,6,29)));
@@ -92,7 +92,7 @@ class MenuRestControllerTest extends AbstractControllerTest {
         MvcResult action = perform(MockMvcRequestBuilders.post(REST_URL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .param("name", "НовыйРесторан")
-                .with(userHttpBasic(USER))
+                .with(userHttpBasic(ADMIN))
                 .content(JsonUtil.writeValue(created)))
                 .andExpect(status().isCreated())
                 .andReturn();
@@ -108,7 +108,7 @@ class MenuRestControllerTest extends AbstractControllerTest {
         List <Dish> updated = getUpdatedList();
         MvcResult action = perform(MockMvcRequestBuilders.put(REST_URL + "restaurants/" + RESTAURANT1_ID)
                 .contentType(MediaType.APPLICATION_JSON)
-                .with(userHttpBasic(USER))
+                .with(userHttpBasic(ADMIN))
                 .content(JsonUtil.writeValue(updated)))
                 .andExpect(status().isCreated())
                 .andReturn();

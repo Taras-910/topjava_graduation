@@ -20,7 +20,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static ru.javawebinar.topjava.TestUtil.readFromJson;
 import static ru.javawebinar.topjava.TestUtil.userHttpBasic;
 import static ru.javawebinar.topjava.testdata.RestaurantTestData.*;
-import static ru.javawebinar.topjava.testdata.UserTestData.USER;
+import static ru.javawebinar.topjava.testdata.UserTestData.ADMIN;
 
 class RestaurantRestControllerTest extends AbstractControllerTest {
     private static final String REST_URL = RestaurantRestController.REST_URL + '/';
@@ -32,7 +32,7 @@ class RestaurantRestControllerTest extends AbstractControllerTest {
     @Test
     void get() throws Exception {
         perform(MockMvcRequestBuilders.get(REST_URL + RESTAURANT1_ID)
-                .with(userHttpBasic(USER))
+                .with(userHttpBasic(ADMIN))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andDo(print())
@@ -43,7 +43,7 @@ class RestaurantRestControllerTest extends AbstractControllerTest {
     @Test
     void getByName() throws Exception {
         perform(MockMvcRequestBuilders.get(REST_URL + "names/Прага")
-                .with(userHttpBasic(USER))
+                .with(userHttpBasic(ADMIN))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andDo(print())
@@ -54,7 +54,7 @@ class RestaurantRestControllerTest extends AbstractControllerTest {
     @Test
     void getAll() throws Exception {
         perform(MockMvcRequestBuilders.get(REST_URL)
-                .with(userHttpBasic(USER))
+                .with(userHttpBasic(ADMIN))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andDo(print())
@@ -65,7 +65,7 @@ class RestaurantRestControllerTest extends AbstractControllerTest {
     @Test
     void getByIdWithDishesOfDate() throws Exception {
         perform(MockMvcRequestBuilders.get(REST_URL + RESTAURANT1_ID +"/menus")
-                .with(userHttpBasic(USER))
+                .with(userHttpBasic(ADMIN))
                 .param("date", "2020-07-30")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -77,7 +77,7 @@ class RestaurantRestControllerTest extends AbstractControllerTest {
     @Test
     void getAllWithDishes() throws Exception {
         perform(MockMvcRequestBuilders.get(REST_URL + "all")
-                .with(userHttpBasic(USER))
+                .with(userHttpBasic(ADMIN))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andDo(print())
@@ -88,7 +88,7 @@ class RestaurantRestControllerTest extends AbstractControllerTest {
     @Test
     void getAllWithDishesOfDate() throws Exception {
         perform(MockMvcRequestBuilders.get(REST_URL + "menus")
-                .with(userHttpBasic(USER))
+                .with(userHttpBasic(ADMIN))
                 .param("date", "2020-07-30")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -103,7 +103,7 @@ class RestaurantRestControllerTest extends AbstractControllerTest {
         perform(MockMvcRequestBuilders.put(REST_URL + RESTAURANT1_ID)
                 .param("restaurantId", valueOf(RESTAURANT1_ID))
                 .contentType(MediaType.APPLICATION_JSON)
-                .with(userHttpBasic(USER))
+                .with(userHttpBasic(ADMIN))
                 .content(JsonUtil.writeValue(updated)))
                 .andExpect(status().isCreated());
         RESTAURANT_MATCHER.assertMatch(controller.get(RESTAURANT1_ID), updated);
@@ -115,7 +115,7 @@ class RestaurantRestControllerTest extends AbstractControllerTest {
         ResultActions action = perform(MockMvcRequestBuilders.post(REST_URL)
                 .param("restaurantId", valueOf(RESTAURANT1_ID))
                 .contentType(MediaType.APPLICATION_JSON)
-                .with(userHttpBasic(USER))
+                .with(userHttpBasic(ADMIN))
                 .content(JsonUtil.writeValue(newDish)))
                 .andExpect(status().isCreated());
         Restaurant created = readFromJson(action, Restaurant.class);
@@ -129,7 +129,7 @@ class RestaurantRestControllerTest extends AbstractControllerTest {
     void delete() throws Exception {
         perform(MockMvcRequestBuilders.delete(REST_URL + RESTAURANT2_ID)
                 .param("restaurantId", valueOf(RESTAURANT2_ID))
-                .with(userHttpBasic(USER))
+                .with(userHttpBasic(ADMIN))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
         assertThrows(NotFoundException.class, () -> controller.get(RESTAURANT2_ID));

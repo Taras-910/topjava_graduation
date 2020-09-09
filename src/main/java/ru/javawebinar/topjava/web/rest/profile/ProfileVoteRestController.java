@@ -36,8 +36,8 @@ public class ProfileVoteRestController {
     }
 
     @GetMapping(value = "/{id}")
-    public Vote get(@PathVariable(name = "id") Integer voteId) {
-        log.info("get vote {} ", voteId);
+    public Vote get(@PathVariable(name = "id") int voteId) {
+        log.info("get vote {} for user {}", voteId, authUserId());
         return checkNotFoundWithId(voteRepository.get(voteId, authUserId()), voteId);
     }
 

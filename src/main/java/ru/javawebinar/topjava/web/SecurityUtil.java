@@ -5,7 +5,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import ru.javawebinar.topjava.AuthorizedUser;
 
 import static java.util.Objects.requireNonNull;
-import static ru.javawebinar.topjava.model.AbstractBaseEntity.START_SEQ;
 
 public class SecurityUtil {
 
@@ -25,12 +24,9 @@ public class SecurityUtil {
         return requireNonNull(safeGet(), "No authorized user found");
     }
 
-    /*    public static int authUserId() {
+        public static int authUserId() {
            int authId = get().getUser().id();
            return  authId;
-       }*/
+       }
 
-    public static int authUserId() {
-        return START_SEQ;
-    }
 }

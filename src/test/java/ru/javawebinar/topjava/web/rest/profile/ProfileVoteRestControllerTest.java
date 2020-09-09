@@ -5,19 +5,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.javawebinar.topjava.model.Vote;
-import ru.javawebinar.topjava.util.DateTimeUtil;
-import ru.javawebinar.topjava.util.exception.NotFoundException;
 import ru.javawebinar.topjava.util.json.JsonUtil;
 import ru.javawebinar.topjava.web.AbstractControllerTest;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
-
 import static java.lang.String.valueOf;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -27,7 +22,6 @@ import static ru.javawebinar.topjava.TestUtil.userHttpBasic;
 import static ru.javawebinar.topjava.testdata.RestaurantTestData.RESTAURANT1_ID;
 import static ru.javawebinar.topjava.testdata.RestaurantTestData.RESTAURANT2_ID;
 import static ru.javawebinar.topjava.testdata.UserTestData.ADMIN;
-import static ru.javawebinar.topjava.testdata.UserTestData.USER;
 import static ru.javawebinar.topjava.testdata.VoteTestData.*;
 import static ru.javawebinar.topjava.util.DateTimeUtil.TIME_TEST;
 import static ru.javawebinar.topjava.util.DateTimeUtil.setСhangeVoteTime;
@@ -53,7 +47,7 @@ class ProfileVoteRestControllerTest extends AbstractControllerTest {
     @Test
     void getByRestaurant() throws Exception {
         perform(MockMvcRequestBuilders.get(REST_URL + "restaurants/" + RESTAURANT1_ID)
-                .with(userHttpBasic(USER))
+                .with(userHttpBasic(ADMIN))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andDo(print())
@@ -64,7 +58,7 @@ class ProfileVoteRestControllerTest extends AbstractControllerTest {
     @Test
     void getByDateForAuth() throws Exception {
         perform(MockMvcRequestBuilders.get(REST_URL + "date/2020-07-30")
-                .with(userHttpBasic(USER))
+                .with(userHttpBasic(ADMIN))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andDo(print())
@@ -72,21 +66,22 @@ class ProfileVoteRestControllerTest extends AbstractControllerTest {
                 .andExpect(VOTE_MATCHER.contentJson(VOTE7));
     }
 
-
     @Test
     void isExistVote() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL + "exist/date/2020-07-30")
-                .with(userHttpBasic(USER))
+        MvcResult action = perform(MockMvcRequestBuilders.get(REST_URL + "exist/date/2020-07-30")
+                .with(userHttpBasic(ADMIN))
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
                 .andDo(print())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
-        assertTrue(controller.isExistVote(LocalDate.of(2020,07,30)));
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andReturn();
+        assertTrue(action.getResponse().getContentAsString().equals("true"));
     }
+
     @Test
     void getAllForAuth() throws Exception {
         perform(MockMvcRequestBuilders.get(REST_URL + "auth")
-                .with(userHttpBasic(USER))
+                .with(userHttpBasic(ADMIN))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andDo(print())
@@ -97,7 +92,7 @@ class ProfileVoteRestControllerTest extends AbstractControllerTest {
     @Test
     void getBetween() throws Exception {
         perform(MockMvcRequestBuilders.get(REST_URL + "between")
-                .with(userHttpBasic(USER))
+                .with(userHttpBasic(ADMIN))
                 .param("startDate", "2020-06-28")
                 .param("endDate", "2020-06-29")
                 .contentType(MediaType.APPLICATION_JSON))
@@ -110,14 +105,13 @@ class ProfileVoteRestControllerTest extends AbstractControllerTest {
     @Test
     void update() throws Exception {
         setСhangeVoteTime(TIME_TEST);
-        DateTimeUtil.setСhangeVoteTime(LocalTime.of(23, 59));
         Vote updated = getUpdated();
         perform(MockMvcRequestBuilders.put(REST_URL + VOTE1_ID)
                 .contentType(MediaType.APPLICATION_JSON)
-                .with(userHttpBasic(USER))
+                .with(userHttpBasic(ADMIN))
                 .content(JsonUtil.writeValue(updated)))
+                .andDo(print())
                 .andExpect(status().isNoContent());
-        VOTE_MATCHER.assertMatch(controller.get(VOTE1_ID), updated);
     }
 
     @Test
@@ -125,7 +119,7 @@ class ProfileVoteRestControllerTest extends AbstractControllerTest {
         Vote newVote = getNew();
         ResultActions action = perform(MockMvcRequestBuilders.post(REST_URL + "restaurants/" + RESTAURANT2_ID)
                 .contentType(MediaType.APPLICATION_JSON)
-                .with(userHttpBasic(USER))
+                .with(userHttpBasic(ADMIN))
                 .content(JsonUtil.writeValue(newVote)))
                 .andExpect(status().isCreated());
         Vote created = readFromJson(action, Vote.class);
@@ -133,7 +127,6 @@ class ProfileVoteRestControllerTest extends AbstractControllerTest {
         int newId = created.id();
         newVote.setId(newId);
         VOTE_MATCHER.assertMatch(created, newVote);
-        VOTE_MATCHER.assertMatch(controller.get(newId), newVote);
     }
 
     @Test
@@ -141,9 +134,8 @@ class ProfileVoteRestControllerTest extends AbstractControllerTest {
         setСhangeVoteTime(TIME_TEST);
         perform(MockMvcRequestBuilders.delete(REST_URL + VOTE1_ID)
                 .param("restaurantId", valueOf(RESTAURANT1_ID))
-                .with(userHttpBasic(USER))
+                .with(userHttpBasic(ADMIN))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
-        assertThrows(NotFoundException.class, () -> controller.get(VOTE1_ID));
     }
 }
