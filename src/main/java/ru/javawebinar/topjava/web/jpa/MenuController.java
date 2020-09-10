@@ -45,7 +45,7 @@ public class MenuController {
 
     public void deleteDishes(int restaurantId, LocalDate date) {
         log.info("deleteDishes with restaurantId {} and date {}", restaurantId, date);
-        dishController.deleteAll(restaurantId, date);
+        dishController.deleteListOfMenu(restaurantId, date);
     }
 
     @Transactional
@@ -64,7 +64,7 @@ public class MenuController {
         List<Dish> dishes = restaurant.getDishes();
         Restaurant createdRestaurant = restaurantController.create(restaurant);
         List<Dish> createdDishes;
-            createdDishes = (List<Dish>) dishController.createAll(dishes, createdRestaurant.id());
+            createdDishes = (List<Dish>) dishController.createListOfMenu(dishes, createdRestaurant.id());
         createdRestaurant.setDishes(createdDishes);
         return createdRestaurant;
     }
@@ -74,7 +74,7 @@ public class MenuController {
         log.info("addDishes for restaurant {}", restaurant);
         checkNotFound(countWithin(restaurant.getDishes(), restaurantController.getByIdWithDishesOfDate(restaurant.id(), thisDay).getDishes()),
                 "menu so dishes number should be within from 2 to 5");
-            restaurant.setDishes(dishController.createAll(restaurant.getDishes(), restaurant.id()));
+            restaurant.setDishes(dishController.createListOfMenu(restaurant.getDishes(), restaurant.id()));
         return restaurant;
     }
 
@@ -88,3 +88,57 @@ public class MenuController {
         restaurantController.update(restaurant, restaurantId);
     }
 }
+/*    @Transactional
+    @GetMapping
+    public List<Menu> getAllToday(){
+        LocalDate date = thisDay;
+        log.info("getMenusToday date {}", date);
+        boolean voteToday = voteRestController.authVote();
+        return toListMenus(restaurantRestController.getAllWithDishesOfDate(date), voteToday, date);
+    }
+
+    @Transactional
+    @GetMapping("/restaurants/{id}")
+    public Menu getByRestaurantIdAndDate(@PathVariable(name = "id") int restaurantId, @RequestParam LocalDate date) {
+        log.info("getTodayMenu for restaurant {}", restaurantId);
+        return toMenu(restaurantRestController.getByIdWithDishesOfDate(restaurantId, date), voteRestController.authVote(), thisDay);
+    }
+
+    @Transactional
+    @GetMapping("/restaurants/names/{name}")
+    public Menu getByRestaurantNameWithDishesAndDate(@PathVariable String name, @RequestParam LocalDate date) {
+        log.info("getTodayMenu for restaurant {}", name);
+        Restaurant restaurantDB = restaurantRestController.getByName(name);
+        return toMenu(restaurantRestController.getByIdWithDishesOfDate(restaurantDB.id(), date), voteRestController.authVote(), thisDay);
+    }
+
+    @Transactional
+    @GetMapping(value = "/date/{date}")
+    public List<Menu> getAllByDate(@PathVariable LocalDate date){
+        log.info("getMenusToday date {}", date);
+        return toListMenus(restaurantRestController.getAllWithDishesOfDate(date), voteRestController.authVote(), date);
+    }
+
+    @DeleteMapping("/restaurants/{id}/date/{date}")
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
+    public void deleteByRestaurantAndDate(@PathVariable(name = "id") int restaurantId, @PathVariable LocalDate date) {
+        log.info("delete by restaurant {} and date {}", restaurantId, date);
+        dishRestController.deleteAllForRestaurantByDate(restaurantId, date);
+    }
+
+    @Transactional
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<Dish>> createMenuForNewRestaurant(@Valid @RequestBody List<Dish> dishes,
+                                                                 @RequestParam(name = "name") String restaurantName){
+        log.info("create Menu for newRestaurant {} with quantity Dishes {}", restaurantName, dishes.size());
+        Restaurant createdRestaurant = restaurantRestController.create(new Restaurant(null, restaurantName)).getBody();
+        return dishRestController.createAllForMenu(dishes, createdRestaurant.id());
+      }
+
+    @Transactional
+    @PutMapping(value = "/restaurants/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<Dish>> updateCreateMenuForRestaurantId(@Valid @RequestBody List<Dish> dishes,
+                                                                      @PathVariable(name = "id") int restaurantId){
+        log.info("create Menu for newRestaurant {} with Dishes number {}", restaurantId, dishes.size());
+        return dishRestController.createAllForMenu(dishes, restaurantId);
+    }*/

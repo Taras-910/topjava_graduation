@@ -24,20 +24,20 @@ public class DataJpaDishRepository implements DishRepository {
     }
 
     @Override
-    public Dish save(Dish dish, int restaurantId) {
+    public Dish save(Dish dish, int restaurantId) throws IllegalArgumentException{
         Restaurant restaurant = restaurantRepository.getOne(restaurantId);
         dish.setRestaurant(restaurant);
         return dish.isNew() || get(dish.id(), restaurant.getId()) != null ? dishRepository.save(dish) : null; }
 
     @Override
-    public List<Dish> saveAll(List<Dish> dishes, int restaurantId) {
+    public List<Dish> saveAll(List<Dish> dishes, int restaurantId) throws IllegalArgumentException{
         Restaurant restaurant = restaurantRepository.getOne(restaurantId);
         dishes.forEach(dish ->  dish.setRestaurant(restaurant));
         return dishRepository.saveAll(dishes);
     }
 
     @Override
-    public boolean deleteAll(int restaurantId, LocalDate date) { return dishRepository.deleteAll(restaurantId, date) != 0; }
+    public boolean deleteListOfMenu(int restaurantId, LocalDate date) { return dishRepository.deleteListOfMenu(restaurantId, date) != 0; }
 
     @Override
     public boolean delete(int id, int restaurantId) {
@@ -51,7 +51,7 @@ public class DataJpaDishRepository implements DishRepository {
     }
 
     @Override
-    public List<Dish> getAll(int restaurantId) {
+    public List<Dish> getAllByRestaurant(int restaurantId) {
         List<Dish> dishes = Optional.ofNullable(dishRepository.getAll(restaurantId)).orElse(null);
         return dishes.isEmpty() ? null : dishes;
     }

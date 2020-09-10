@@ -20,7 +20,7 @@ public class Dish extends AbstractBaseEntity {
     private LocalDate date;
 
     @Column(name="price", nullable = false)
-    @Range(max = 10000)
+    @Range(max = 100, min = 0)
     private float price;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -40,6 +40,10 @@ public class Dish extends AbstractBaseEntity {
         this.name = name;
         this.date = date;
         this.price = price;
+    }
+
+    public Dish(Dish d) {
+        this(d.getId(), d.getName(), d.getDate(), d.getPrice());
     }
 
     public String getName() { return name; }

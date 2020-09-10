@@ -11,13 +11,13 @@ public interface DishRepository {
 
     List<Dish> saveAll(List<Dish> dishes, int restaurantId);
 
-    boolean deleteAll(int restaurantId, LocalDate date);
+    boolean deleteListOfMenu(int restaurantId, LocalDate date);
 
     boolean delete(int id, int restaurantId);
 
     Dish get(int id, int restaurantId);
 
-    List<Dish> getAll(int restaurantId);
+    List<Dish> getAllByRestaurant(int restaurantId);
 
     List<Dish> getByRestaurantAndDate(int restaurantId, LocalDate date);
 

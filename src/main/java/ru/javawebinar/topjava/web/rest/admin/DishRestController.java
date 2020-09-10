@@ -50,9 +50,9 @@ public class DishRestController {
     }
 
     @GetMapping(value = "/restaurants/{id}")
-    public List<Dish> getAll(@PathVariable(name = "id") int restaurantId) {
+    public List<Dish> getAllByRestaurant(@PathVariable(name = "id") int restaurantId) {
         log.info("getAll dishes for restaurant {}", restaurantId);
-        return checkNotFoundWithId(repository.getAll(restaurantId), restaurantId);
+        return checkNotFoundWithId(repository.getAllByRestaurant(restaurantId), restaurantId);
     }
 
     @GetMapping(value = "/restaurants/{id}/date/{date}")
@@ -78,7 +78,7 @@ public class DishRestController {
     public void deleteAllForRestaurantByDate(@PathVariable(name = "id") @Nullable int restaurantId,
                                 @PathVariable @Nullable LocalDate date) {
         log.info("deleteAll for restaurantId {} and date {}", restaurantId, date);
-        checkNotFoundWithId(repository.deleteAll(restaurantId, date), restaurantId);
+        checkNotFoundWithId(repository.deleteListOfMenu(restaurantId, date), restaurantId);
     }
 
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)

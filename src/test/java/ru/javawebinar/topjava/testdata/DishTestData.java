@@ -4,10 +4,11 @@ import ru.javawebinar.topjava.TestMatcher;
 import ru.javawebinar.topjava.model.Dish;
 
 import java.time.Month;
-import java.util.Arrays;
 import java.util.List;
 
+import static java.time.LocalDate.now;
 import static java.time.LocalDate.of;
+import static java.util.Arrays.asList;
 import static ru.javawebinar.topjava.model.AbstractBaseEntity.START_SEQ;
 
 public class DishTestData {
@@ -33,8 +34,11 @@ public class DishTestData {
     public static final Dish DISH15 = new Dish(null, "Created еда4",of(2020, Month.JULY, 30), 2.3F);
     public static final Dish DISH16 = new Dish(null, "Created еда5",of(2020, Month.JULY, 30), 2.4F);
     public static final Dish DISH17 = new Dish(null, "Created еда6",of(2020, Month.JULY, 30), 2.5F);
+    public static final Dish DISH18 = new Dish(null, "Created еда7",of(2020, Month.JULY, 30), 2.5F);
+    public static final Dish DISH19 = new Dish(null, "Created еда8",of(2020, Month.JULY, 30), 2.5F);
 
     public static final List<Dish> DISHES_RESTAURANT2 = List.of(DISH7, DISH8, DISH9, DISH10, DISH11);
+    public static final List<Dish> DISHES_ALL = List.of(DISH1, DISH2, DISH3, DISH4, DISH5, DISH6, DISH7, DISH8, DISH9, DISH10, DISH11);
     public static final List<Dish> DISHES_GET_ALL = List.of(DISH1, DISH2, DISH3, DISH4, DISH5, DISH6, DISH7, DISH8, DISH9, DISH10, DISH11);
     public static final List<Dish> DISHES_RESTAURANT_DATE = List.of(DISH6, DISH5);
 
@@ -42,11 +46,17 @@ public class DishTestData {
         return new Dish("Созданный ужин", of(2020, Month.FEBRUARY, 1), 5.0F);
     }
     public static List<Dish> getNewList() {
-        return Arrays.asList(DISH12, DISH13);
+        return asList(DISH12, DISH13);
+    }
+    public static List<Dish> overLimitMax() {
+        return asList(DISH14, DISH15, DISH16, DISH17,DISH18, DISH19);
+    }
+    public static List<Dish> overLimitMin() {
+        return asList(new Dish(null, "Created еда3", now(), 2.2F));
     }
 
     public static List<Dish> getNewDishes() {
-        return Arrays.asList(DISH14, DISH15, DISH16);
+        return asList(DISH14, DISH15, DISH16);
     }
 
     public static Dish getUpdated() {
