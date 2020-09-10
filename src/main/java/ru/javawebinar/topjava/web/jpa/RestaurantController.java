@@ -65,6 +65,6 @@ public class RestaurantController {
 
     public Restaurant getByIdWithDishesOfDate(int id, LocalDate date) {
         log.info("getById with id {} and date {}", id, date);
-        return checkNotFoundWithId(repository.getByIdWithDishesOfDate(id, date), id);
+        return checkNotFound(repository.getByIdWithDishesOfDate(id, date), " date='" + date +"'");
     }
 }

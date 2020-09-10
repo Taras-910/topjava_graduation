@@ -95,7 +95,7 @@ Maven/ Spring/ Security/ JPA(Hibernate)/ REST(Jackson).
  -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
  
 #### vote profile getBetween 
-`votes/between?startDate=2020-06-30&endDate=2020-07-29' \
+`curl -L -X GET 'http://localhost:8080/topjava/rest/profile/votes/between?startDate=2020-06-30&endDate=2020-07-29' \
  -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
 
 #### vote profile delete

@@ -3,10 +3,17 @@ package ru.javawebinar.topjava.web;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import ru.javawebinar.topjava.AuthorizedUser;
+import ru.javawebinar.topjava.model.User;
 
 import static java.util.Objects.requireNonNull;
 
 public class SecurityUtil {
+
+    public static AuthorizedUser authTest = null;
+
+    public static void setTestAuthorizedUser(User user) {
+        authTest = new AuthorizedUser(user);
+    }
 
     private SecurityUtil() {
     }
@@ -21,12 +28,14 @@ public class SecurityUtil {
     }
 
     public static AuthorizedUser get() {
-        return requireNonNull(safeGet(), "No authorized user found");
+        AuthorizedUser authPrincipal = safeGet();
+        AuthorizedUser authUser = authPrincipal == null ? authTest : authPrincipal;
+        return requireNonNull(authUser, "No authorized user found");
     }
 
-        public static int authUserId() {
-           int authId = get().getUser().id();
-           return  authId;
-       }
+    public static int authUserId() {
+        return  get().getUser().id();
+    }
 
 }
+
