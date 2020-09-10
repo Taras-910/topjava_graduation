@@ -16,8 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static ru.javawebinar.topjava.testdata.DishTestData.*;
 import static ru.javawebinar.topjava.testdata.RestaurantTestData.RESTAURANT1_ID;
 import static ru.javawebinar.topjava.testdata.RestaurantTestData.RESTAURANT2_ID;
-import static ru.javawebinar.topjava.testdata.UserTestData.ADMIN_ID;
-import static ru.javawebinar.topjava.testdata.UserTestData.USER_ID;
+import static ru.javawebinar.topjava.testdata.UserTestData.*;
 
 public class DishControllerTest extends AbstractJpaControllerTest {
 
@@ -32,7 +31,7 @@ public class DishControllerTest extends AbstractJpaControllerTest {
 
     @Test
     public void getNotFound() throws Exception {
-        assertThrows(NotFoundException.class, () -> controller.get(DishTestData.NOT_FOUND, RESTAURANT1_ID));
+        assertThrows(NotFoundException.class, () -> controller.get(NOT_FOUND, RESTAURANT1_ID));
     }
 
     @Test
@@ -53,7 +52,7 @@ public class DishControllerTest extends AbstractJpaControllerTest {
 
     @Test
     public void deleteNotFound() throws Exception {
-        assertThrows(NotFoundException.class, () -> controller.delete(DishTestData.NOT_FOUND, USER_ID));
+        assertThrows(NotFoundException.class, () -> controller.delete(NOT_FOUND, USER_ID));
     }
 
     @Test

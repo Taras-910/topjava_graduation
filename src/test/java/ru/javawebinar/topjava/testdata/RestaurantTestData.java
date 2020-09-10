@@ -12,7 +12,6 @@ import static ru.javawebinar.topjava.testdata.MenuTestData.newRestaurantWithDish
 
 public class RestaurantTestData {
     public static TestMatcher<Restaurant> RESTAURANT_MATCHER = TestMatcher.usingFieldsComparator(Restaurant.class,"dishes");
-    public static final int NOT_FOUND = 100;
     public static final int RESTAURANT1_ID = START_SEQ + 2;
     public static final int RESTAURANT2_ID = START_SEQ + 3;
     public static final Restaurant NEW_RESTAURANT = newRestaurantWithDishes();

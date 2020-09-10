@@ -14,7 +14,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 import static ru.javawebinar.topjava.util.DateTimeUtil.DATE_TEST;
-import static ru.javawebinar.topjava.util.DateTimeUtil.TIME_TEST;
+import static ru.javawebinar.topjava.util.DateTimeUtil.TIME_TEST_IN;
 
 public class SpringMain {
     public static void main(String[] args) {
@@ -30,7 +30,7 @@ public class SpringMain {
                         "spring/spring-mvc.xml"}, false);
         appCtx.refresh();
         DateTimeUtil.setThisDay(DATE_TEST);
-        DateTimeUtil.setСhangeVoteTime(TIME_TEST);
+        DateTimeUtil.setСhangeVoteTime(TIME_TEST_IN);
 /*
         System.out.println("Bean definition names: ");
         for(String s : appCtx.getBeanDefinitionNames()) {

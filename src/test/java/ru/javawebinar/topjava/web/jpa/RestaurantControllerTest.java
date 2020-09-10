@@ -11,6 +11,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static ru.javawebinar.topjava.testdata.RestaurantTestData.*;
+import static ru.javawebinar.topjava.testdata.UserTestData.NOT_FOUND;
 import static ru.javawebinar.topjava.util.DateTimeUtil.*;
 
 public class RestaurantControllerTest extends AbstractJpaControllerTest {

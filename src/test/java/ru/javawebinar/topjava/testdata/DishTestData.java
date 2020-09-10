@@ -13,7 +13,6 @@ import static ru.javawebinar.topjava.model.AbstractBaseEntity.START_SEQ;
 public class DishTestData {
     public static TestMatcher<Dish> DISH_MATCHER = TestMatcher.usingFieldsComparator(Dish.class,"restaurant");
 
-    public static final int NOT_FOUND = 100;
     public static final int DISH1_ID = START_SEQ + 4;
     public static final int DISH10_ID = DISH1_ID + 9;
 

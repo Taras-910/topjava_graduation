@@ -23,7 +23,7 @@ import static ru.javawebinar.topjava.testdata.RestaurantTestData.RESTAURANT1_ID;
 import static ru.javawebinar.topjava.testdata.RestaurantTestData.RESTAURANT2_ID;
 import static ru.javawebinar.topjava.testdata.UserTestData.ADMIN;
 import static ru.javawebinar.topjava.testdata.VoteTestData.*;
-import static ru.javawebinar.topjava.util.DateTimeUtil.TIME_TEST;
+import static ru.javawebinar.topjava.util.DateTimeUtil.TIME_TEST_IN;
 import static ru.javawebinar.topjava.util.DateTimeUtil.setСhangeVoteTime;
 
 class ProfileVoteRestControllerTest extends AbstractControllerTest {
@@ -104,7 +104,7 @@ class ProfileVoteRestControllerTest extends AbstractControllerTest {
 
     @Test
     void update() throws Exception {
-        setСhangeVoteTime(TIME_TEST);
+        setСhangeVoteTime(TIME_TEST_IN);
         Vote updated = getUpdated();
         perform(MockMvcRequestBuilders.put(REST_URL + VOTE1_ID)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -131,7 +131,7 @@ class ProfileVoteRestControllerTest extends AbstractControllerTest {
 
     @Test
     void delete() throws Exception {
-        setСhangeVoteTime(TIME_TEST);
+        setСhangeVoteTime(TIME_TEST_IN);
         perform(MockMvcRequestBuilders.delete(REST_URL + VOTE1_ID)
                 .param("restaurantId", valueOf(RESTAURANT1_ID))
                 .with(userHttpBasic(ADMIN))

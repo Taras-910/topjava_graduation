@@ -2,11 +2,13 @@ package ru.javawebinar.topjava.web.jpa;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.Assert;
 import ru.javawebinar.topjava.model.Vote;
 import ru.javawebinar.topjava.repository.VoteRepository;
+import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -69,18 +71,30 @@ public class VoteController {
 
     public Vote create(Vote vote, int userId) {
         log.info("create {} for userId", vote);
-        Assert.notNull(userId, "user must be logged-in");
-        checkNew(vote);
-        checkNotFound(getByDateForAuth(vote.getDate()) == null, userId +" - so as vote already exist for this day " + thisDay.toString());
-        return voteRepository.save(vote, userId);
+        Vote created = null;
+        try {
+            Assert.notNull(userId, "user must be logged-in");
+            checkNew(vote);
+            checkNotFound(getByDateForAuth(vote.getDate()) == null, userId +" - so as vote already exist for this day " + thisDay.toString());
+            created = voteRepository.save(vote, userId);
+        } catch (IllegalArgumentException | DataIntegrityViolationException e) {
+            throw new NotFoundException(" Illegal argument vote=" + vote + " or id=" + userId);
+        }
+        return created;
     }
 
     public void update(Vote vote, int id, int userId) {
         log.info("update vote {} with id {} for userId {}", vote, id, userId);
-        Assert.notNull(vote, "vote must not be null");
-        assureIdConsistent(vote, id);
-        checkNotFound(LocalTime.now().isBefore(сhangeVoteTime), id +" for change vote up to 11:00");
-        checkNotFoundWithId(voteRepository.save(vote, userId), vote.id());
+        Vote updated = null;
+        try {
+            Assert.notNull(vote, "vote must not be null");
+            assureIdConsistent(vote, id);
+            checkNotFound(LocalTime.now().isBefore(сhangeVoteTime), id +" for change vote up to 11:00");
+            updated = voteRepository.save(vote, userId);
+        } catch (IllegalArgumentException | DataIntegrityViolationException e) {
+            throw new NotFoundException(" Illegal argument vote=" + vote + " or id=" + userId);
+        }
+        checkNotFoundWithId(updated, vote.id());
     }
 
     public boolean authVote(){

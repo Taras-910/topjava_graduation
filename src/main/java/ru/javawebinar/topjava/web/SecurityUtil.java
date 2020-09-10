@@ -11,7 +11,7 @@ public class SecurityUtil {
 
     public static AuthorizedUser authTest = null;
 
-    public static void setTestAuthorizedUser(User user) {
+    public static void setAuthorizedUserTest(User user) {
         authTest = new AuthorizedUser(user);
     }
 

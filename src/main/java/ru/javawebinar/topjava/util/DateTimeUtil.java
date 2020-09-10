@@ -12,7 +12,8 @@ public class DateTimeUtil {
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     public static final LocalDate DATE_TEST = LocalDate.of(2020,07,30);
-    public static final LocalTime TIME_TEST = LocalTime.now().plusMinutes(10);
+    public static final LocalTime TIME_TEST_IN = LocalTime.now().plusMinutes(10);
+    public static final LocalTime TIME_TEST_OUT = LocalTime.now().minusMinutes(10);
 
     public static LocalTime сhangeVoteTime = LocalTime.of(11, 0);
 
