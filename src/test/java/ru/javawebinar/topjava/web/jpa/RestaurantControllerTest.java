@@ -80,14 +80,10 @@ public class RestaurantControllerTest extends AbstractJpaControllerTest {
 
     @Test
     public void updateErrorData() throws Exception {
-        assertThrows(NotFoundException.class,
-                () -> controller.update(new Restaurant(null, "Обновленный_ресторан"), RESTAURANT1_ID));
-        assertThrows(NotFoundException.class,
-                () -> controller.update(new Restaurant(RESTAURANT1_ID, "Обновленный_ресторан"), NOT_FOUND));
-        assertThrows(NotFoundException.class,
-                () -> controller.update(new Restaurant(null, null), RESTAURANT1_ID));
-        assertThrows(NotFoundException.class,
-                () -> controller.update(new Restaurant(RESTAURANT1_ID, "Обновленный_ресторан"), RESTAURANT2_ID));
+        assertThrows(NotFoundException.class, () -> controller.update(new Restaurant(null, "Новый"), RESTAURANT1_ID));
+        assertThrows(NotFoundException.class, () -> controller.update(new Restaurant(RESTAURANT1_ID, "Новый"), NOT_FOUND));
+        assertThrows(NotFoundException.class, () -> controller.update(new Restaurant(null, null), RESTAURANT1_ID));
+        assertThrows(NotFoundException.class, () -> controller.update(new Restaurant(RESTAURANT1_ID, "Новый"), RESTAURANT2_ID));
     }
 
     @Test
@@ -100,11 +96,8 @@ public class RestaurantControllerTest extends AbstractJpaControllerTest {
 
     @Test
     public void createErrorDate() throws Exception {
-        assertThrows(NotFoundException.class,
-                () -> controller.create(new Restaurant(RESTAURANT1_ID, "Обновленный_ресторан")));
-        assertThrows(NotFoundException.class,
-                () -> controller.create(new Restaurant(NOT_FOUND, "Обновленный_ресторан")));
-        assertThrows(NotFoundException.class,
-                () -> controller.create(new Restaurant(RESTAURANT1_ID, null)));
+        assertThrows(NotFoundException.class, () -> controller.create(new Restaurant(RESTAURANT1_ID, "Новый")));
+        assertThrows(NotFoundException.class, () -> controller.create(new Restaurant(NOT_FOUND, "Новый")));
+        assertThrows(NotFoundException.class, () -> controller.create(new Restaurant(RESTAURANT1_ID, null)));
     }
 }

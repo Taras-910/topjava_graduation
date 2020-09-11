@@ -14,6 +14,7 @@ import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static ru.javawebinar.topjava.util.DateTimeUtil.thisDay;
@@ -74,7 +75,7 @@ public class DishController {
                     "dishes so number should be within from 2 to 5");
             created = repository.save(dish, restaurantId);
         } catch (IllegalArgumentException | DataIntegrityViolationException | NullPointerException e) {
-            throw new NotFoundException("dish("+dish.getName()+") already exist today("+thisDay+"), or error data "+dish);
+            throw new NotFoundException("error argument or dish("+dish.getName()+") already exist today("+thisDay+"), or error data "+dish);
         }
         return created;
     }
@@ -86,13 +87,12 @@ public class DishController {
             dishes.forEach(ValidationUtil::checkNew);
             dishes.forEach(d -> Assert.notNull(d, "dish must not be null"));
             dishes.stream().map(dish -> dish.getName().toLowerCase()).distinct().collect(Collectors.toList());
+            List<Dish> storedDishes = Optional.ofNullable(repository.getByRestaurantAndDate(restaurantId, thisDay)).orElse(null);
+            checkNotFound(countWithin(dishes, storedDishes), "dishes so number should be within from 2 to 5");
 
-            List<Dish> existInDB = checkNotFound(repository.getByRestaurantAndDate(restaurantId, thisDay), " dishes by " + restaurantId);
-
-            checkNotFound(countWithin(dishes, existInDB), "dishes so number should be within from 2 to 5");
-            created = repository.saveAll(dishes, restaurantId);
+            created = checkNotFound(repository.saveAll(dishes, restaurantId), "restaurantId=" + restaurantId);
         } catch (IllegalArgumentException | DataIntegrityViolationException | NullPointerException | ExceptionInInitializerError e) {
-            throw new NotFoundException(" at least one dish from List (" + dishes + ") already exist today(" + thisDay + ")");
+            throw new NotFoundException("error argument or at least one dish from List (" + dishes + ") already exist today(" + thisDay + ")");
         }
         return created;
     }

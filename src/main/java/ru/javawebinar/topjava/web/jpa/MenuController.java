@@ -101,21 +101,23 @@ public class MenuController {
 
     @Transactional
     public List<Dish> addListOfMenuForRestaurantId(List<Dish> dishes, int restaurantId){
-        log.info("create Menu for newRestaurant {} with Dishes number {}", restaurantId, dishes);
+        log.info("create with Dishes {} Menu for newRestaurant {} ", dishes, restaurantId);
         return dishController.createListOfMenu(dishes, restaurantId);
     }
 
     @Transactional
     public Restaurant createNewRestaurantWithDishes(Restaurant restaurant){
         log.info("createByRestaurantAndDishes restaurant {}", restaurant);
+        checkNotFound(restaurant, " data restaurant=" + restaurant);
+        Restaurant newRestaurant = new Restaurant(restaurant);
+        newRestaurant.setDishes(null);
         Restaurant createdRestaurant = null;
         try {
-            createdRestaurant = restaurantController.create(restaurant);
-            List<Dish> createdDishes;
-            createdDishes = (List<Dish>) dishController.createListOfMenu(restaurant.getDishes(), createdRestaurant.id());
+            createdRestaurant = restaurantController.create(newRestaurant);
+            List<Dish> createdDishes = dishController.createListOfMenu(restaurant.getDishes(), createdRestaurant.id());
             createdRestaurant.setDishes(createdDishes);
         } catch (IllegalArgumentException | DataIntegrityViolationException | TransactionSystemException | NullPointerException e) {
-            throw new NotFoundException(" Illegal argument restaurant=" + restaurant);
+            throw new NotFoundException(" Illegal argument restaurant=" + restaurant + "in createNewRestaurantWithDishes");
         }
         return createdRestaurant;
     }

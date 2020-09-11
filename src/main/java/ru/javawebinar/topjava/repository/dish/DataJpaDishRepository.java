@@ -32,7 +32,10 @@ public class DataJpaDishRepository implements DishRepository {
 
     @Override
     public List<Dish> saveAll(List<Dish> dishes, int restaurantId) throws IllegalArgumentException, DataIntegrityViolationException {
-        Restaurant restaurant = restaurantRepository.getOne(restaurantId);
+        Restaurant restaurant = restaurantRepository.findById(restaurantId).orElse(null);
+        if (restaurant == null) {
+            return null;
+        }
         dishes.forEach(dish ->  dish.setRestaurant(restaurant));
         return dishRepository.saveAll(dishes);
     }

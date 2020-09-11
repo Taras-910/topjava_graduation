@@ -70,7 +70,7 @@ public class RestaurantController {
         try {
             restaurant = checkNotFound(repository.getByIdWithDishesOfDate(id, date), " date='" + date +"'");
         } catch (IllegalArgumentException | DataIntegrityViolationException e) {
-            throw new NotFoundException(" Illegal argument " + date);
+            throw new NotFoundException(" Illegal argument date=" + date + "in getByIdWithDishesOfDate");
         }
         return restaurant;
     }
@@ -85,7 +85,7 @@ public class RestaurantController {
             restaurant.setDishes(null);
             created = repository.save(restaurant);
         } catch (IllegalArgumentException | DataIntegrityViolationException | NullPointerException e) {
-            throw new NotFoundException(" Illegal argument vote=" + restaurant + " or id=" + restaurant);
+            throw new NotFoundException(" Illegal argument restaurant=" + restaurant + " in create RestaurantController");
         }
         return created;
     }
@@ -100,7 +100,7 @@ public class RestaurantController {
             Restaurant updated = repository.save(restaurant);
             checkNotFoundWithId(updated, id);
         } catch (IllegalArgumentException | DataIntegrityViolationException | NullPointerException e) {
-            throw new NotFoundException(" Illegal argument vote=" + restaurant + " or id=" + restaurant);
+            throw new NotFoundException(" Illegal argument restaurant=" + restaurant + " or id=" + id);
         }
     }
 
