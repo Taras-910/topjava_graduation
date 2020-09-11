@@ -34,6 +34,6 @@ class AnonymousMenuRestControllerTest extends AbstractControllerTest {
         perform(MockMvcRequestBuilders.get(REST_URL + "restaurants/" + RESTAURANT1_ID))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
-        MENU_MATCHER.contentJson(controller.getMenuByRestaurantIdThisDay(RESTAURANT1_ID), menuOfDay());
+        MENU_MATCHER.contentJson(controller.getMenuByRestaurantIdThisDay(RESTAURANT1_ID), MENU);
     }
 }

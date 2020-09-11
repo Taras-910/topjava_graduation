@@ -27,7 +27,7 @@ public class AnonymousMenuControllerTest extends AbstractJpaControllerTest {
     @Test
     public void getMenuByRestaurantId() {
         setThisDay(DATE_TEST);
-        Menu menu = controller.getMenuByRestaurantId(RESTAURANT1_ID);
-        MENU_MATCHER.assertMatch(menuOfDay(), menu);
+        Menu menuDB = controller.getMenuByRestaurantId(RESTAURANT1_ID);
+        MENU_MATCHER.assertMatch(MENU, menuDB);
     }
 }

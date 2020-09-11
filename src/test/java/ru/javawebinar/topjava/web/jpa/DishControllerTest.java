@@ -8,6 +8,7 @@ import ru.javawebinar.topjava.util.DateTimeUtil;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 import ru.javawebinar.topjava.web.AbstractJpaControllerTest;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import static java.util.Arrays.asList;
@@ -106,19 +107,19 @@ public class DishControllerTest extends AbstractJpaControllerTest {
 
     @Test
     public void createErrorData() throws Exception {
-        DateTimeUtil.setThisDay(DATE_TEST);
-        assertThrows(NotFoundException.class, () ->
-                controller.create(new Dish(DISH1_ID, "tea", DATE_TEST, 1.1F), RESTAURANT1_ID));
-        assertThrows(NotFoundException.class, () ->
-                controller.create(new Dish(null, null, DATE_TEST, 1.1F), RESTAURANT1_ID));
-        assertThrows(NotFoundException.class, () ->
-                controller.create(new Dish(null, "tea", null, 1.1F), RESTAURANT1_ID));
-        assertThrows(NotFoundException.class, () ->
-                controller.create(new Dish(null, "tea", DATE_TEST, -1.0F), RESTAURANT1_ID));
-        assertThrows(NotFoundException.class, () ->
-                controller.create(new Dish(null, "tea", DATE_TEST, 101.0F), RESTAURANT1_ID));
-        assertThrows(NotFoundException.class, () ->
-                controller.create(new Dish(null, "tea", DATE_TEST, 1.0F), NOT_FOUND));
+        DateTimeUtil.setThisDay(LocalDate.now().plusDays(1));
+        assertThrows(NotFoundException.class,
+                () -> controller.create(new Dish(DISH1_ID, "tea", DATE_TEST, 1.1F), RESTAURANT1_ID));
+        assertThrows(NotFoundException.class,
+                () -> controller.create(new Dish(null, null, DATE_TEST, 1.1F), RESTAURANT1_ID));
+        assertThrows(NotFoundException.class,
+                () -> controller.create(new Dish(null, "tea", null, 1.1F), RESTAURANT1_ID));
+        assertThrows(NotFoundException.class,
+                () -> controller.create(new Dish(null, "tea", DATE_TEST, -1.0F), RESTAURANT1_ID));
+        assertThrows(NotFoundException.class,
+                () -> controller.create(new Dish(null, "tea", DATE_TEST, 101.0F), RESTAURANT1_ID));
+        assertThrows(NotFoundException.class,
+                () -> controller.create(new Dish(null, "tea", DATE_TEST, 1.0F), NOT_FOUND));
     }
 
     @Test
@@ -135,7 +136,7 @@ public class DishControllerTest extends AbstractJpaControllerTest {
     public void createOverLimit() throws Exception {
         assertThrows(NotFoundException.class, () -> controller.createListOfMenu(overLimitMax(), RESTAURANT1_ID));
         assertThrows(NotFoundException.class, () -> controller.createListOfMenu(overLimitMin(), RESTAURANT2_ID));
-     }
+    }
 
     @Test
     public void createListErrorData() throws Exception {
@@ -158,6 +159,7 @@ public class DishControllerTest extends AbstractJpaControllerTest {
     public void updateNotOwn() throws Exception {
         assertThrows(NotFoundException.class, () -> controller.update(DISH1, DISH1_ID ,RESTAURANT2_ID));
     }
+
     @Test
     public void updateErrorData() throws Exception {
         assertThrows(NotFoundException.class, () -> controller.update(DISH1, DISH10_ID ,RESTAURANT1_ID));
@@ -166,7 +168,5 @@ public class DishControllerTest extends AbstractJpaControllerTest {
         assertThrows(NotFoundException.class, () -> controller.update(DISH1, NOT_FOUND ,RESTAURANT1_ID));
         assertThrows(NotFoundException.class, () -> controller.update(DISH1, DISH1_ID ,NOT_FOUND));
     }
-
-
 }
 

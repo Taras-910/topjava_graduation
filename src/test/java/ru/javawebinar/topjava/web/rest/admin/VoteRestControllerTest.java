@@ -14,9 +14,6 @@ import ru.javawebinar.topjava.util.exception.NotFoundException;
 import ru.javawebinar.topjava.util.json.JsonUtil;
 import ru.javawebinar.topjava.web.AbstractControllerTest;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
-
 import static java.lang.String.valueOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -29,8 +26,7 @@ import static ru.javawebinar.topjava.testdata.RestaurantTestData.RESTAURANT1_ID;
 import static ru.javawebinar.topjava.testdata.RestaurantTestData.RESTAURANT2_ID;
 import static ru.javawebinar.topjava.testdata.UserTestData.*;
 import static ru.javawebinar.topjava.testdata.VoteTestData.*;
-import static ru.javawebinar.topjava.util.DateTimeUtil.TIME_TEST_IN;
-import static ru.javawebinar.topjava.util.DateTimeUtil.setСhangeVoteTime;
+import static ru.javawebinar.topjava.util.DateTimeUtil.*;
 
 class VoteRestControllerTest extends AbstractControllerTest {
     private Logger log = LoggerFactory.getLogger(getClass());
@@ -91,7 +87,7 @@ class VoteRestControllerTest extends AbstractControllerTest {
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
-        assertTrue(controller.isExistForUserByDate(ADMIN_ID, LocalDate.of(2020, 07, 30)));
+        assertTrue(controller.isExistForUserByDate(ADMIN_ID, DATE_TEST));
     }
 
     @Test
@@ -120,7 +116,7 @@ class VoteRestControllerTest extends AbstractControllerTest {
 
     @Test
     void update() throws Exception {
-        DateTimeUtil.setСhangeVoteTime(LocalTime.of(23, 59));
+        DateTimeUtil.setСhangeVoteTime(TIME_TEST_IN);
         Vote updated = VoteTestData.getUpdated();
         perform(MockMvcRequestBuilders.put(REST_URL + VOTE1_ID)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -149,7 +145,7 @@ class VoteRestControllerTest extends AbstractControllerTest {
 
     @Test
     void delete() throws Exception {
-        setСhangeVoteTime(LocalTime.now().plusMinutes(20));
+        setСhangeVoteTime(TIME_TEST_IN);
         perform(MockMvcRequestBuilders.delete(REST_URL + VOTE1_ID)
                 .param("restaurantId", valueOf(RESTAURANT1_ID))
                 .with(userHttpBasic(ADMIN))

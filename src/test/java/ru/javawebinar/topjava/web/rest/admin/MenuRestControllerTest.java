@@ -46,7 +46,7 @@ class MenuRestControllerTest extends AbstractControllerTest {
     void getByRestaurantNameWithDishesAndDate() throws Exception {
         perform(MockMvcRequestBuilders.get(REST_URL + "restaurants/names/" + RESTAURANT1.getName())
                 .with(userHttpBasic(ADMIN))
-                .content(JsonUtil.writeValue(menuOfDay()))
+                .content(JsonUtil.writeValue(MENU))
                 .param("date", "2020-07-30")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -58,7 +58,7 @@ class MenuRestControllerTest extends AbstractControllerTest {
     void getByRestaurantIdAndDate() throws Exception {
         perform(MockMvcRequestBuilders.get(REST_URL + "restaurants/" + RESTAURANT1_ID)
                 .with(userHttpBasic(ADMIN))
-                .content(JsonUtil.writeValue(menuOfDay()))
+                .content(JsonUtil.writeValue(MENU))
                 .param("date", "2020-07-30")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())

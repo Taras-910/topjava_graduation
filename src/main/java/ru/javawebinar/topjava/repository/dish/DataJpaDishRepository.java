@@ -2,6 +2,7 @@ package ru.javawebinar.topjava.repository.dish;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Repository;
 import ru.javawebinar.topjava.model.Dish;
 import ru.javawebinar.topjava.model.Restaurant;
@@ -30,7 +31,7 @@ public class DataJpaDishRepository implements DishRepository {
         return dish.isNew() || get(dish.id(), restaurant.getId()) != null ? dishRepository.save(dish) : null; }
 
     @Override
-    public List<Dish> saveAll(List<Dish> dishes, int restaurantId) throws IllegalArgumentException{
+    public List<Dish> saveAll(List<Dish> dishes, int restaurantId) throws IllegalArgumentException, DataIntegrityViolationException {
         Restaurant restaurant = restaurantRepository.getOne(restaurantId);
         dishes.forEach(dish ->  dish.setRestaurant(restaurant));
         return dishRepository.saveAll(dishes);
@@ -57,7 +58,7 @@ public class DataJpaDishRepository implements DishRepository {
     }
 
     @Override
-    public List<Dish> getByRestaurantAndDate(int restaurantId, LocalDate date) {
+    public List<Dish> getByRestaurantAndDate(int restaurantId, LocalDate date) throws DataIntegrityViolationException {
         List<Dish> dishes = Optional.ofNullable(dishRepository.getByRestaurantAndDate(restaurantId, date)).orElse(null);
         return dishes.isEmpty() ? null : dishes;
     }

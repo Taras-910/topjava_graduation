@@ -20,13 +20,44 @@ public class RestaurantControllerTest extends AbstractJpaControllerTest {
     RestaurantController controller;
 
     @Test
-    public void findById() throws Exception {
+    public void getById() throws Exception {
+        Assert.assertEquals(controller.getById(RESTAURANT1_ID), RESTAURANT1);
+    }
+
+    @Test
+    public void getByName() throws Exception {
+        Assert.assertEquals(controller.getByName(RESTAURANT1.getName()), RESTAURANT1);
+    }
+
+    @Test
+    public void getAll() throws Exception {
+        List<Restaurant> all = controller.getAll();
+        RESTAURANT_MATCHER.assertMatch(all, RESTAURANT1, RESTAURANT2);
+    }
+
+    @Test
+    public void getAllWithDishes() throws Exception {
         Assert.assertEquals(controller.getById(RESTAURANT1_ID), restaurant1WithDishes());
     }
 
     @Test
-    public void getNotFound() throws Exception {
+    public void getAllWithDishesOfDate() throws Exception {
+        List<Restaurant> restaurant = controller.getAllWithDishesOfDate(thisDay);
+        RESTAURANT_MATCHER.assertMatch(restaurant, withDishesByDate());
+    }
+
+    @Test
+    public void getByIdWithDishesOfDate() throws Exception {
+        setThisDay(DATE_TEST);
+        Restaurant restaurant = controller.getByIdWithDishesOfDate(RESTAURANT1_ID, thisDay);
+        RESTAURANT_MATCHER.assertMatch(restaurant, RESTAURANT1);
+    }
+
+    @Test
+    public void getErrorData() throws Exception {
         assertThrows(NotFoundException.class, () -> controller.getById(NOT_FOUND));
+        assertThrows(NotFoundException.class, () -> controller.getByIdWithDishesOfDate(NOT_FOUND, thisDay));
+        assertThrows(NotFoundException.class, () -> controller.getByIdWithDishesOfDate(RESTAURANT1_ID, null));
     }
 
     @Test
@@ -48,21 +79,32 @@ public class RestaurantControllerTest extends AbstractJpaControllerTest {
     }
 
     @Test
-    public void getAll() throws Exception {
-        List<Restaurant> all = controller.getAll();
-        RESTAURANT_MATCHER.assertMatch(all, RESTAURANT1, RESTAURANT2);
+    public void updateErrorData() throws Exception {
+        assertThrows(NotFoundException.class,
+                () -> controller.update(new Restaurant(null, "Обновленный_ресторан"), RESTAURANT1_ID));
+        assertThrows(NotFoundException.class,
+                () -> controller.update(new Restaurant(RESTAURANT1_ID, "Обновленный_ресторан"), NOT_FOUND));
+        assertThrows(NotFoundException.class,
+                () -> controller.update(new Restaurant(null, null), RESTAURANT1_ID));
+        assertThrows(NotFoundException.class,
+                () -> controller.update(new Restaurant(RESTAURANT1_ID, "Обновленный_ресторан"), RESTAURANT2_ID));
     }
 
     @Test
-    public void getAllWithDishesOfDate() throws Exception {
-        List<Restaurant> restaurant = controller.getAllWithDishesOfDate(thisDay);
-        RESTAURANT_MATCHER.assertMatch(restaurant, withDishesByDate());
+    public void create() throws Exception {
+        Restaurant newRestaurant = getNew();
+        Restaurant created = controller.create(newRestaurant);
+        newRestaurant.setId(created.getId());
+        RESTAURANT_MATCHER.assertMatch(created, newRestaurant);
     }
 
     @Test
-    public void getByIdWithDishesOfDate() throws Exception {
-        setThisDay(DATE_TEST);
-        Restaurant restaurant = controller.getByIdWithDishesOfDate(RESTAURANT1_ID, thisDay);
-        RESTAURANT_MATCHER.assertMatch(restaurant, RESTAURANT1);
+    public void createErrorDate() throws Exception {
+        assertThrows(NotFoundException.class,
+                () -> controller.create(new Restaurant(RESTAURANT1_ID, "Обновленный_ресторан")));
+        assertThrows(NotFoundException.class,
+                () -> controller.create(new Restaurant(NOT_FOUND, "Обновленный_ресторан")));
+        assertThrows(NotFoundException.class,
+                () -> controller.create(new Restaurant(RESTAURANT1_ID, null)));
     }
 }

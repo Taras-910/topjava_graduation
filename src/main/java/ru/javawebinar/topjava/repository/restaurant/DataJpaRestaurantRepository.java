@@ -42,12 +42,12 @@ public class DataJpaRestaurantRepository implements RestaurantRepository {
     public List<Restaurant> getAll() { return restaurantRepository.findAll(SORT_NAME); }
 
     @Override
-    public List<Restaurant> getAllWithDishesOfDate(LocalDate date) {
+    public List<Restaurant> getAllWithDishesOfDate(LocalDate date) throws IllegalArgumentException {
         return restaurantRepository.getAllWithDishesOfDate(date);
     }
 
     @Override
-    public Restaurant getByIdWithDishesOfDate(int restaurantId, LocalDate date) {
+    public Restaurant getByIdWithDishesOfDate(int restaurantId, LocalDate date) throws IllegalArgumentException {
         return Optional.ofNullable(restaurantRepository.getByIdWithDishesOfDate(restaurantId, date)).orElse(null);
     }
 }

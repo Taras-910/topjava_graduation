@@ -106,23 +106,23 @@ class RestaurantRestControllerTest extends AbstractControllerTest {
                 .with(userHttpBasic(ADMIN))
                 .content(JsonUtil.writeValue(updated)))
                 .andExpect(status().isCreated());
-        RESTAURANT_MATCHER.assertMatch(controller.get(RESTAURANT1_ID), updated);
+        RESTAURANT_MATCHER.assertMatch(controller.getById(RESTAURANT1_ID), updated);
     }
 
     @Test
     void create() throws Exception {
-        Restaurant newDish = getNew();
+        Restaurant newRestaurant = getNew();
         ResultActions action = perform(MockMvcRequestBuilders.post(REST_URL)
                 .param("restaurantId", valueOf(RESTAURANT1_ID))
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(userHttpBasic(ADMIN))
-                .content(JsonUtil.writeValue(newDish)))
+                .content(JsonUtil.writeValue(newRestaurant)))
                 .andExpect(status().isCreated());
         Restaurant created = readFromJson(action, Restaurant.class);
         int newId = created.id();
-        newDish.setId(newId);
-        RESTAURANT_MATCHER.assertMatch(created, newDish);
-        RESTAURANT_MATCHER.assertMatch(controller.get(newId), newDish);
+        newRestaurant.setId(newId);
+        RESTAURANT_MATCHER.assertMatch(created, newRestaurant);
+        RESTAURANT_MATCHER.assertMatch(controller.getById(newId), newRestaurant);
     }
 
     @Test
@@ -132,6 +132,6 @@ class RestaurantRestControllerTest extends AbstractControllerTest {
                 .with(userHttpBasic(ADMIN))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
-        assertThrows(NotFoundException.class, () -> controller.get(RESTAURANT2_ID));
+        assertThrows(NotFoundException.class, () -> controller.getById(RESTAURANT2_ID));
     }
 }

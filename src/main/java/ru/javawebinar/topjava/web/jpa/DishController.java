@@ -73,7 +73,7 @@ public class DishController {
             checkNotFound(countWithin(List.of(dish), repository.getByRestaurantAndDate(restaurantId, thisDay)),
                     "dishes so number should be within from 2 to 5");
             created = repository.save(dish, restaurantId);
-        } catch (Exception e) {
+        } catch (IllegalArgumentException | DataIntegrityViolationException | NullPointerException e) {
             throw new NotFoundException("dish("+dish.getName()+") already exist today("+thisDay+"), or error data "+dish);
         }
         return created;
@@ -83,16 +83,16 @@ public class DishController {
     public List<Dish> createListOfMenu(List<Dish> dishes, int restaurantId) {
         List<Dish> created = null;
         try {
-        dishes.forEach(ValidationUtil::checkNew);
-        dishes.forEach(d -> Assert.notNull(d, "dish must not be null"));
-        dishes.stream().map(dish -> dish.getName().toLowerCase())
-                .distinct()
-                .collect(Collectors.toList());
-            checkNotFound(countWithin(dishes, repository.getByRestaurantAndDate(restaurantId, thisDay)),
-                    "dishes so number should be within from 2 to 5");
+            dishes.forEach(ValidationUtil::checkNew);
+            dishes.forEach(d -> Assert.notNull(d, "dish must not be null"));
+            dishes.stream().map(dish -> dish.getName().toLowerCase()).distinct().collect(Collectors.toList());
+
+            List<Dish> existInDB = checkNotFound(repository.getByRestaurantAndDate(restaurantId, thisDay), " dishes by " + restaurantId);
+
+            checkNotFound(countWithin(dishes, existInDB), "dishes so number should be within from 2 to 5");
             created = repository.saveAll(dishes, restaurantId);
-        } catch (IllegalArgumentException | DataIntegrityViolationException | NullPointerException e) {
-            throw new NotFoundException(" at least one dish from List ("+dishes+") already exist today("+thisDay+")");
+        } catch (IllegalArgumentException | DataIntegrityViolationException | NullPointerException | ExceptionInInitializerError e) {
+            throw new NotFoundException(" at least one dish from List (" + dishes + ") already exist today(" + thisDay + ")");
         }
         return created;
     }
