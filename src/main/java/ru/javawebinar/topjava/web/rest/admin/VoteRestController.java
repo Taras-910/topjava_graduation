@@ -68,13 +68,13 @@ public class VoteRestController {
     }
 
     @GetMapping(value = "/users/{id}")
-    public List<Vote> getAllForAuthUser(@PathVariable(name = "id") int userId) {
+    public List<Vote> getAllForUser(@PathVariable(name = "id") int userId) {
         log.info("getAllForUser with userId {}", userId);
         return repository.getAllForAuthUser(userId);
     }
 
-    @GetMapping(value = "/between/users/{id}")
-    public List<Vote> getBetweenForUser(@RequestParam @Nullable LocalDate startDate, @RequestParam @Nullable LocalDate endDate,
+    @GetMapping(value = "/between/users/{id}/start/{startDate}/end/{endDate}")
+    public List<Vote> getBetweenForUser(@PathVariable @Nullable LocalDate startDate, @PathVariable @Nullable LocalDate endDate,
                                         @PathVariable(name = "id") int userId) {
         log.info("getBetween with dates({} - {}) for userId {}", startDate, endDate, userId);
         return repository.getBetween(startDate, endDate, userId);

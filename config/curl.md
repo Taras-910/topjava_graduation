@@ -4,11 +4,11 @@
 `curl -L -X GET 'http://localhost:8080/topjava/rest/admin/votes' \
  -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
 
-#### vote admin getById
+#### vote admin get (by id)
 `curl -L -X GET 'http://localhost:8080/topjava/rest/admin/votes/100015' \
  -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
 
-#### vote admin getByRestaurantId
+#### vote admin getAllForRestaurant
 `curl -L -X GET 'http://localhost:8080/topjava/rest/admin/votes/restaurants/100003' \
  -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
 
@@ -20,13 +20,14 @@
 `curl -L -X GET 'http://localhost:8080/topjava/rest/admin/votes/users/100001' \
  -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
  
-#### vote admin isExistForUserByDate
+#### vote admin isExistVote
 `curl -L -X GET 'http://localhost:8080/topjava/rest/admin/votes/users/100000/date/2020-07-30' \
 -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
  
-#### vote admin getBetween 
-`curl -L -X GET 'http://localhost:8080/topjava/rest/admin/votes/between/users/100000/?startDate=2020-07-30&endDate=2020-07-30' \
- -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
+#### vote admin getBetweenForUser 
+`curl -L -X GET 'http://localhost:8080/topjava/rest/admin/votes/between/users/100000/start/2020-07-30/end/2020-07-30' \
+ -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu' \
+ --data-raw ''`
 
 #### vote admin delete
 `curl -L -X DELETE 'http://localhost:8080/topjava/rest/admin/votes/100015' \
@@ -48,12 +49,12 @@
  -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
 
 
-#### vote profile get byVoteId
+#### vote profile get (by voteId)
 `curl -L -X GET 'http://localhost:8080/topjava/rest/profile/votes/100016' \
  -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
 
 #### vote profile getAllForAuth
-`curl -L -X GET 'http://localhost:8080/topjava/rest/profile/votes/auth' \
+`curl -L -X GET 'http://localhost:8080/topjava/rest/profile/votes' \
  -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
 
 #### vote profile getByRestaurantIdForAuth
@@ -69,7 +70,7 @@
  -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
  
 #### vote profile getBetween 
-`votes/between?startDate=2020-06-30&endDate=2020-07-29' \
+`curl -L -X GET 'http://localhost:8080/topjava/rest/profile/votes/between/start/2020-06-30/end/2020-07-29' \
  -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
 
 #### vote profile delete
@@ -92,11 +93,13 @@
  -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
 
 
-#### user anonymous getAll (menus)
-`curl --location --request GET 'http://localhost:8080/topjava/rest/anonymous'`
+#### anonymous getAllMenusThisDay
+`curl -L -X GET 'http://localhost:8080/topjava/anonymous' \
+ -H 'Authorization: Basic Og=='`
 
-#### user anonymous getAll ByRestaurantId (menu)
-`curl --location --request GET 'http://localhost:8080/topjava/rest/anonymous/restaurants/100002'`
+#### anonymous getMenuByRestaurantIdThisDay
+`curl -L -X GET 'http://localhost:8080/topjava/anonymous/restaurants/100003' \
+ -H 'Authorization: Basic Og=='`
 
 
 #### user profile get

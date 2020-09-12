@@ -80,7 +80,7 @@ class ProfileVoteRestControllerTest extends AbstractControllerTest {
 
     @Test
     void getAllForAuth() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL + "auth")
+        perform(MockMvcRequestBuilders.get(REST_URL)
                 .with(userHttpBasic(ADMIN))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -89,12 +89,11 @@ class ProfileVoteRestControllerTest extends AbstractControllerTest {
                 .andExpect(VOTE_MATCHER.contentJson(allForAdmin()));
     }
 
+
     @Test
     void getBetween() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL + "between")
+        perform(MockMvcRequestBuilders.get(REST_URL + "between/start/2020-06-28/end/2020-06-29")
                 .with(userHttpBasic(ADMIN))
-                .param("startDate", "2020-06-28")
-                .param("endDate", "2020-06-29")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andDo(print())

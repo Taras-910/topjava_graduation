@@ -41,7 +41,7 @@ public class ProfileVoteRestController {
         return checkNotFoundWithId(voteRepository.get(voteId, authUserId()), voteId);
     }
 
-    @GetMapping(value = "/auth")
+    @GetMapping
     public List<Vote> getAllForAuth() {
         log.info("getAllForUser with userId {}", authUserId());
         return voteRepository.getAllForAuthUser(authUserId());
@@ -53,20 +53,20 @@ public class ProfileVoteRestController {
         return checkNotFound(voteRepository.getByRestaurantAuth(restaurantId, authUserId()), " for restaurant " + restaurantId);
     }
 
-    @GetMapping(value = "date/{date}")
+    @GetMapping(value = "/date/{date}")
     public Vote getByDateForAuth(@PathVariable LocalDate date) {
         log.info("get for user {} by date {}", authUserId(), date);
         return checkNotFound(voteRepository.getByDateForAuth(date, authUserId()), "for date " + date);
     }
 
-    @GetMapping(value = "exist/date/{date}")
+    @GetMapping(value = "/exist/date/{date}")
     public boolean isExistVote(@PathVariable LocalDate date) {
         log.info("get for user {} by date {}", authUserId(), date);
         return voteRepository.isExistVote(date, authUserId());
     }
 
-    @GetMapping(value = "/between")
-    public List<Vote> getBetween(@RequestParam @Nullable LocalDate startDate, @RequestParam @Nullable LocalDate endDate) {
+    @GetMapping(value = "/between/start/{startDate}/end/{endDate}")
+    public List<Vote> getBetween(@PathVariable @Nullable LocalDate startDate, @PathVariable @Nullable LocalDate endDate) {
         log.info("getBetween with dates({} - {}) for userId {}", startDate, endDate, authUserId());
         return voteRepository.getBetween(startDate, endDate, authUserId());
     }

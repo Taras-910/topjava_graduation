@@ -105,10 +105,8 @@ class VoteRestControllerTest extends AbstractControllerTest {
 
     @Test
     void getBetweenForUser() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL + "between/users/" + ADMIN_ID)
+        perform(MockMvcRequestBuilders.get(REST_URL + "between/users/" + ADMIN_ID + "/start/2020-06-28/end/2020-06-29")
                 .with(userHttpBasic(ADMIN))
-                .param("startDate", "2020-06-28")
-                .param("endDate", "2020-06-29")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andDo(print())
