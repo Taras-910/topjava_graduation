@@ -37,7 +37,7 @@ public class RestaurantControllerTest extends AbstractJpaControllerTest {
 
     @Test
     public void getAllWithDishes() throws Exception {
-        Assert.assertEquals(controller.getById(RESTAURANT1_ID), restaurant1WithDishes());
+        Assert.assertEquals(controller.getAllWithDishes(), allWithDishes());
     }
 
     @Test

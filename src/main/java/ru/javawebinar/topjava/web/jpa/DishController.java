@@ -54,10 +54,8 @@ public class DishController {
     public void delete(int dishId, int restaurantId) {
         List<Dish> memoryDishes = repository.getByRestaurantAndDate(restaurantId, thisDay);
         log.info("delete dish {} of restaurant {} from memoryDishes {}", dishId, restaurantId, memoryDishes.size());
-        checkNotFound(MenuUtil.countLowerLimit(memoryDishes),
-                dishId+" so as dishes number of menu should be at least 2");
-        boolean result = repository.delete(dishId, restaurantId);
-        checkNotFoundWithId(result, dishId);
+        checkNotFound(MenuUtil.countLowerLimit(memoryDishes), dishId+" so as dishes number of menu should be at least 2");
+        checkNotFoundWithId(repository.delete(dishId, restaurantId), dishId);
     }
 
     public void deleteListOfMenu(int restaurantId, LocalDate date) {

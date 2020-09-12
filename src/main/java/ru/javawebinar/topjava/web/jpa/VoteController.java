@@ -22,51 +22,51 @@ import static ru.javawebinar.topjava.web.SecurityUtil.authUserId;
 @Controller
 public class VoteController {
     protected final Logger log = LoggerFactory.getLogger(getClass());
-    private VoteRepository voteRepository;
+    private VoteRepository repository;
 
-    public VoteController(VoteRepository voteRepository) {
-        this.voteRepository = voteRepository;
+    public VoteController(VoteRepository repository) {
+        this.repository = repository;
     }
 
     public Vote getById(int id) {
         log.info("get by id {} for user {}", id, authUserId());
-        return checkNotFoundWithId(voteRepository.get(id, authUserId()), id);
+        return checkNotFoundWithId(repository.get(id, authUserId()), id);
     }
 
     public Vote getByDateForAuth(LocalDate date) {
         log.info("get for user {} by date {}", authUserId(), date);
-        return voteRepository.getByDateForAuth(date, authUserId());
+        return repository.getByDateForAuth(date, authUserId());
     }
 
     public boolean isExistVote(LocalDate date) {
         log.info("isExistVote for user {} by date {}", authUserId(), date);
-        return voteRepository.isExistVote(date, authUserId());
+        return repository.isExistVote(date, authUserId());
     }
 
     public List<Vote> getAllForAuthUser(int userId) {
         log.info("get all for User {}", userId);
-        return voteRepository.getAllForAuthUser(userId);
+        return repository.getAllForAuthUser(userId);
     }
 
     public List<Vote> getAllForRestaurant(int restaurantId) {
         log.info("get all for restaurant {}", restaurantId);
-        return voteRepository.getByRestaurant(restaurantId);
+        return repository.getByRestaurant(restaurantId);
     }
 
     public List<Vote> getBetween(@Nullable LocalDate startDate, @Nullable LocalDate endDate, int userId) {
         log.info("getBetween with dates({} - {}) for userId {}", startDate, endDate, userId);
-        return voteRepository.getBetween(startDate, endDate, userId);
+        return repository.getBetween(startDate, endDate, userId);
     }
 
     public List<Vote> getAll() {
         log.info("getAll votes");
-        return voteRepository.getAll();
+        return repository.getAll();
     }
 
     public void delete(int id) {
         log.info("delete vote {} for userId {}", id, authUserId());
         checkNotFound(LocalTime.now().isBefore(сhangeVoteTime), id +" for change vote up to 11:00");
-        checkNotFoundWithId(voteRepository.delete(id, authUserId()), id);
+        checkNotFoundWithId(repository.delete(id, authUserId()), id);
     }
 
     public Vote create(Vote vote, int userId) {
@@ -76,7 +76,7 @@ public class VoteController {
             Assert.notNull(userId, "user must be logged-in");
             checkNew(vote);
             checkNotFound(getByDateForAuth(vote.getDate()) == null, userId +" - so as vote already exist for this day " + thisDay.toString());
-            created = voteRepository.save(vote, userId);
+            created = repository.save(vote, userId);
         } catch (IllegalArgumentException | DataIntegrityViolationException e) {
             throw new NotFoundException(" Illegal argument vote=" + vote + " or id=" + userId);
         }
@@ -90,7 +90,7 @@ public class VoteController {
             Assert.notNull(vote, "vote must not be null");
             assureIdConsistent(vote, id);
             checkNotFound(LocalTime.now().isBefore(сhangeVoteTime), id +" for change vote up to 11:00");
-            updated = voteRepository.save(vote, userId);
+            updated = repository.save(vote, userId);
         } catch (IllegalArgumentException | DataIntegrityViolationException e) {
             throw new NotFoundException(" Illegal argument vote=" + vote + " or id=" + userId);
         }

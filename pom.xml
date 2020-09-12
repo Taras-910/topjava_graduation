@@ -3,13 +3,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>ru.javawebinar</groupId>
-    <artifactId>topjava</artifactId>
+    <artifactId>topjava_graduation</artifactId>
     <packaging>war</packaging>
 
     <version>1.0-SNAPSHOT</version>
 
-    <name>Calories Management</name>
-    <url>http://topjava.herokuapp.com/</url>
+    <name>Restaurant Votes</name>
 
     <properties>
         <java.version>14</java.version>
@@ -39,17 +38,10 @@
 
         <!--Tools-->
         <ehcache.version>3.9.0</ehcache.version>
-
-        <!--webjars-->
-        <webjars-bootstrap.version>4.4.1</webjars-bootstrap.version>
-        <webjars-jquery.version>3.4.1</webjars-jquery.version>
-        <webjars-datetimepicker.version>2.5.20</webjars-datetimepicker.version>
-        <webjars-noty.version>3.1.4</webjars-noty.version>
-        <webjars-datatables.version>1.10.20</webjars-datatables.version>
     </properties>
 
     <build>
-        <finalName>topjava</finalName>
+        <finalName>topjava_graduation</finalName>
         <defaultGoal>package</defaultGoal>
         <plugins>
             <plugin>
@@ -61,16 +53,6 @@
                     <target>${java.version}</target>
                 </configuration>
             </plugin>
-            <!--<plugin>
-                &lt;!&ndash;https://junit.org/junit5/docs/current/user-guide/#running-tests-build-maven &ndash;&gt;
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.22.2</version>
-                <configuration>
-                    <argLine>-Dfile.encoding=UTF-8</argLine>
-                </configuration>
-            </plugin>-->
-
             <!-- http://stackoverflow.com/questions/4305935/is-it-possible-to-supply-tomcat6s-context-xml-file-via-the-maven-cargo-plugin#4417945 -->
             <!-- https://codehaus-cargo.github.io/cargo/Tomcat+9.x.html -->
             <plugin>
@@ -99,7 +81,7 @@
                     <deployables>
                         <deployable>
                             <groupId>ru.javawebinar</groupId>
-                            <artifactId>topjava</artifactId>
+                            <artifactId>topjava_graduation</artifactId>
                             <type>war</type>
                             <properties>
                                 <context>${project.build.finalName}</context>
@@ -108,7 +90,6 @@
                     </deployables>
                 </configuration>
             </plugin>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
@@ -126,11 +107,17 @@
                     </dependency>
                 </dependencies>
             </plugin>
-
         </plugins>
     </build>
 
     <dependencies>
+
+        <!--DB-->
+        <dependency>
+            <groupId>org.hsqldb</groupId>
+            <artifactId>hsqldb</artifactId>
+            <version>${hsqldb.version}</version>
+        </dependency>
 
         <!-- Logging with SLF4J & LogBack -->
         <dependency>
@@ -139,7 +126,6 @@
             <version>${slf4j.version}</version>
             <scope>compile</scope>
         </dependency>
-
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
@@ -152,7 +138,6 @@
                 </exclusion>
             </exclusions>
         </dependency>
-
         <dependency>
             <groupId>javax.annotation</groupId>
             <artifactId>javax.annotation-api</artifactId>
@@ -279,65 +264,14 @@
             <version>${tomcat.version}</version>
             <scope>provided</scope>
         </dependency>
-
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>jstl</artifactId>
             <version>1.2</version>
         </dependency>
-
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
-        </dependency>
-
-        <!-- Webjars (static dependencies distributed as JAR files) -->
-        <dependency>
-            <groupId>org.webjars</groupId>
-            <artifactId>jquery</artifactId>
-            <version>${webjars-jquery.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.webjars.bower</groupId>
-            <artifactId>bootstrap</artifactId>
-            <version>${webjars-bootstrap.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.webjars</groupId>
-                    <artifactId>jquery</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.webjars</groupId>
-            <artifactId>datatables</artifactId>
-            <version>${webjars-datatables.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.webjars</groupId>
-                    <artifactId>jquery</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.webjars.bower</groupId>
-            <artifactId>datetimepicker</artifactId>
-            <version>${webjars-datetimepicker.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.webjars.bower</groupId>
-                    <artifactId>jquery</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.webjars.bower</groupId>
-                    <artifactId>php-date-formatter</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.webjars.bower</groupId>
-            <artifactId>noty</artifactId>
-            <version>${webjars-noty.version}</version>
         </dependency>
 
         <!--JSON-->
@@ -358,21 +292,18 @@
         </dependency>
 
         <!--Test-->
-
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
             <version>${junit.jupiter.version}</version>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>org.junit.vintage</groupId>
             <artifactId>junit-vintage-engine</artifactId>
             <version>5.6.2</version>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-core</artifactId>
@@ -380,6 +311,7 @@
             <scope>test</scope>
         </dependency>
 
+        <!--Spring Test-->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
@@ -392,18 +324,11 @@
             <version>${spring.security.version}</version>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
             <version>${assertj.version}</version>
             <scope>test</scope>
-        </dependency>
-
-        <dependency>
-        <groupId>org.hsqldb</groupId>
-            <artifactId>hsqldb</artifactId>
-            <version>${hsqldb.version}</version>
         </dependency>
 
         <dependency>
@@ -430,7 +355,6 @@
                 </exclusion>
              </exclusions>
         </dependency>
-
     </dependencies>
 
     <dependencyManagement>

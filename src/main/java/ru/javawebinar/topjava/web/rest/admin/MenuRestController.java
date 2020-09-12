@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.Nullable;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import ru.javawebinar.topjava.model.Dish;
@@ -47,14 +48,21 @@ public class MenuRestController {
 
     @Transactional
     @GetMapping("/restaurants/{id}")
-    public Menu getByRestaurantIdAndDate(@PathVariable(name = "id") int restaurantId, @RequestParam LocalDate date) {
+    public Menu getByRestaurantToday(@PathVariable(name = "id")int restaurantId) {
+        log.info("getMenu for restaurantId {}", restaurantId);
+        return toMenu(restaurantRestController.getByIdWithDishesOfDate(restaurantId, thisDay), voteRestController.authVote(), thisDay);
+    }
+
+    @Transactional
+    @GetMapping("/restaurants/{id}/date/{date}")
+    public Menu getByRestaurantIdAndDate(@PathVariable(name = "id") int restaurantId, @Nullable @PathVariable LocalDate date) {
         log.info("getTodayMenu for restaurant {}", restaurantId);
         return toMenu(restaurantRestController.getByIdWithDishesOfDate(restaurantId, date), voteRestController.authVote(), thisDay);
     }
 
-    @Transactional
-    @GetMapping("/restaurants/names/{name}")
-    public Menu getByRestaurantNameWithDishesAndDate(@PathVariable String name, @RequestParam LocalDate date) {
+   @Transactional
+    @GetMapping("/restaurants/names/{name}/date/{date}")
+    public Menu getByRestaurantNameAndDate(@PathVariable String name, @Nullable @PathVariable LocalDate date) {
         log.info("getTodayMenu for restaurant {}", name);
         Restaurant restaurantDB = restaurantRestController.getByName(name);
         return toMenu(restaurantRestController.getByIdWithDishesOfDate(restaurantDB.id(), date), voteRestController.authVote(), thisDay);
@@ -62,16 +70,16 @@ public class MenuRestController {
 
     @Transactional
     @GetMapping(value = "/date/{date}")
-    public List<Menu> getAllByDate(@PathVariable LocalDate date){
+    public List<Menu> getAllByDate(@Nullable @PathVariable LocalDate date){
         log.info("getMenusToday date {}", date);
         return toListMenus(restaurantRestController.getAllWithDishesOfDate(date), voteRestController.authVote(), date);
     }
 
     @DeleteMapping("/restaurants/{id}/date/{date}")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    public void deleteByRestaurantAndDate(@PathVariable(name = "id") int restaurantId, @PathVariable LocalDate date) {
+    public void deleteByRestaurantAndDate(@PathVariable(name = "id") int restaurantId, @Nullable @PathVariable LocalDate date) {
         log.info("delete by restaurant {} and date {}", restaurantId, date);
-        dishRestController.deleteAllForRestaurantByDate(restaurantId, date);
+        dishRestController.deleteListOfMenu(restaurantId, date);
     }
 
     @Transactional
@@ -80,7 +88,7 @@ public class MenuRestController {
                                                                  @RequestParam(name = "name") String restaurantName){
         log.info("create Menu for newRestaurant {} with quantity Dishes {}", restaurantName, dishes.size());
         Restaurant createdRestaurant = restaurantRestController.create(new Restaurant(null, restaurantName)).getBody();
-        return dishRestController.createAllForMenu(dishes, createdRestaurant.id());
+        return dishRestController.createListOfMenu(dishes, createdRestaurant.id());
       }
 
     @Transactional
@@ -88,6 +96,6 @@ public class MenuRestController {
     public ResponseEntity<List<Dish>> updateCreateMenuForRestaurantId(@Valid @RequestBody List<Dish> dishes,
                                                                       @PathVariable(name = "id") int restaurantId){
         log.info("create Menu for newRestaurant {} with Dishes number {}", restaurantId, dishes.size());
-        return dishRestController.createAllForMenu(dishes, restaurantId);
+        return dishRestController.createListOfMenu(dishes, restaurantId);
     }
 }

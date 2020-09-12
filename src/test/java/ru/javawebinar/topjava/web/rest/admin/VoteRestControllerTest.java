@@ -14,6 +14,8 @@ import ru.javawebinar.topjava.util.exception.NotFoundException;
 import ru.javawebinar.topjava.util.json.JsonUtil;
 import ru.javawebinar.topjava.web.AbstractControllerTest;
 
+import java.time.LocalDate;
+
 import static java.lang.String.valueOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -87,7 +89,7 @@ class VoteRestControllerTest extends AbstractControllerTest {
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
-        assertTrue(controller.isExistForUserByDate(ADMIN_ID, DATE_TEST));
+        assertTrue(controller.isExistVote(ADMIN_ID, DATE_TEST));
     }
 
     @Test
@@ -123,12 +125,12 @@ class VoteRestControllerTest extends AbstractControllerTest {
                 .with(userHttpBasic(ADMIN))
                 .content(JsonUtil.writeValue(updated)))
                 .andExpect(status().isNoContent());
-        VOTE_MATCHER.assertMatch(controller.get(VOTE1_ID), updated);
+        VOTE_MATCHER.assertMatch(controller.getById(VOTE1_ID), updated);
     }
 
     @Test
     void create() throws Exception {
-        setСhangeVoteTime(TIME_TEST_IN);
+        setThisDay(LocalDate.now());
         Vote newVote = VoteTestData.getNew();
         ResultActions action = perform(MockMvcRequestBuilders.post(
                 REST_URL + "restaurants/" + RESTAURANT2_ID + "/users/" + ADMIN_ID)
@@ -140,7 +142,7 @@ class VoteRestControllerTest extends AbstractControllerTest {
         int newId = created.id();
         newVote.setId(newId);
         VOTE_MATCHER.assertMatch(created, newVote);
-        VOTE_MATCHER.assertMatch(controller.get(newId), newVote);
+        VOTE_MATCHER.assertMatch(controller.getById(newId), newVote);
     }
 
     @Test
@@ -151,6 +153,6 @@ class VoteRestControllerTest extends AbstractControllerTest {
                 .with(userHttpBasic(ADMIN))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
-        assertThrows(NotFoundException.class, () -> controller.get(VOTE1_ID));
+        assertThrows(NotFoundException.class, () -> controller.getById(VOTE1_ID));
     }
 }

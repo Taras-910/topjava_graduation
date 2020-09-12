@@ -1,22 +1,15 @@
 package ru.javawebinar.topjava;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import ru.javawebinar.topjava.util.DateTimeUtil;
-import ru.javawebinar.topjava.web.jpa.RestaurantController;
-import ru.javawebinar.topjava.web.rest.admin.DishRestController;
-import ru.javawebinar.topjava.web.rest.admin.MenuRestController;
-import ru.javawebinar.topjava.web.rest.admin.RestaurantRestController;
-import ru.javawebinar.topjava.web.rest.admin.VoteRestController;
-import ru.javawebinar.topjava.web.rest.profile.ProfileUserRestController;
+import ru.javawebinar.topjava.model.Dish;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
-
-import static ru.javawebinar.topjava.util.DateTimeUtil.DATE_TEST;
-import static ru.javawebinar.topjava.util.DateTimeUtil.TIME_TEST_IN;
+import static ru.javawebinar.topjava.util.DateTimeUtil.thisDay;
 
 public class SpringMain {
+    public static final Logger log = LoggerFactory.getLogger(SpringMain.class);
     public static void main(String[] args) {
         // java 7 automatic resource management
  /*       try {
@@ -29,8 +22,6 @@ public class SpringMain {
                 new ClassPathXmlApplicationContext(new String[]{"spring/spring-app.xml", "spring/spring-db.xml",
                         "spring/spring-mvc.xml"}, false);
         appCtx.refresh();
-        DateTimeUtil.setThisDay(DATE_TEST);
-        DateTimeUtil.setСhangeVoteTime(TIME_TEST_IN);
 /*
         System.out.println("Bean definition names: ");
         for(String s : appCtx.getBeanDefinitionNames()) {
@@ -46,20 +37,38 @@ public class SpringMain {
         AdminUserController adminUserController = appCtx.getBean(AdminUserController.class);
         ProfileController profileController = appCtx.getBean(ProfileController.class);
 */
+/*
         DishRestController dishRestController = appCtx.getBean(DishRestController.class);
         MenuRestController menuRestController = appCtx.getBean(MenuRestController.class);
         RestaurantController restaurantController = appCtx.getBean(RestaurantController.class);
         RestaurantRestController restaurantRestController = appCtx.getBean(RestaurantRestController.class);
         ProfileUserRestController profileRestController = appCtx.getBean(ProfileUserRestController.class);
         VoteRestController voteRestController = appCtx.getBean(VoteRestController.class);
+*/
+
+        Dish testDish1 = new Dish(null, "testEating1", thisDay, 10.0F);
+        Dish testDish2 = new Dish(null, "testEating2", thisDay, 10.0F);
+        Dish testDish3 = new Dish(null, "testEating3", thisDay, 10.0F);
+
+        System.out.println(thisDay);
+//        List<Dish> dishes = List.of(testDish1, testDish2, testDish3);
+//        dishRestController.create(testDish1, RESTAURANT1_ID);
+
+//        dishRestController.createListOfMenu(dishes, RESTAURANT1_ID);
+
+//        log.info("dish {}", dishRestController.getByRestaurantAndDate(RESTAURANT1_ID, thisDay));
+//        log.info("---------------------------------------------------------------\n\n\n\n\n");
+//        dishRestController.delete(DISH10_ID, RESTAURANT2_ID);
+//        log.info("dish {}", dishRestController.getByRestaurantAndDate(RESTAURANT2_ID, DATE_TEST));
+//        log.info("---------------------------------------------------------------\n\n");
+//
+//        Dish dish = new Dish(DISH10);
+//        dish.setId(null);
+//        dishRestController.create(dish, RESTAURANT2_ID);
+//        log.info("dish {}", dishRestController.getByRestaurantAndDate(RESTAURANT2_ID, DATE_TEST));
+        log.info("---------------------------------------------------------------\n\n\n\n\n");
 
 
-
-
-
-
-        DateTimeUtil.setThisDay(LocalDate.now());
-        DateTimeUtil.setСhangeVoteTime(LocalTime.now());
         appCtx.close();
     }
 }

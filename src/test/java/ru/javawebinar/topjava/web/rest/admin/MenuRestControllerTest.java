@@ -24,6 +24,8 @@ import static ru.javawebinar.topjava.testdata.MenuTestData.*;
 import static ru.javawebinar.topjava.testdata.RestaurantTestData.RESTAURANT1;
 import static ru.javawebinar.topjava.testdata.RestaurantTestData.RESTAURANT1_ID;
 import static ru.javawebinar.topjava.testdata.UserTestData.ADMIN;
+import static ru.javawebinar.topjava.util.DateTimeUtil.DATE_TEST;
+import static ru.javawebinar.topjava.util.DateTimeUtil.setThisDay;
 
 class MenuRestControllerTest extends AbstractControllerTest {
     private static final String REST_URL = MenuRestController.REST_URL + '/';
@@ -43,23 +45,11 @@ class MenuRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    void getByRestaurantNameWithDishesAndDate() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL + "restaurants/names/" + RESTAURANT1.getName())
-                .with(userHttpBasic(ADMIN))
-                .content(JsonUtil.writeValue(MENU))
-                .param("date", "2020-07-30")
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andDo(print())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
-    }
-
-    @Test
-    void getByRestaurantIdAndDate() throws Exception {
+    void getByRestaurantToday() throws Exception {
+        setThisDay(DATE_TEST);
         perform(MockMvcRequestBuilders.get(REST_URL + "restaurants/" + RESTAURANT1_ID)
                 .with(userHttpBasic(ADMIN))
                 .content(JsonUtil.writeValue(MENU))
-                .param("date", "2020-07-30")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andDo(print())
@@ -71,6 +61,29 @@ class MenuRestControllerTest extends AbstractControllerTest {
         perform(MockMvcRequestBuilders.get(REST_URL + "date/2020-07-30")
                 .with(userHttpBasic(ADMIN))
                 .content(JsonUtil.writeValue(allMenusOfDay()))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
+    }
+
+    @Test
+    void getByRestaurantNameAndDate() throws Exception {
+        perform(MockMvcRequestBuilders.get(REST_URL + "restaurants/names/" + RESTAURANT1.getName() + "/date/" + DATE_TEST)
+                .with(userHttpBasic(ADMIN))
+                .content(JsonUtil.writeValue(MENU))
+//                .param("date", "2020-07-30")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
+    }
+
+    @Test
+    void getByRestaurantIdAndDate() throws Exception {
+        perform(MockMvcRequestBuilders.get(REST_URL + "restaurants/" + RESTAURANT1_ID + "/date/" + DATE_TEST)
+                .with(userHttpBasic(ADMIN))
+                .content(JsonUtil.writeValue(MENU))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andDo(print())

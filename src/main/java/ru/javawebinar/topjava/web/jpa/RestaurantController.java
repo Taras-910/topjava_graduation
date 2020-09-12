@@ -52,6 +52,7 @@ public class RestaurantController {
         log.info("get Restaurants With Dishes");
         return repository.getAllWithDishes();
     }
+
     @Cacheable("restaurants")
     public List<Restaurant> getAllWithDishesOfDate(LocalDate date) {
         log.info("getWithDishesForDate with date {}",date);

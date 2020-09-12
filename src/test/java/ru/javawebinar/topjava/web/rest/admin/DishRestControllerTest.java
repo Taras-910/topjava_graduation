@@ -7,6 +7,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.javawebinar.topjava.model.Dish;
+import ru.javawebinar.topjava.testdata.DishTestData;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 import ru.javawebinar.topjava.util.json.JsonUtil;
 import ru.javawebinar.topjava.web.AbstractControllerTest;
@@ -58,7 +59,7 @@ class DishRestControllerTest extends AbstractControllerTest {
 
     @Test
     void update() throws Exception {
-        Dish updated = getUpdated();
+        Dish updated = DishTestData.getUpdated();
         perform(MockMvcRequestBuilders.put(REST_URL + DISH1_ID)
                 .param("restaurantId", valueOf(RESTAURANT1_ID))
                 .contentType(MediaType.APPLICATION_JSON)
@@ -71,7 +72,7 @@ class DishRestControllerTest extends AbstractControllerTest {
     @Test
     void create() throws Exception {
         setThisDay(DATE_TEST);
-        Dish newDish = getNew();
+        Dish newDish = DishTestData.getNew();
         ResultActions action = perform(MockMvcRequestBuilders.post(REST_URL)
                 .param("restaurantId", valueOf(RESTAURANT1_ID))
                 .contentType(MediaType.APPLICATION_JSON)
@@ -124,18 +125,7 @@ class DishRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    void deleteAll() throws Exception  {
-        setThisDay(DATE_TEST);
-        perform(MockMvcRequestBuilders.delete(REST_URL + DISH10_ID)
-                .param("restaurantId", valueOf(RESTAURANT2_ID))
-                .with(userHttpBasic(ADMIN))
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNoContent());
-        assertThrows(NotFoundException.class, () -> controller.get(DISH10_ID, RESTAURANT2_ID));
-    }
-
-    @Test
-    void deleteAllForRestaurantByDate() throws Exception  {
+    void deleteListOfMenu() throws Exception  {
         perform(MockMvcRequestBuilders.delete(REST_URL + "restaurants/" + RESTAURANT1_ID + "/date/2020-06-29")
                 .with(userHttpBasic(ADMIN))
                 .contentType(MediaType.APPLICATION_JSON))

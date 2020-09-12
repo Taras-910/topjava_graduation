@@ -2,6 +2,7 @@ package ru.javawebinar.topjava.web.rest.admin;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -37,8 +38,8 @@ public class VoteRestController {
     }
 
     @GetMapping(value = "/{id}")
-    public Vote get(@PathVariable Integer id) {
-        log.info("get vote {} ", id);
+    public Vote getById(@PathVariable int id) {
+        log.info("getById {} ", id);
         return checkNotFoundWithId(repository.get(id), id);
     }
 
@@ -49,25 +50,25 @@ public class VoteRestController {
     }
 
     @GetMapping(value = "/restaurants/{id}")
-    public List<Vote> getByRestaurant(@PathVariable int id) {
+    public List<Vote> getAllForRestaurant(@PathVariable int id) {
         log.info("get all for restaurant {}", id);
         return repository.getByRestaurant(id);
     }
 
     @GetMapping(value = "/date/{date}")
-    public List<Vote> getByDate(@PathVariable LocalDate date) {
+    public List<Vote> getAllByDate(@PathVariable @Nullable LocalDate date) {
         log.info("get by date {}", date);
         return repository.getByDate(date);
     }
 
     @GetMapping(value = "/users/{id}/date/{date}")
-    public boolean isExistForUserByDate(@PathVariable(name = "id") int userId, @PathVariable LocalDate date) {
+    public boolean isExistVote(@PathVariable(name = "id") int userId, @PathVariable @Nullable LocalDate date) {
         log.info("get for user {} by date {}", userId, date);
         return repository.isExistVote(date, userId );
     }
 
     @GetMapping(value = "/users/{id}")
-    public List<Vote> getAllForUser(@PathVariable(name = "id") int userId) {
+    public List<Vote> getAllForAuthUser(@PathVariable(name = "id") int userId) {
         log.info("getAllForUser with userId {}", userId);
         return repository.getAllForAuthUser(userId);
     }
@@ -91,10 +92,16 @@ public class VoteRestController {
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void update(@Valid @RequestBody Vote vote, @PathVariable(name = "id") int voteId) {
         log.info("update vote {} for userId {}", vote, authUserId());
-        Assert.notNull(vote, "vote must not be null");
-        assureIdConsistent(vote, voteId);
-        checkNotFound(LocalTime.now().isBefore(сhangeVoteTime), voteId +" for change vote up to 11:00");
-        checkNotFoundWithId(repository.save(vote, authUserId()), vote.id());
+        Vote updated = null;
+        try {
+            Assert.notNull(vote, "vote must not be null");
+            assureIdConsistent(vote, voteId);
+            checkNotFound(LocalTime.now().isBefore(сhangeVoteTime), voteId +" for change vote up to 11:00");
+            updated = repository.save(vote, authUserId());
+            checkNotFoundWithId(updated, vote.id());
+        } catch (IllegalArgumentException | DataIntegrityViolationException e) {
+            throw new NotFoundException(" Illegal argument vote=" + vote + " or id=" + voteId);
+        }
     }
 
     @PostMapping(value = "/restaurants/{id}/users/{userId}")
@@ -102,8 +109,9 @@ public class VoteRestController {
         log.info("create Vote {} for restaurantId", restaurantId);
         Vote created;
         try {
+            checkNotFound(!isExistVote(userId, thisDay), userId +" - so as vote already exist for this day (" + thisDay + ")");
             created = repository.save(new Vote(null, thisDay, restaurantId, userId), userId);
-        } catch (Exception e) {
+        } catch (IllegalArgumentException | DataIntegrityViolationException e) {
             throw new NotFoundException("vote of user " + userId + " for this date (" + thisDay + ") already exist");
         }
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
@@ -113,6 +121,6 @@ public class VoteRestController {
     }
 
     public boolean authVote(){
-        return isExistForUserByDate(authUserId(), thisDay);
+        return isExistVote(authUserId(), thisDay);
     }
 }

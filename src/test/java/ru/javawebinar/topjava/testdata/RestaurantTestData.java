@@ -8,13 +8,11 @@ import java.util.List;
 
 import static ru.javawebinar.topjava.model.AbstractBaseEntity.START_SEQ;
 import static ru.javawebinar.topjava.testdata.DishTestData.*;
-import static ru.javawebinar.topjava.testdata.MenuTestData.newRestaurantWithDishes;
 
 public class RestaurantTestData {
     public static TestMatcher<Restaurant> RESTAURANT_MATCHER = TestMatcher.usingFieldsComparator(Restaurant.class,"dishes");
     public static final int RESTAURANT1_ID = START_SEQ + 2;
     public static final int RESTAURANT2_ID = START_SEQ + 3;
-    public static final Restaurant NEW_RESTAURANT = newRestaurantWithDishes();
     public static final Restaurant RESTAURANT1 = new Restaurant(RESTAURANT1_ID, "Дубок");
     public static final Restaurant RESTAURANT2 = new Restaurant(RESTAURANT2_ID, "Прага");
 
@@ -42,4 +40,5 @@ public class RestaurantTestData {
     public static Restaurant getUpdated() {
         return new Restaurant(RESTAURANT1_ID, "Обновленный ресторан");
     }
+
 }
