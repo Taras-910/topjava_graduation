@@ -61,10 +61,10 @@ public class VoteRestController {
         return repository.getByDate(date);
     }
 
-    @GetMapping(value = "/users/{id}/date/{date}")
-    public boolean isExistVote(@PathVariable(name = "id") int userId, @PathVariable @Nullable LocalDate date) {
+    @GetMapping(value = "/date/{date}/users/{id}")
+    public Vote getByDateForUser(@PathVariable(name = "id") int userId, @PathVariable LocalDate date) {
         log.info("get for user {} by date {}", userId, date);
-        return repository.isExistVote(date, userId );
+        return repository.getByDateForAuth(date, userId );
     }
 
     @GetMapping(value = "/users/{id}")
@@ -120,7 +120,8 @@ public class VoteRestController {
         return ResponseEntity.created(uriOfNewResource).body(created);
     }
 
-    public boolean authVote(){
-        return isExistVote(authUserId(), thisDay);
+    public boolean isExistVote(int userId, LocalDate date){
+        return getByDateForUser(userId, date) != null;
     }
+
 }

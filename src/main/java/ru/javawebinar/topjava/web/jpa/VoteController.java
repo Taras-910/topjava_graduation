@@ -38,11 +38,6 @@ public class VoteController {
         return repository.getByDateForAuth(date, authUserId());
     }
 
-    public boolean isExistVote(LocalDate date) {
-        log.info("isExistVote for user {} by date {}", authUserId(), date);
-        return repository.isExistVote(date, authUserId());
-    }
-
     public List<Vote> getAllForAuthUser(int userId) {
         log.info("get all for User {}", userId);
         return repository.getAllForAuthUser(userId);
@@ -96,9 +91,4 @@ public class VoteController {
         }
         checkNotFoundWithId(updated, vote.id());
     }
-
-    public boolean authVote(){
-        return isExistVote(thisDay);
-    }
-
 }

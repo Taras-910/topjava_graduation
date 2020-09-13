@@ -33,7 +33,7 @@ public class AnonymousMenuRestController {
     public List<Menu> getAllMenusThisDay() {
         setThisDay(DATE_TEST);
         log.info("getAllMenus");
-        return toListMenus(restaurantController.getAllWithDishesOfDate(thisDay), false);
+        return toListMenus(restaurantController.getAllWithDishesOfDate(thisDay), null);
     }
 
     @Transactional

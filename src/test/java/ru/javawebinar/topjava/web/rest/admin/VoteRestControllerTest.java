@@ -18,7 +18,6 @@ import java.time.LocalDate;
 
 import static java.lang.String.valueOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -82,14 +81,13 @@ class VoteRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    void isExistForUserByDate() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL + "users/" + USER_ID + "/date/2020-07-30")
+    void getByDateForUser() throws Exception {
+        perform(MockMvcRequestBuilders.get(REST_URL + "/date/" + DATE_TEST + "/users/" + USER_ID)
                 .with(userHttpBasic(ADMIN))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andDo(print())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
-        assertTrue(controller.isExistVote(ADMIN_ID, DATE_TEST));
+                .andDo(print());
+        VOTE_MATCHER.assertMatch(controller.getByDateForUser(ADMIN_ID, DATE_TEST), VOTE7);
     }
 
     @Test

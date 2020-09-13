@@ -69,11 +69,6 @@ public class DataJpaVoteRepository implements VoteRepository {
     }
 
     @Override
-    public boolean isExistVote(LocalDate date, int authUserId) {
-        return getByDateForAuth(date, authUserId) != null;
-    }
-
-    @Override
     public List<Vote> getByRestaurantAuth(int restaurantId, int authUserId) {
         return voteRepository.getByRestaurantAuth(restaurantId, authUserId);
     }

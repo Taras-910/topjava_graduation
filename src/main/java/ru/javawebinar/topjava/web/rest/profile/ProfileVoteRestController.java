@@ -60,12 +60,6 @@ public class ProfileVoteRestController {
         return checkNotFound(voteRepository.getByDateForAuth(date, authUserId()), "for date " + date);
     }
 
-    @GetMapping(value = "/exist/date/{date}")
-    public boolean isExistVote(@PathVariable LocalDate date) {
-        log.info("get for user {} by date {}", authUserId(), date);
-        return voteRepository.isExistVote(date, authUserId());
-    }
-
     @GetMapping(value = "/between/start/{startDate}/end/{endDate}")
     public List<Vote> getBetween(@PathVariable @Nullable LocalDate startDate, @PathVariable @Nullable LocalDate endDate) {
         log.info("getBetween with dates({} - {}) for userId {}", startDate, endDate, authUserId());

@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.javawebinar.topjava.model.Restaurant;
+import ru.javawebinar.topjava.model.Vote;
 import ru.javawebinar.topjava.to.Menu;
 import ru.javawebinar.topjava.web.jpa.DishController;
 import ru.javawebinar.topjava.web.rest.admin.RestaurantRestController;
@@ -21,6 +22,7 @@ import java.util.List;
 import static ru.javawebinar.topjava.util.DateTimeUtil.thisDay;
 import static ru.javawebinar.topjava.util.MenuUtil.toListMenus;
 import static ru.javawebinar.topjava.util.MenuUtil.toMenu;
+import static ru.javawebinar.topjava.web.SecurityUtil.authUserId;
 
 @RestController
 @RequestMapping(value = ProfileMenuRestController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -39,39 +41,43 @@ public class ProfileMenuRestController {
     @Transactional
     @GetMapping
     public List<Menu> getAllToday(){
-        LocalDate date = thisDay;
-        log.info("getMenusToday date {}", date);
-        boolean voteToday = voteRestController.authVote();
-        return toListMenus(restaurantRestController.getAllWithDishesOfDate(date), false);
+        log.info("getMenusToday date {}", thisDay);
+        Vote vote = voteRestController.getByDateForUser(authUserId(), thisDay);
+        return toListMenus(restaurantRestController.getAllWithDishesOfDate(thisDay), vote);
     }
 
     @Transactional
     @GetMapping("/restaurants/{id}")
     public Menu getByRestaurantToday(@PathVariable(name = "id")int restaurantId) {
         log.info("getMenu for restaurantId {}", restaurantId);
-        return toMenu(restaurantRestController.getByIdWithDishesOfDate(restaurantId, thisDay), false);
+        boolean toVote = voteRestController.isExistVote(authUserId(), thisDay);
+        return toMenu(restaurantRestController.getByIdWithDishesOfDate(restaurantId, thisDay), toVote);
     }
 
     @Transactional
     @GetMapping("/restaurants/{id}/date/{date}")
     public Menu getByRestaurantIdAndDate(@PathVariable(name = "id") int restaurantId, @Nullable @PathVariable LocalDate date) {
         log.info("getTodayMenu for restaurant {}", restaurantId);
-        return toMenu(restaurantRestController.getByIdWithDishesOfDate(restaurantId, date), false);
+        boolean toVote = voteRestController.isExistVote(authUserId(), thisDay);
+        return toMenu(restaurantRestController.getByIdWithDishesOfDate(restaurantId, date), toVote);
     }
 
-   @Transactional
+    @Transactional
     @GetMapping("/restaurants/names/{name}/date/{date}")
     public Menu getByRestaurantNameAndDate(@PathVariable String name, @Nullable @PathVariable LocalDate date) {
         log.info("getTodayMenu for restaurant {}", name);
         Restaurant restaurantDB = restaurantRestController.getByName(name);
-        return toMenu(restaurantRestController.getByIdWithDishesOfDate(restaurantDB.id(), date), false);
+        boolean toVote = voteRestController.isExistVote(authUserId(), thisDay);
+        return toMenu(restaurantRestController.getByIdWithDishesOfDate(restaurantDB.id(), date), toVote);
     }
 
     @Transactional
     @GetMapping(value = "/date/{date}")
     public List<Menu> getAllByDate(@Nullable @PathVariable LocalDate date){
         log.info("getMenusToday date {}", date);
-        return toListMenus(restaurantRestController.getAllWithDishesOfDate(date), false);
+        boolean toVote = voteRestController.isExistVote(authUserId(), date);
+        Vote vote = voteRestController.getByDateForUser(authUserId(), thisDay);
+        return toListMenus(restaurantRestController.getAllWithDishesOfDate(date), vote);
     }
 
 }
