@@ -28,7 +28,7 @@ import static ru.javawebinar.topjava.web.SecurityUtil.authUserId;
 @RequestMapping(value = ProfileMenuRestController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 public class ProfileMenuRestController {
     private static final Logger log = LoggerFactory.getLogger(DishController.class);
-    protected static final String REST_URL = "/rest/admin/menus";
+    protected static final String REST_URL = "/rest/profile/menus";
 
     private final VoteRestController voteRestController;
     private final RestaurantRestController restaurantRestController;
