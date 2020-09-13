@@ -33,7 +33,7 @@ Maven/ Spring/ Security/ JPA(Hibernate)/ REST(Jackson).
 `curl -L -X GET 'http://localhost:8080/topjava/rest/admin/votes' \
  -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
 
-#### vote admin get (by id)
+#### vote admin get (byId)
 `curl -L -X GET 'http://localhost:8080/topjava/rest/admin/votes/100015' \
  -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
 
@@ -49,9 +49,9 @@ Maven/ Spring/ Security/ JPA(Hibernate)/ REST(Jackson).
 `curl -L -X GET 'http://localhost:8080/topjava/rest/admin/votes/users/100001' \
  -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
  
-#### vote admin isExistVote
-`curl -L -X GET 'http://localhost:8080/topjava/rest/admin/votes/users/100000/date/2020-07-30' \
--H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
+#### vote admin getByDateForUser
+`curl -L -X GET 'http://localhost:8080/topjava/rest/admin/votes/date/2020-07-30/users/100000' \
+ -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
  
 #### vote admin getBetweenForUser 
 `curl -L -X GET 'http://localhost:8080/topjava/rest/admin/votes/between/users/100000/start/2020-07-30/end/2020-07-30' \
