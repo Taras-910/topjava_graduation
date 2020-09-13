@@ -4,19 +4,18 @@ import ru.javawebinar.topjava.model.Dish;
 import ru.javawebinar.topjava.model.Restaurant;
 import ru.javawebinar.topjava.to.Menu;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class MenuUtil {
 
-    public static List<Menu> toListMenus(List<Restaurant> restaurants, boolean voteAuth, LocalDate date) {
+    public static List<Menu> toListMenus(List<Restaurant> restaurants, boolean toVote) {
         return restaurants.stream()
-                .map(restaurant -> toMenu(restaurant, voteAuth, date))
+                .map(restaurant -> toMenu(restaurant, toVote))
                 .collect(Collectors.toList());
     }
-    public static Menu toMenu (Restaurant restaurant, boolean voteAuth, LocalDate date){
-        return new Menu(restaurant, date, voteAuth, false);
+    public static Menu toMenu (Restaurant restaurant, boolean toVote){
+        return new Menu(restaurant.getId(), restaurant.getName(), restaurant.getDishes(), false);
     }
 
     public static boolean countWithin(List<Dish> newDishes, List<Dish> storedDishes){

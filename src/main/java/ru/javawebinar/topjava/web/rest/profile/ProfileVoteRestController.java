@@ -20,6 +20,7 @@ import java.time.LocalTime;
 import java.util.List;
 
 import static java.time.LocalDate.now;
+import static ru.javawebinar.topjava.util.DateTimeUtil.thisDay;
 import static ru.javawebinar.topjava.util.DateTimeUtil.сhangeVoteTime;
 import static ru.javawebinar.topjava.util.ValidationUtil.*;
 import static ru.javawebinar.topjava.web.SecurityUtil.authUserId;
@@ -96,7 +97,7 @@ public class ProfileVoteRestController {
         try {
             createdVote = voteRepository.save(new Vote(null, now(), restaurantId, authUserId()), authUserId());
         } catch (Exception e) {
-            throw new NotFoundException("vote for this date (" + now() + ") already exist");
+            throw new NotFoundException("vote for this date (" + thisDay + ") already exist");
         }
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path(REST_URL + "/{id}")

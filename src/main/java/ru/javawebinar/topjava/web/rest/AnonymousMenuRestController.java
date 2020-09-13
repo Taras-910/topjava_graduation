@@ -33,7 +33,7 @@ public class AnonymousMenuRestController {
     public List<Menu> getAllMenusThisDay() {
         setThisDay(DATE_TEST);
         log.info("getAllMenus");
-        return toListMenus(restaurantController.getAllWithDishesOfDate(thisDay), false, thisDay);
+        return toListMenus(restaurantController.getAllWithDishesOfDate(thisDay), false);
     }
 
     @Transactional
@@ -41,6 +41,6 @@ public class AnonymousMenuRestController {
     public Menu getMenuByRestaurantIdThisDay(@PathVariable(name = "id") int restaurantId) {
         setThisDay(DATE_TEST);
         log.info("getMenu by restaurant id {}", restaurantId);
-        return toMenu(restaurantController.getByIdWithDishesOfDate(restaurantId, thisDay),false,thisDay);
+        return toMenu(restaurantController.getByIdWithDishesOfDate(restaurantId, thisDay),false);
     }
 }

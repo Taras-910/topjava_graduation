@@ -20,9 +20,10 @@ Maven/ Spring/ Security/ JPA(Hibernate)/ REST(Jackson).
               `/anonymous/**`    - свободный доступ просмотра актуальных меню
 - тестирование репозитория [Junit4] 
 - тестирование REST контроллеров [Junit5] через матчеры 
-- логирование тестов
+- логирование
 - `curl` тестирования голосований с
 (полный список команд в config.curl.md) :
+
 
 #### curl (`topjava_graduation`).
 

@@ -1,52 +1,72 @@
 package ru.javawebinar.topjava.to;
 
-import ru.javawebinar.topjava.model.Restaurant;
+import ru.javawebinar.topjava.model.Dish;
 
 import javax.validation.constraints.NotNull;
-import java.time.LocalDate;
+import java.util.List;
 
 public class Menu {
 
-    @NotNull
-    private Restaurant restaurant;
+    Integer restaurantId;
 
     @NotNull
-    private LocalDate date = LocalDate.now();
+    private String restaurantName;
 
-    private boolean voteAuth;
+    @NotNull
+    private List<Dish> dishes;
 
     private boolean toVote = false;
 
-    public Menu(Restaurant restaurant, LocalDate date, boolean voteAuth, boolean toVote) {
-        this.restaurant = restaurant;
-        this.date = date;
-        this.voteAuth = voteAuth;
+    public Menu(int restaurantId, @NotNull String restaurantName, @NotNull List<Dish> dishes, boolean toVote) {
+        this.restaurantId = restaurantId;
+        this.restaurantName = restaurantName;
+        this.dishes = dishes;
         this.toVote = toVote;
     }
 
-    public Restaurant getRestaurant() { return restaurant; }
+    public Menu(Menu menu){
+        this(menu.getRestaurantId() ,menu.getRestaurantName() ,menu.getDishes() ,menu.isToVote());
+    }
 
-    public void setRestaurant(Restaurant restaurant) { this.restaurant = restaurant; }
+    public int getRestaurantId() {
+        return restaurantId;
+    }
 
-    public LocalDate getDate() { return date; }
+    public void setRestaurantId(int restaurantId) {
+        this.restaurantId = restaurantId;
+    }
 
-    public void setDate(LocalDate date) { this.date = date; }
+    public String getRestaurantName() {
+        return restaurantName;
+    }
 
-    public boolean isVoteAuth() { return voteAuth; }
+    public void setRestaurantName(String restaurantName) {
+        this.restaurantName = restaurantName;
+    }
 
-    public void setVoteAuth(boolean voteAuth) { this.voteAuth = voteAuth; }
+    public List<Dish> getDishes() {
+        return dishes;
+    }
 
-    public boolean isToVote() { return toVote; }
+    public void setDishes(List<Dish> dishes) {
+        this.dishes = dishes;
+    }
 
-    public void setToVote(boolean toVote) { this.toVote = toVote; }
+    public boolean isToVote() {
+        return toVote;
+    }
+
+    public void setToVote(boolean toVote) {
+        this.toVote = toVote;
+    }
 
     @Override
     public String toString() {
-        return "Menu{" +
-                ", restaurant=" + restaurant +
-                ", date=" + date +
-                ", voteAuth=" + voteAuth +
-                ", toVote=" + toVote +
+        return "Menu\n{" +
+                "restaurantId=" + restaurantId +
+                ",\n restaurantName='" + restaurantName + '\'' +
+                ",\n dishes=" + dishes +
+                ",\n toVote=" + toVote +
                 '}';
     }
 }
