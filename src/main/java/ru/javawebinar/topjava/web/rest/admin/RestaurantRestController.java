@@ -103,7 +103,7 @@ public class RestaurantRestController {
     @CacheEvict(value = "rest_restaurants", allEntries = true)
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    public ResponseEntity<Restaurant> update(@Valid @PathVariable int id, @RequestBody Restaurant restaurant) {
+    public ResponseEntity<Restaurant> update(@RequestBody Restaurant restaurant, @Valid @PathVariable int id) {
         log.info("update restaurant {} for id {}", restaurant, id);
         Restaurant updated;
         try {

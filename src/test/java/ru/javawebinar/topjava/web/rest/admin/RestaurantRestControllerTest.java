@@ -21,7 +21,9 @@ import static ru.javawebinar.topjava.TestUtil.readFromJson;
 import static ru.javawebinar.topjava.TestUtil.userHttpBasic;
 import static ru.javawebinar.topjava.testdata.RestaurantTestData.*;
 import static ru.javawebinar.topjava.testdata.UserTestData.ADMIN;
+import static ru.javawebinar.topjava.testdata.UserTestData.NOT_FOUND;
 import static ru.javawebinar.topjava.util.DateTimeUtil.DATE_TEST;
+import static ru.javawebinar.topjava.util.DateTimeUtil.thisDay;
 
 class RestaurantRestControllerTest extends AbstractControllerTest {
     private static final String REST_URL = RestaurantRestController.REST_URL + '/';
@@ -67,7 +69,6 @@ class RestaurantRestControllerTest extends AbstractControllerTest {
     void getByIdWithDishesOfDate() throws Exception {
         perform(MockMvcRequestBuilders.get(REST_URL + RESTAURANT1_ID +"/date/" + DATE_TEST)
                 .with(userHttpBasic(ADMIN))
-//                .param("date", "2020-07-30")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andDo(print())
@@ -98,6 +99,14 @@ class RestaurantRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
+    void getErrorData() throws Exception {
+        assertThrows(NotFoundException.class, () -> controller.getById(NOT_FOUND));
+        assertThrows(NotFoundException.class, () -> controller.getByIdWithDishesOfDate(NOT_FOUND, thisDay));
+        assertThrows(NotFoundException.class, () -> controller.getByIdWithDishesOfDate(RESTAURANT1_ID, null));
+    }
+
+
+    @Test
     void update() throws Exception {
         Restaurant updated = getUpdated();
         perform(MockMvcRequestBuilders.put(REST_URL + RESTAURANT1_ID)
@@ -107,6 +116,14 @@ class RestaurantRestControllerTest extends AbstractControllerTest {
                 .content(JsonUtil.writeValue(updated)))
                 .andExpect(status().isCreated());
         RESTAURANT_MATCHER.assertMatch(controller.getById(RESTAURANT1_ID), updated);
+    }
+
+    @Test
+    void updateErrorData() throws Exception {
+        assertThrows(NotFoundException.class, () -> controller.update(new Restaurant(null, "Новый"), RESTAURANT1_ID));
+        assertThrows(NotFoundException.class, () -> controller.update(new Restaurant(RESTAURANT1_ID, "Новый"), NOT_FOUND));
+        assertThrows(NotFoundException.class, () -> controller.update(new Restaurant(null, null), RESTAURANT1_ID));
+        assertThrows(NotFoundException.class, () -> controller.update(new Restaurant(RESTAURANT1_ID, "Новый"), RESTAURANT2_ID));
     }
 
     @Test
@@ -126,6 +143,13 @@ class RestaurantRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
+    public void createErrorDate() throws Exception {
+        assertThrows(NotFoundException.class, () -> controller.create(new Restaurant(RESTAURANT1_ID, "Новый")));
+        assertThrows(NotFoundException.class, () -> controller.create(new Restaurant(NOT_FOUND, "Новый")));
+        assertThrows(NotFoundException.class, () -> controller.create(new Restaurant(RESTAURANT1_ID, null)));
+    }
+
+    @Test
     void delete() throws Exception {
         perform(MockMvcRequestBuilders.delete(REST_URL + RESTAURANT2_ID)
                 .param("restaurantId", valueOf(RESTAURANT2_ID))
@@ -133,5 +157,10 @@ class RestaurantRestControllerTest extends AbstractControllerTest {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
         assertThrows(NotFoundException.class, () -> controller.getById(RESTAURANT2_ID));
+    }
+
+    @Test
+    public void deletedNotFound() throws Exception {
+        assertThrows(NotFoundException.class, () -> controller.delete(NOT_FOUND));
     }
 }

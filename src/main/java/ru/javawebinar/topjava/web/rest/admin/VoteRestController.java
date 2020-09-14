@@ -88,16 +88,16 @@ public class VoteRestController {
         checkNotFoundWithId(repository.delete(voteId, authUserId()), voteId);
     }
 
-    @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/{id}/users/{userId}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    public void update(@Valid @RequestBody Vote vote, @PathVariable(name = "id") int voteId) {
-        log.info("update vote {} for userId {}", vote, authUserId());
-        Vote updated = null;
+    public void update(@Valid @RequestBody Vote vote, @PathVariable(name = "id") int voteId, @PathVariable int userId) {
+        log.info("update vote {} for userId {}", vote, userId);
+        Vote updated;
         try {
             Assert.notNull(vote, "vote must not be null");
             assureIdConsistent(vote, voteId);
             checkNotFound(LocalTime.now().isBefore(сhangeVoteTime), voteId +" for change vote up to 11:00");
-            updated = repository.save(vote, authUserId());
+            updated = repository.save(vote, userId);
             checkNotFoundWithId(updated, vote.id());
         } catch (IllegalArgumentException | DataIntegrityViolationException e) {
             throw new NotFoundException(" Illegal argument vote=" + vote + " or id=" + voteId);

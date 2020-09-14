@@ -28,6 +28,7 @@ import static ru.javawebinar.topjava.testdata.RestaurantTestData.RESTAURANT2_ID;
 import static ru.javawebinar.topjava.testdata.UserTestData.*;
 import static ru.javawebinar.topjava.testdata.VoteTestData.*;
 import static ru.javawebinar.topjava.util.DateTimeUtil.*;
+import static ru.javawebinar.topjava.web.SecurityUtil.setAuthorizedUserTest;
 
 class VoteRestControllerTest extends AbstractControllerTest {
     private Logger log = LoggerFactory.getLogger(getClass());
@@ -45,6 +46,12 @@ class VoteRestControllerTest extends AbstractControllerTest {
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(VOTE_MATCHER.contentJson(VOTE1));
+    }
+
+    @Test
+    void getNotFound() throws Exception {
+        setAuthorizedUserTest(ADMIN);
+        assertThrows(NotFoundException.class, () -> controller.getById(NOT_FOUND));
     }
 
     @Test
@@ -116,12 +123,33 @@ class VoteRestControllerTest extends AbstractControllerTest {
     void update() throws Exception {
         DateTimeUtil.setСhangeVoteTime(TIME_TEST_IN);
         Vote updated = VoteTestData.getUpdated();
-        perform(MockMvcRequestBuilders.put(REST_URL + VOTE1_ID)
+        perform(MockMvcRequestBuilders.put(REST_URL + VOTE1_ID + "/users/" + ADMIN_ID)
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(userHttpBasic(ADMIN))
                 .content(JsonUtil.writeValue(updated)))
                 .andExpect(status().isNoContent());
         VOTE_MATCHER.assertMatch(controller.getById(VOTE1_ID), updated);
+    }
+
+    @Test
+    void updateOverTime() throws Exception {
+        Vote updated = VoteTestData.getUpdated();
+        setСhangeVoteTime(TIME_TEST_OUT);
+        assertThrows(NotFoundException.class, () -> controller.update(updated, VOTE1_ID, ADMIN_ID));
+    }
+
+    @Test
+    void updateNotOwn() throws Exception {
+        Vote updated = VoteTestData.getUpdated();
+        setСhangeVoteTime(TIME_TEST_IN);
+        assertThrows(NotFoundException.class, () -> controller.update(updated, VOTE1_ID, USER_ID));
+    }
+
+    @Test
+    void updateIllegalArgument() throws Exception {
+        Vote updated = VoteTestData.getUpdated();
+        setСhangeVoteTime(TIME_TEST_IN);
+        assertThrows(NotFoundException.class, () -> controller.update(updated, NOT_FOUND, ADMIN_ID));
     }
 
     @Test
@@ -141,6 +169,18 @@ class VoteRestControllerTest extends AbstractControllerTest {
         VOTE_MATCHER.assertMatch(controller.getById(newId), newVote);
     }
 
+    @org.junit.Test
+    public void createErrorData() throws Exception {
+        assertThrows(NotFoundException.class, () -> controller.create(NOT_FOUND, ADMIN_ID));
+        assertThrows(NotFoundException.class, () -> controller.create( RESTAURANT2_ID, NOT_FOUND));
+    }
+
+    @Test
+    public void createRepeatPerDay() throws Exception {
+        setThisDay(DATE_TEST);
+        assertThrows(NotFoundException.class, () -> controller.create(RESTAURANT1_ID, ADMIN_ID));
+    }
+
     @Test
     void delete() throws Exception {
         setСhangeVoteTime(TIME_TEST_IN);
@@ -150,5 +190,24 @@ class VoteRestControllerTest extends AbstractControllerTest {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
         assertThrows(NotFoundException.class, () -> controller.getById(VOTE1_ID));
+    }
+
+    @Test
+    void deletedNotFound() throws Exception {
+        assertThrows(NotFoundException.class, () -> controller.delete(NOT_FOUND));
+    }
+
+    @Test
+    void deleteNotOwn() throws Exception {
+        setAuthorizedUserTest(USER);
+        setСhangeVoteTime(TIME_TEST_IN);
+        assertThrows(NotFoundException.class, () -> controller.delete(VOTE1_ID));
+    }
+
+    @Test
+    void deleteOverTime() throws Exception {
+        setAuthorizedUserTest(ADMIN);
+        setСhangeVoteTime(TIME_TEST_OUT);
+        assertThrows(NotFoundException.class, () -> controller.delete(VOTE1_ID));
     }
 }
