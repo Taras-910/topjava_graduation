@@ -37,8 +37,6 @@ public class DishTestData {
     public static final Dish DISH18 = new Dish(null, "Created еда7",of(2020, Month.JULY, 30), 2.5F);
     public static final Dish DISH19 = new Dish(null, "Created еда8",of(2020, Month.JULY, 30), 2.5F);
 
-    public static final List<Dish> DISHES_RESTAURANT2 = List.of(DISH7, DISH8, DISH9, DISH10, DISH11);
-    public static final List<Dish> DISHES_ALL = List.of(DISH1, DISH2, DISH3, DISH4, DISH5, DISH6, DISH7, DISH8, DISH9, DISH10, DISH11);
     public static final List<Dish> DISHES_GET_ALL = List.of(DISH1, DISH2, DISH3, DISH4, DISH5, DISH6, DISH7, DISH8, DISH9, DISH10, DISH11);
     public static final List<Dish> DISHES_RESTAURANT_DATE = List.of(DISH6, DISH5);
 
@@ -53,10 +51,6 @@ public class DishTestData {
     }
     public static List<Dish> overLimitMin() {
         return asList(new Dish(null, "Created еда3", now(), 2.2F));
-    }
-
-    public static List<Dish> getNewDishes() {
-        return asList(DISH14, DISH15, DISH16);
     }
 
     public static Dish getUpdated() {
