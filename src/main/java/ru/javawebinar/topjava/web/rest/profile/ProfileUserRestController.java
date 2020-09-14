@@ -14,7 +14,7 @@ import static ru.javawebinar.topjava.util.ValidationUtil.assureIdConsistent;
 @RequestMapping(ProfileUserRestController.REST_URL)
 public class ProfileUserRestController {
     protected final Logger log = LoggerFactory.getLogger(getClass());
-    protected static final String REST_URL = "/rest/profile";
+    protected static final String REST_URL = "/rest/profile/users";
     private final UserService service;
 
     public ProfileUserRestController(UserService service) {

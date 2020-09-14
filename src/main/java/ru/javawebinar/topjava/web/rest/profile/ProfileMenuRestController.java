@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.javawebinar.topjava.model.Restaurant;
 import ru.javawebinar.topjava.model.Vote;
 import ru.javawebinar.topjava.to.Menu;
-import ru.javawebinar.topjava.web.jpa.DishController;
 import ru.javawebinar.topjava.web.rest.admin.RestaurantRestController;
 import ru.javawebinar.topjava.web.rest.admin.VoteRestController;
 
@@ -27,7 +26,7 @@ import static ru.javawebinar.topjava.web.SecurityUtil.authUserId;
 @RestController
 @RequestMapping(value = ProfileMenuRestController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 public class ProfileMenuRestController {
-    private static final Logger log = LoggerFactory.getLogger(DishController.class);
+    private static final Logger log = LoggerFactory.getLogger(ProfileMenuRestController.class);
     protected static final String REST_URL = "/rest/profile/menus";
 
     private final VoteRestController voteRestController;
@@ -44,6 +43,13 @@ public class ProfileMenuRestController {
         log.info("getMenusToday date {}", thisDay);
         Vote vote = voteRestController.getByDateForUser(authUserId(), thisDay);
         return toListMenus(restaurantRestController.getAllWithDishesOfDate(thisDay), vote);
+    }
+
+    @Transactional
+    @GetMapping("/all")
+    public List<Menu> getAll(){
+        log.info("getAll");
+        return toListMenus(restaurantRestController.getAllWithDishes(), null);
     }
 
     @Transactional

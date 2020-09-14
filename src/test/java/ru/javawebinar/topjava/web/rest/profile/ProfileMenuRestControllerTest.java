@@ -37,6 +37,17 @@ class ProfileMenuRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
+    void getAll() throws Exception {
+        perform(MockMvcRequestBuilders.get(REST_URL + "all")
+                .with(userHttpBasic(ADMIN))
+                .content(JsonUtil.writeValue(allMenusOfDay()))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
+    }
+
+    @Test
     void getByRestaurantToday() throws Exception {
         setThisDay(DATE_TEST);
         perform(MockMvcRequestBuilders.get(REST_URL + "restaurants/" + RESTAURANT1_ID)

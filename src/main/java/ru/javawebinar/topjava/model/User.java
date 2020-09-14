@@ -42,10 +42,6 @@ public class User extends AbstractNamedEntity implements Serializable {
     @ElementCollection(fetch = FetchType.EAGER)
     private Set<Role> roles;
 
-//    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-//    @JsonIgnore
-//    private List<Vote> votes;
-
     public User() {
     }
 

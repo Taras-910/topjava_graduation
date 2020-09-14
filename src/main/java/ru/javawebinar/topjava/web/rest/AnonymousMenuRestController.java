@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.javawebinar.topjava.to.Menu;
-import ru.javawebinar.topjava.web.jpa.RestaurantController;
+import ru.javawebinar.topjava.web.rest.admin.RestaurantRestController;
 
 import java.util.List;
 
@@ -22,9 +22,9 @@ import static ru.javawebinar.topjava.util.MenuUtil.toMenu;
 public class AnonymousMenuRestController {
     protected final Logger log = LoggerFactory.getLogger(getClass());
     protected static final String REST_URL = "/anonymous";
-    private final RestaurantController restaurantController;
+    private final RestaurantRestController restaurantController;
 
-    public AnonymousMenuRestController(RestaurantController restaurantController) {
+    public AnonymousMenuRestController(RestaurantRestController restaurantController) {
         this.restaurantController = restaurantController;
     }
 
