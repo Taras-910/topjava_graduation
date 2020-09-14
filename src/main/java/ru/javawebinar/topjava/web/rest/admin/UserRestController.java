@@ -11,6 +11,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.service.UserService;
 
+import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
 
@@ -39,7 +40,7 @@ public class UserRestController {
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<User> create(@RequestBody User user) {
+    public ResponseEntity<User> create(@Valid @RequestBody User user) {
         User created = service.create(user);
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path(REST_URL + "/{id}")
@@ -55,7 +56,7 @@ public class UserRestController {
 
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    public void update(@RequestBody User user, @PathVariable int id) {
+    public void update(@Valid @RequestBody User user, @PathVariable int id) {
         assureIdConsistent(user, id);
         service.update(user);
     }

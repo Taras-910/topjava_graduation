@@ -13,7 +13,7 @@ public class RestaurantTestData {
     public static TestMatcher<Restaurant> RESTAURANT_MATCHER = TestMatcher.usingFieldsComparator(Restaurant.class,"dishes");
     public static final int RESTAURANT1_ID = START_SEQ + 2;
     public static final int RESTAURANT2_ID = START_SEQ + 3;
-    public static final Restaurant RESTAURANT1 = new Restaurant(RESTAURANT1_ID, "Дубок");
+    public static final Restaurant RESTAURANT1 = new Restaurant(RESTAURANT1_ID, "Венеция");
     public static final Restaurant RESTAURANT2 = new Restaurant(RESTAURANT2_ID, "Прага");
 
     public static List<Restaurant> withDishesByDate() {

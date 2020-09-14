@@ -23,90 +23,40 @@ Maven/ Spring/ Security/ JPA(Hibernate)/ REST(Jackson).
 - тестирование репозитория [Junit4] 
 - тестирование REST контроллеров [Junit5] через матчеры 
 - логирование
-- `curl` тестирования голосований с
-(полный список команд в config.curl.md) :
-
+- `curl` - команды тестирования голосований:
 
 #### curl (`topjava_graduation`).
 
-#### vote admin getAll
-`curl -L -X GET 'http://localhost:8080/topjava/rest/admin/votes' \
- -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
+#### anonymous getAllMenusThisDay
+`curl -L -X GET 'http://localhost:8080/topjava/anonymous' \
+ -H 'Authorization: Basic Og=='`
 
-#### vote admin get (byId)
-`curl -L -X GET 'http://localhost:8080/topjava/rest/admin/votes/100015' \
- -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
-
-#### vote admin getAllForRestaurant
-`curl -L -X GET 'http://localhost:8080/topjava/rest/admin/votes/restaurants/100003' \
- -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
-
-#### vote admin getByDate
-`curl -L -X GET 'http://localhost:8080/topjava/rest/admin/votes/date/2020-07-29' \
- -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
-
-#### vote admin getAllForUser
-`curl -L -X GET 'http://localhost:8080/topjava/rest/admin/votes/users/100001' \
- -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
- 
-#### vote admin getByDateForUser
-`curl -L -X GET 'http://localhost:8080/topjava/rest/admin/votes/date/2020-07-30/users/100000' \
- -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
- 
-#### vote admin getBetweenForUser 
-`curl -L -X GET 'http://localhost:8080/topjava/rest/admin/votes/between/users/100000/start/2020-07-30/end/2020-07-30' \
- -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu' \
- --data-raw ''`
-
-#### vote admin delete
-`curl -L -X DELETE 'http://localhost:8080/topjava/rest/admin/votes/100015' \
- -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
-
-#### vote admin update 
-`curl -L -X PUT 'http://localhost:8080/topjava/rest/admin/votes/100015' \
- -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu' \
- -H 'Content-Type: application/json' \
- --data-raw '{
-         "id": 100015,
-         "date": "2020-06-28",
-         "restaurantId": 100003,
-         "userId": 100000
-     }'`
-
-#### vote admin create
-`curl -L -X POST 'http://localhost:8080/topjava/rest/admin/votes/restaurants/100002/users/100001' \
- -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
+#### anonymous getMenuByRestaurantIdThisDay
+`curl -L -X GET 'http://localhost:8080/topjava/anonymous/restaurants/100003' \
+ -H 'Authorization: Basic Og=='`
 
 
-#### vote profile get (by voteId)
+#### profile votes get (by voteId)
 `curl -L -X GET 'http://localhost:8080/topjava/rest/profile/votes/100016' \
  -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
 
-#### vote profile getAllForAuth
+#### profile votes getAllForAuth
 `curl -L -X GET 'http://localhost:8080/topjava/rest/profile/votes' \
  -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
 
-#### vote profile getByRestaurantIdForAuth
+#### profile votes getByRestaurantAuth
 `curl -L -X GET 'http://localhost:8080/topjava/rest/profile/votes/restaurants/100002' \
  -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
 
-#### vote profile getByDateForAuth for authUser
+#### profile votes getByDateForAuth for authUser
 `curl -L -X GET 'http://localhost:8080/topjava/rest/profile/votes/date/2020-06-30' \
  -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
 
-#### vote profile isExistVote
-`curl -L -X GET 'http://localhost:8080/topjava/rest/profile/votes/exist/date/2020-06-30' \
- -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
- 
-#### vote profile getBetween 
+#### profile votes getBetween 
 `curl -L -X GET 'http://localhost:8080/topjava/rest/profile/votes/between/start/2020-06-30/end/2020-07-29' \
  -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
 
-#### vote profile delete
-`curl -L -X DELETE 'http://localhost:8080/topjava/rest/profile/votes/100016' \
- -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
-
-#### vote profile update 
+#### profile votes update 
 `curl -L -X PUT 'http://localhost:8080/topjava/rest/profile/votes/100016' \
  -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu' \
  -H 'Content-Type: application/json' \
@@ -117,15 +67,272 @@ Maven/ Spring/ Security/ JPA(Hibernate)/ REST(Jackson).
      "userId": 100000
  }'`
 
-#### vote profile create
+#### profile votes create
 `curl -L -X POST 'http://localhost:8080/topjava/rest/profile/votes/restaurants/100002' \
  -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
 
+#### profile votes delete
+`curl -L -X DELETE 'http://localhost:8080/topjava/rest/profile/votes/100016' \
+ -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
 
-#### anonymous getAllMenusThisDay
-`curl -L -X GET 'http://localhost:8080/topjava/anonymous' \
- -H 'Authorization: Basic Og=='`
 
-#### anonymous getMenuByRestaurantIdThisDay
-`curl -L -X GET 'http://localhost:8080/topjava/anonymous/restaurants/100003' \
- -H 'Authorization: Basic Og=='`
+#### profile menus getAllToday
+`curl -L -X GET 'http://localhost:8080/topjava/rest/profile/menus' \
+ -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
+ 
+#### profile menus getAll
+`curl -L -X GET 'http://localhost:8080/topjava/rest/profile/menus/all' \
+  -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
+ 
+#### profile menus getByRestaurantToday
+`curl -L -X GET 'http://localhost:8080/topjava/rest/profile/menus/restaurants/100002' \
+ -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
+
+#### profile menus getByRestaurantIdAndDate
+`curl -L -X GET 'http://localhost:8080/topjava/rest/profile/menus/restaurants/100002/date/2020-07-30' \
+ -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
+
+#### profile menus getByRestaurantNameAndDate
+`curl -L -X GET 'http://localhost:8080/topjava/rest/profile/menus/restaurants/names/Прага/date/2020-07-30' \
+ -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
+
+#### profile menus getAllByDate
+`curl -L -X GET 'http://localhost:8080/topjava/rest/profile/menus/date/2020-07-30' \
+ -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
+
+
+#### admin votes getAll
+`curl -L -X GET 'http://localhost:8080/topjava/rest/admin/votes' \
+ -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
+
+#### admin votes get (byId)
+`curl -L -X GET 'http://localhost:8080/topjava/rest/admin/votes/100015' \
+ -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
+
+#### admin votes getAllForRestaurant
+`curl -L -X GET 'http://localhost:8080/topjava/rest/admin/votes/restaurants/100003' \
+ -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
+
+#### admin votes getByDate
+`curl -L -X GET 'http://localhost:8080/topjava/rest/admin/votes/date/2020-07-29' \
+ -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
+
+#### admin votes getAllForUser
+`curl -L -X GET 'http://localhost:8080/topjava/rest/admin/votes/users/100001' \
+ -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
+ 
+#### admin votes getByDateForUser
+`curl -L -X GET 'http://localhost:8080/topjava/rest/admin/votes/date/2020-07-30/users/100000' \
+ -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
+ 
+#### admin votes getBetweenForUser 
+`curl -L -X GET 'http://localhost:8080/topjava/rest/admin/votes/between/users/100000/start/2020-07-30/end/2020-07-30' \
+ -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
+
+#### admin votes update 
+`curl -L -X PUT 'http://localhost:8080/topjava/rest/admin/votes/100015/users/100000' \
+ -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu' \
+ -H 'Content-Type: application/json' \
+ --data-raw '{
+         "id": 100015,
+         "date": "2020-06-28",
+         "restaurantId": 100003,
+         "userId": 100000
+     }'`
+
+#### admin votes create
+`curl -L -X POST 'http://localhost:8080/topjava/rest/admin/votes/restaurants/100002/users/100001' \
+ -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
+
+#### admin votes delete
+`curl -L -X DELETE 'http://localhost:8080/topjava/rest/admin/votes/100015' \
+ -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
+
+
+#### admin restaurants getAll
+`curl -L -X GET 'http://localhost:8080/topjava/rest/admin/restaurants' \
+ -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
+
+#### admin restaurants getById
+`curl -L -X GET 'http://localhost:8080/topjava/rest/admin/restaurants/100003' \
+ -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
+
+#### admin restaurants getByName
+`curl -L -X GET 'http://localhost:8080/topjava/rest/admin/restaurants/names/Венеция' \
+ -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
+
+#### admin restaurants getByIdWithDishesOfDate
+`curl -L -X GET 'http://localhost:8080/topjava/rest/admin/restaurants/100003/date/2020-07-30' \
+ -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
+
+#### admin restaurants getAllWithDishes
+`curl -L -X GET 'http://localhost:8080/topjava/rest/admin/restaurants/dishes' \
+ -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
+ 
+#### admin restaurants getAllWithDishesOfDate
+`curl -L -X GET 'http://localhost:8080/topjava/rest/admin/restaurants/dishes/date/2020-07-30' \
+  -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
+ 
+#### admin restaurants create
+`curl -L -X POST 'http://localhost:8080/topjava/rest/admin/restaurants' \
+ -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu' \
+ -H 'Content-Type: application/json' \
+ --data-raw '{
+         "id": "",
+         "name": "НовыйРесторан",
+         "dishes": null
+     }'`
+
+#### admin restaurants update
+`curl -L -X PUT 'http://localhost:8080/topjava/rest/admin/restaurants/100003' \
+ -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu' \
+ -H 'Content-Type: application/json' \
+ --data-raw '{
+     "id": 100003,
+     "name": "Прага_обновленный_2",
+     "dishes": null
+ }'`
+
+#### admin restaurants delete
+`curl -L -X DELETE 'http://localhost:8080/topjava/rest/admin/restaurants/100002' \
+ -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
+
+
+#### admin dishes getAll
+`curl -L -X GET 'http://localhost:8080/topjava/rest/admin/dishes' \
+ -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
+
+#### admin dishes getById
+`curl -L -X GET 'http://localhost:8080/topjava/rest/admin/dishes/100010/restaurants/100003' \
+ -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
+
+#### admin dishes getAllByRestaurantId
+`curl -L -X GET 'http://localhost:8080/topjava/rest/admin/dishes/restaurants/100003' \
+ -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
+
+#### admin dishes getAllByRestaurantIdAndDate
+`ccurl -L -X GET 'http://localhost:8080/topjava/rest/admin/dishes/restaurants/100003/date/2020-07-30' \
+  -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
+
+#### admin dishes createListOfMenu
+`curl -L -X POST 'http://localhost:8080/topjava/rest/admin/dishes/restaurants/100002' \
+ -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu' \
+ -H 'Content-Type: application/json' \
+ --data-raw '[{
+         "id": "",
+         "name": "Новая еда 1",
+         "date": "2020-07-29",
+         "price": 0.1
+     },
+     {
+         "id": "",
+         "name": "Новая еда 2",
+         "date": "2020-07-29",
+         "price": 0.2
+     }
+ ]'`
+
+#### admin dishes createLimit
+`curl -L -X POST 'http://localhost:8080/topjava/rest/admin/dishes?restaurantId=100002' \
+ -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu' \
+ -H 'Content-Type: application/json' \
+ --data-raw '{
+         "id": "",
+         "name": "Новая еда",
+         "date": "2020-07-29",
+         "price": 0.2
+     }'`
+
+#### admin dishes update
+`curl -L -X PUT 'http://localhost:8080/topjava/rest/admin/dishes/100005?restaurantId=100002' \
+ -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu' \
+ -H 'Content-Type: application/json' \
+ --data-raw '{
+         "id": 100005,
+         "name": "Updated Чай",
+         "date": "2020-06-29",
+         "price": 0.2
+     }'`
+ 
+#### admin dishes deleteLimit
+`curl -L -X DELETE 'http://localhost:8080/topjava/rest/admin/dishes/100014/restaurants/100003?date=2020-07-30' \
+ -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
+
+#### admin dishes deleteListOfMenu 
+`curl -L -X DELETE 'http://localhost:8080/topjava/rest/admin/dishes/restaurants/100002/date/2020-07-30' \
+ -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
+
+
+#### profile users get
+`curl -L -X GET 'http://localhost:8080/topjava/rest/profile/users/100001' \
+ -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
+
+#### profile users update
+`curl -L -X PUT 'http://localhost:8080/topjava/rest/profile/users/100001' \
+ -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu' \
+ -H 'Content-Type: application/json' \
+ --data-raw '{
+     "id": 100001,
+     "name": "updatedUser",
+     "email": "updatedEmail@mail.com",
+     "password": "updated",
+     "registered": "2020-07-30T06:00:00.000+00:00",
+     "roles": [
+         "USER"
+     ]
+ }'`
+
+#### profile users delete
+`curl -L -X DELETE 'http://localhost:8080/topjava/rest/profile/users/100001' \
+ -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
+
+
+#### admin users getAll
+`curl -L -X GET 'http://localhost:8080/topjava/rest/admin/users' \
+ -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
+
+#### admin users get
+`curl -L -X GET 'http://localhost:8080/topjava/rest/admin/users/100000' \
+ -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
+
+#### admin users getByEmail
+`curl -L -X GET 'http://localhost:8080/topjava/rest/admin/users/by?email=admin@gmail.com' \
+ -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
+
+#### admin users enabled
+`curl -L -X PATCH 'http://localhost:8080/topjava/rest/admin/users/100001?enabled=false' \
+ -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
+
+#### admin users create
+`curl -L -X POST 'http://localhost:8080/topjava/rest/admin/users' \
+ -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu' \
+ -H 'Content-Type: application/json' \
+ --data-raw '{
+     "id": "",
+     "name": "NewUser",
+     "email": "newAddress@gmail.com",
+     "password": "newPassword",
+     "registered": "2020-01-30T06:00:00.000+00:00",
+     "roles": [
+         "USER"
+     ]
+ }'`
+
+#### admin users update
+`curl -L -X PUT 'http://localhost:8080/topjava/rest/admin/users/100000' \
+ -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu' \
+ -H 'Content-Type: application/json' \
+ --data-raw '{
+      "id": "100000",
+      "name": "UpdateUser",
+      "email": "updateAddress@gmail.com",
+      "password": "updatePassword",
+      "registered": "2020-01-30T06:00:00.000+00:00",
+      "roles": [
+          "USER"
+      ]
+ }'`
+
+#### admin users delete
+`curl -L -X DELETE 'http://localhost:8080/topjava/rest/admin/users/100001' \
+ -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`

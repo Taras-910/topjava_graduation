@@ -89,7 +89,7 @@ class RestaurantRestControllerTest extends AbstractControllerTest {
 
     @Test
     void getAllWithDishesOfDate() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL + "date/" + DATE_TEST)
+        perform(MockMvcRequestBuilders.get(REST_URL + "dishes/date/" + DATE_TEST)
                 .with(userHttpBasic(ADMIN))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())

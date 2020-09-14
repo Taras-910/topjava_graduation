@@ -50,7 +50,6 @@ class VoteRestControllerTest extends AbstractControllerTest {
 
     @Test
     void getNotFound() throws Exception {
-        setAuthorizedUserTest(ADMIN);
         assertThrows(NotFoundException.class, () -> controller.getById(NOT_FOUND));
     }
 
@@ -169,14 +168,8 @@ class VoteRestControllerTest extends AbstractControllerTest {
         VOTE_MATCHER.assertMatch(controller.getById(newId), newVote);
     }
 
-    @org.junit.Test
-    public void createErrorData() throws Exception {
-        assertThrows(NotFoundException.class, () -> controller.create(NOT_FOUND, ADMIN_ID));
-        assertThrows(NotFoundException.class, () -> controller.create( RESTAURANT2_ID, NOT_FOUND));
-    }
-
     @Test
-    public void createRepeatPerDay() throws Exception {
+    void createRepeatPerDay() throws Exception {
         setThisDay(DATE_TEST);
         assertThrows(NotFoundException.class, () -> controller.create(RESTAURANT1_ID, ADMIN_ID));
     }
@@ -208,6 +201,6 @@ class VoteRestControllerTest extends AbstractControllerTest {
     void deleteOverTime() throws Exception {
         setAuthorizedUserTest(ADMIN);
         setСhangeVoteTime(TIME_TEST_OUT);
-        assertThrows(NotFoundException.class, () -> controller.delete(VOTE1_ID));
+        assertThrows(NotFoundException.class, () -> controller.delete(VoteTestData.VOTE5_ID));
     }
 }

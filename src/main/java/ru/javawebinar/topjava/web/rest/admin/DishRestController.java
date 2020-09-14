@@ -23,7 +23,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static ru.javawebinar.topjava.util.DateTimeUtil.thisDay;
 import static ru.javawebinar.topjava.util.MenuUtil.countWithin;
@@ -47,7 +46,7 @@ public class DishRestController {
     }
 
     @GetMapping(value = "/{id}/restaurants/{restaurantId}")
-    public Dish get(@PathVariable int id, @PathVariable int restaurantId) {
+    public Dish getById(@PathVariable int id, @PathVariable int restaurantId) {
         log.info("get dish {}", id);
         return checkNotFoundWithId(repository.get(id, restaurantId), id);
     }
@@ -65,24 +64,6 @@ public class DishRestController {
         return checkNotFoundWithId(repository.getByRestaurantAndDate(restaurantId, date), restaurantId);
     }
 
-    @DeleteMapping("/{id}")
-    @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable(name = "id") int dishId, @RequestParam int restaurantId) {
-        List<Dish> memoryDishes = repository.getByRestaurantAndDate(restaurantId, thisDay);
-        log.info("delete dish {} of restaurant {} from memoryDishes {}", dishId, restaurantId, memoryDishes.size());
-        checkNotFound(MenuUtil.countLowerLimit(memoryDishes),
-                dishId+" so as dishes number of menu should be at least 2");
-        checkNotFoundWithId(repository.delete(dishId, restaurantId), dishId);
-    }
-
-    @DeleteMapping("restaurants/{id}/date/{date}")
-    @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    public void deleteListOfMenu(@PathVariable(name = "id") @Nullable int restaurantId,
-                                @PathVariable @Nullable LocalDate date) {
-        log.info("deleteListOfMenu for restaurant {} and date {}", restaurantId, date);
-        checkNotFoundWithId(repository.deleteListOfMenu(restaurantId, date), restaurantId);
-    }
-
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void update(@Valid @RequestBody Dish dish, @PathVariable(name = "id") int dishId, @RequestParam int restaurantId) {
@@ -98,13 +79,13 @@ public class DishRestController {
 
     /* create with test limit dishesPerDay from 2 to 5*/
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Dish> create(@Valid @RequestBody Dish dish, @RequestParam int restaurantId) {
+    public ResponseEntity<Dish> createLimit(@Valid @RequestBody Dish dish, @RequestParam int restaurantId) {
         log.info("create dish {} for restaurantId {}", dish, restaurantId);
         Dish created;
         try {
             Assert.notNull(dish, "dish must not be null");
             checkNew(dish);
-            checkNotFound(countWithin(List.of(dish), repository.getByRestaurantAndDate(restaurantId, thisDay)),
+            checkNotFound(countWithin(List.of(dish), repository.getByRestaurantAndDate(restaurantId, dish.getDate())),
                     "dishes so number should be within from 2 to 5");
             created = repository.save(dish, restaurantId);
         } catch (IllegalArgumentException | DataIntegrityViolationException | NullPointerException e) {
@@ -124,8 +105,7 @@ public class DishRestController {
         try {
             dishes.forEach(d -> Assert.notNull(d, "dish must not be null"));
             dishes.forEach(ValidationUtil::checkNew);
-            dishes.stream().map(dish -> dish.getName().toLowerCase()).distinct().collect(Collectors.toList());
-            List<Dish> storedDishes = Optional.ofNullable(repository.getByRestaurantAndDate(restaurantId, thisDay)).orElse(null);
+            List<Dish> storedDishes = Optional.ofNullable(repository.getByRestaurantAndDate(restaurantId, dishes.get(0).getDate())).orElse(null);
             checkNotFound(countWithin(dishes, storedDishes), "dishes so number should be within from 2 to 5");
             dishes.forEach(dish -> {
                 Dish storedDish;
@@ -140,4 +120,24 @@ public class DishRestController {
         }
         return ResponseEntity.created(uriOfNewResource[0]).body(createdDishes);
     }
+
+    @DeleteMapping("/{id}/restaurants/{restaurantId}")
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable(name = "id") int dishId, @PathVariable int restaurantId, @RequestParam LocalDate date) {
+        List<Dish> memoryDishes = repository.getByRestaurantAndDate(restaurantId, date);
+        log.info("delete dish {} of restaurant {} from memoryDishes {}", dishId, restaurantId, memoryDishes.size());
+        checkNotFound(MenuUtil.countLowerLimit(memoryDishes),
+                dishId+" so as dishes number of menu should be at least 2");
+        checkNotFoundWithId(repository.delete(dishId, restaurantId), dishId);
+    }
+
+    @DeleteMapping("restaurants/{id}/date/{date}")
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
+    public void deleteListOfMenu(@PathVariable(name = "id") @Nullable int restaurantId,
+                                 @PathVariable @Nullable LocalDate date) {
+        log.info("deleteListOfMenu for restaurant {} and date {}", restaurantId, date);
+        checkNotFoundWithId(repository.deleteListOfMenu(restaurantId, date), restaurantId);
+    }
+
+
 }

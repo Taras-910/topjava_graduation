@@ -15,7 +15,7 @@ VALUES ('ADMIN', 100000),
        ('USER', 100001);
 
 INSERT INTO restaurants (name)
-VALUES ('Дубок'),
+VALUES ('Венеция'),
        ('Прага');
 
 INSERT INTO dishes (name, date, price, restaurant_id)

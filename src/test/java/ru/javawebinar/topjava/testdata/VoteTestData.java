@@ -18,6 +18,7 @@ import static ru.javawebinar.topjava.testdata.UserTestData.USER_ID;
 public class VoteTestData {
     public static TestMatcher<Vote> VOTE_MATCHER = TestMatcher.usingFieldsComparator(Vote.class,"date");
     public static final int VOTE1_ID = START_SEQ + 15;
+    public static final int VOTE5_ID = START_SEQ + 19;
     public static final Vote VOTE1 = new Vote(VOTE1_ID, of(2020, Month.JUNE, 28), RESTAURANT1_ID, ADMIN_ID);
     public static final Vote VOTE2 = new Vote(VOTE1_ID + 1, of(2020, Month.JUNE, 29), RESTAURANT1_ID, ADMIN_ID);
     public static final Vote VOTE3 = new Vote(VOTE1_ID + 2, of(2020, Month.JUNE, 29), RESTAURANT1_ID, USER_ID);

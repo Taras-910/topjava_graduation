@@ -13,7 +13,7 @@ import ru.javawebinar.topjava.web.rest.admin.RestaurantRestController;
 
 import java.util.List;
 
-import static ru.javawebinar.topjava.util.DateTimeUtil.*;
+import static ru.javawebinar.topjava.util.DateTimeUtil.thisDay;
 import static ru.javawebinar.topjava.util.MenuUtil.toListMenus;
 import static ru.javawebinar.topjava.util.MenuUtil.toMenu;
 
@@ -31,7 +31,6 @@ public class AnonymousMenuRestController {
     @Transactional
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public List<Menu> getAllMenusThisDay() {
-        setThisDay(DATE_TEST);
         log.info("getAllMenus");
         return toListMenus(restaurantController.getAllWithDishesOfDate(thisDay), null);
     }
@@ -39,7 +38,6 @@ public class AnonymousMenuRestController {
     @Transactional
     @GetMapping(value = "/restaurants/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Menu getMenuByRestaurantIdThisDay(@PathVariable(name = "id") int restaurantId) {
-        setThisDay(DATE_TEST);
         log.info("getMenu by restaurant id {}", restaurantId);
         return toMenu(restaurantController.getByIdWithDishesOfDate(restaurantId, thisDay),false);
     }

@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -91,12 +92,12 @@ public class VoteRestController {
     @PutMapping(value = "/{id}/users/{userId}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void update(@Valid @RequestBody Vote vote, @PathVariable(name = "id") int voteId, @PathVariable int userId) {
-        log.info("update vote {} for userId {}", vote, userId);
+        log.info("update vote {}", vote);
         Vote updated;
         try {
             Assert.notNull(vote, "vote must not be null");
             assureIdConsistent(vote, voteId);
-            checkNotFound(LocalTime.now().isBefore(сhangeVoteTime), voteId +" for change vote up to 11:00");
+            checkNotFound(LocalTime.now().isBefore(сhangeVoteTime), voteId +" for change vote up to " + сhangeVoteTime);
             updated = repository.save(vote, userId);
             checkNotFoundWithId(updated, vote.id());
         } catch (IllegalArgumentException | DataIntegrityViolationException e) {
@@ -104,14 +105,15 @@ public class VoteRestController {
         }
     }
 
+    @Transactional
     @PostMapping(value = "/restaurants/{id}/users/{userId}")
     public ResponseEntity<Vote> create(@PathVariable(name = "id") int restaurantId, @PathVariable int userId) {
         log.info("create Vote {} for restaurantId", restaurantId);
         Vote created;
         try {
             checkNotFound(!isExistVote(userId, thisDay), userId +" - so as vote already exist for this day (" + thisDay + ")");
-            created = repository.save(new Vote(null, thisDay, restaurantId, userId), userId);
-        } catch (IllegalArgumentException | DataIntegrityViolationException e) {
+            created = checkNotFound(repository.save(new Vote(null, thisDay, restaurantId, userId), authUserId()), "id=" + restaurantId);
+        } catch (IllegalArgumentException | DataIntegrityViolationException | NullPointerException e) {
             throw new NotFoundException("vote of user " + userId + " for this date (" + thisDay + ") already exist");
         }
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()

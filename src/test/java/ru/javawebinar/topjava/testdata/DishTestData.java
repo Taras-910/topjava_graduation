@@ -41,7 +41,7 @@ public class DishTestData {
     public static final List<Dish> DISHES_RESTAURANT_DATE = List.of(DISH6, DISH5);
 
     public static Dish getNew() {
-        return new Dish("Созданный ужин", of(2020, Month.FEBRUARY, 1), 5.0F);
+        return new Dish("Созданный ужин", of(2020, 07, 30), 5.0F);
     }
     public static List<Dish> getNewList() {
         return asList(DISH12, DISH13);

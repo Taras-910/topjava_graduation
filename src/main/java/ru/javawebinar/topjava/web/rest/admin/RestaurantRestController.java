@@ -78,7 +78,7 @@ public class RestaurantRestController {
     }
 
     @Cacheable("rest_restaurants")
-    @GetMapping("/date/{date}")
+    @GetMapping("/dishes/date/{date}")
     public List<Restaurant> getAllWithDishesOfDate(@PathVariable LocalDate date) {
         if (date == null ){
             date = thisDay;
@@ -103,7 +103,7 @@ public class RestaurantRestController {
     @CacheEvict(value = "rest_restaurants", allEntries = true)
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    public ResponseEntity<Restaurant> update(@RequestBody Restaurant restaurant, @Valid @PathVariable int id) {
+    public ResponseEntity<Restaurant> update(@Valid @RequestBody Restaurant restaurant, @PathVariable int id) {
         log.info("update restaurant {} for id {}", restaurant, id);
         Restaurant updated;
         try {

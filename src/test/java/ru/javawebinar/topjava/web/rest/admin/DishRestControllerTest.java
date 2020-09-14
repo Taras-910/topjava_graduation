@@ -50,12 +50,12 @@ class DishRestControllerTest extends AbstractControllerTest {
 
     @Test
     void getNotFound() throws Exception {
-        assertThrows(NotFoundException.class, () -> controller.get(NOT_FOUND, RESTAURANT1_ID));
+        assertThrows(NotFoundException.class, () -> controller.getById(NOT_FOUND, RESTAURANT1_ID));
     }
 
     @Test
     void getNotOwn() throws Exception {
-        assertThrows(NotFoundException.class, () -> controller.get(DISH1_ID, RESTAURANT2_ID));
+        assertThrows(NotFoundException.class, () -> controller.getById(DISH1_ID, RESTAURANT2_ID));
     }
 
     @Test
@@ -80,8 +80,7 @@ class DishRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    void create() throws Exception {
-        setThisDay(DATE_TEST);
+    void createLimit() throws Exception {
         Dish newDish = DishTestData.getNew();
         ResultActions action = perform(MockMvcRequestBuilders.post(REST_URL)
                 .param("restaurantId", valueOf(RESTAURANT1_ID))
@@ -93,22 +92,18 @@ class DishRestControllerTest extends AbstractControllerTest {
         int newId = created.id();
         newDish.setId(newId);
         DISH_MATCHER.assertMatch(created, newDish);
-        DISH_MATCHER.assertMatch(controller.get(newId, RESTAURANT1_ID), newDish);
+        DISH_MATCHER.assertMatch(controller.getById(newId, RESTAURANT1_ID), newDish);
     }
 
     @Test
     void createErrorData() throws Exception {
-        DateTimeUtil.setThisDay(LocalDate.now().plusDays(1));
-        assertThrows(NotFoundException.class, () -> controller.create(new Dish(DISH1_ID, "tea", DATE_TEST, 1.1F), RESTAURANT1_ID));
-        assertThrows(NotFoundException.class, () -> controller.create(new Dish(null, null, DATE_TEST, 1.1F), RESTAURANT1_ID));
-        assertThrows(NotFoundException.class, () -> controller.create(new Dish(null, "tea", null, 1.1F), RESTAURANT1_ID));
-        assertThrows(NotFoundException.class, () -> controller.create(new Dish(null, "tea", DATE_TEST, -1.0F), RESTAURANT1_ID));
-        assertThrows(NotFoundException.class, () -> controller.create(new Dish(null, "tea", DATE_TEST, 101.0F), RESTAURANT1_ID));
-        assertThrows(NotFoundException.class, () -> controller.create(new Dish(null, "tea", DATE_TEST, 1.0F), NOT_FOUND));
+        DateTimeUtil.setThisDay(LocalDate.now().minusDays(1));
+        assertThrows(NotFoundException.class, () -> controller.createLimit(new Dish(DISH1_ID, "tea", DATE_TEST, 1.1F), RESTAURANT1_ID));
+        assertThrows(NotFoundException.class, () -> controller.createLimit(new Dish(null, "tea", null, 1.1F), RESTAURANT1_ID));
     }
 
     @Test
-    void createAll() throws Exception {
+    void createListOfMenu() throws Exception {
         List<Dish> newDishes = getNewList();
         MvcResult action = perform(MockMvcRequestBuilders.post(REST_URL + "restaurants/100002")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -141,45 +136,6 @@ class DishRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    void delete() throws Exception {
-        setThisDay(DATE_TEST);
-        perform(MockMvcRequestBuilders.delete(REST_URL + DISH10_ID)
-                .param("restaurantId", valueOf(RESTAURANT2_ID))
-                .with(userHttpBasic(ADMIN))
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNoContent());
-        assertThrows(NotFoundException.class, () -> controller.get(DISH10_ID, RESTAURANT2_ID));
-    }
-
-    @Test
-    void deleteOverLimit() throws Exception {
-        DateTimeUtil.setThisDay(DATE_TEST);
-        assertThrows(NotFoundException.class, () -> controller.delete(DISH1_ID, RESTAURANT1_ID));
-    }
-
-    @Test
-    void deleteNotFound() throws Exception {
-        DateTimeUtil.setThisDay(DATE_TEST);
-        assertThrows(NotFoundException.class, () -> controller.delete(NOT_FOUND, RESTAURANT2_ID));
-    }
-
-    @Test
-    void deleteNotOwn() throws Exception {
-        DateTimeUtil.setThisDay(DATE_TEST);
-        assertThrows(NotFoundException.class, () -> controller.delete(DISH1_ID, RESTAURANT2_ID));
-    }
-
-
-    @Test
-    void deleteListOfMenu() throws Exception  {
-        perform(MockMvcRequestBuilders.delete(REST_URL + "restaurants/" + RESTAURANT1_ID + "/date/2020-06-29")
-                .with(userHttpBasic(ADMIN))
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNoContent());
-        assertThrows(NotFoundException.class, () -> controller.getByRestaurantAndDate(RESTAURANT1_ID, LocalDate.of(2020,06,29)));
-    }
-
-    @Test
     void update() throws Exception {
         Dish updated = DishTestData.getUpdated();
         perform(MockMvcRequestBuilders.put(REST_URL + DISH1_ID)
@@ -188,7 +144,7 @@ class DishRestControllerTest extends AbstractControllerTest {
                 .with(userHttpBasic(ADMIN))
                 .content(JsonUtil.writeValue(updated)))
                 .andExpect(status().isNoContent());
-        DISH_MATCHER.assertMatch(controller.get(DISH1_ID, RESTAURANT1_ID), updated);
+        DISH_MATCHER.assertMatch(controller.getById(DISH1_ID, RESTAURANT1_ID), updated);
     }
 
     @Test
@@ -203,6 +159,45 @@ class DishRestControllerTest extends AbstractControllerTest {
         assertThrows(NotFoundException.class, () -> controller.update(null, DISH1_ID ,RESTAURANT1_ID));
         assertThrows(NotFoundException.class, () -> controller.update(DISH1, NOT_FOUND ,RESTAURANT1_ID));
         assertThrows(NotFoundException.class, () -> controller.update(DISH1, DISH1_ID ,NOT_FOUND));
+    }
+
+    @Test
+    void delete() throws Exception {
+        setThisDay(DATE_TEST);
+        perform(MockMvcRequestBuilders.delete(REST_URL + DISH10_ID + "/restaurants/" + RESTAURANT2_ID)
+                .param("date", String.valueOf(DATE_TEST))
+                .with(userHttpBasic(ADMIN))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
+        assertThrows(NotFoundException.class, () -> controller.getById(DISH10_ID, RESTAURANT2_ID));
+    }
+
+    @Test
+    void deleteOverLimit() throws Exception {
+        DateTimeUtil.setThisDay(DATE_TEST);
+        assertThrows(NotFoundException.class, () -> controller.delete(DISH1_ID, RESTAURANT1_ID, DATE_TEST));
+    }
+
+    @Test
+    void deleteNotFound() throws Exception {
+        DateTimeUtil.setThisDay(DATE_TEST);
+        assertThrows(NotFoundException.class, () -> controller.delete(NOT_FOUND, RESTAURANT2_ID, DATE_TEST));
+    }
+
+    @Test
+    void deleteNotOwn() throws Exception {
+        DateTimeUtil.setThisDay(DATE_TEST);
+        assertThrows(NotFoundException.class, () -> controller.delete(DISH1_ID, RESTAURANT2_ID, DATE_TEST));
+    }
+
+
+    @Test
+    void deleteListOfMenu() throws Exception  {
+        perform(MockMvcRequestBuilders.delete(REST_URL + "restaurants/" + RESTAURANT1_ID + "/date/2020-06-29")
+                .with(userHttpBasic(ADMIN))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
+        assertThrows(NotFoundException.class, () -> controller.getByRestaurantAndDate(RESTAURANT1_ID, LocalDate.of(2020,06,29)));
     }
 
 
