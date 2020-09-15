@@ -4,7 +4,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 import ru.javawebinar.topjava.model.Restaurant;
 import ru.javawebinar.topjava.repository.RestaurantRepository;
-import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -20,7 +19,7 @@ public class DataJpaRestaurantRepository implements RestaurantRepository {
     }
 
     @Override
-    public Restaurant save(Restaurant restaurant) throws NotFoundException {
+    public Restaurant save(Restaurant restaurant) {
         return restaurantRepository.save(restaurant);
     }
 
@@ -43,12 +42,12 @@ public class DataJpaRestaurantRepository implements RestaurantRepository {
     public List<Restaurant> getAll() { return restaurantRepository.findAll(SORT_NAME); }
 
     @Override
-    public List<Restaurant> getAllWithDishesOfDate(LocalDate date) throws IllegalArgumentException {
+    public List<Restaurant> getAllWithDishesOfDate(LocalDate date) {
         return restaurantRepository.getAllWithDishesOfDate(date);
     }
 
     @Override
-    public Restaurant getByIdWithDishesOfDate(int restaurantId, LocalDate date) throws IllegalArgumentException {
+    public Restaurant getByIdWithDishesOfDate(int restaurantId, LocalDate date) {
         return Optional.ofNullable(restaurantRepository.getByIdWithDishesOfDate(restaurantId, date)).orElse(null);
     }
 }

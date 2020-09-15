@@ -8,8 +8,7 @@ import ru.javawebinar.topjava.web.AbstractControllerTest;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static ru.javawebinar.topjava.testdata.MenuTestData.MENU;
-import static ru.javawebinar.topjava.testdata.MenuTestData.MENU_MATCHER;
+import static ru.javawebinar.topjava.testdata.MenuTestData.*;
 import static ru.javawebinar.topjava.testdata.RestaurantTestData.RESTAURANT1_ID;
 import static ru.javawebinar.topjava.util.DateTimeUtil.DATE_TEST;
 import static ru.javawebinar.topjava.util.DateTimeUtil.setThisDay;
@@ -26,16 +25,9 @@ class AnonymousMenuRestControllerTest extends AbstractControllerTest {
         perform(MockMvcRequestBuilders.get(REST_URL))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
-//        MENU_MATCHER.assertMatch(controller.getAllMenusThisDay(), allMenusOfDay());
+        MENU_MATCHER.assertMatch(controller.getAllMenusThisDay(), allMenusOfDay());
     }
-/*    @Transactional
-    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<Menu> getAllMenusThisDay() {
-        setThisDay(DATE_TEST);
-        log.info("getAllMenus");
-        return toListMenus(restaurantController.getAllWithDishesOfDate(thisDay), new Vote());
-    }
-*/
+
     @Test
     void getMenuByRestaurantIdThisDay() throws Exception {
         setThisDay(DATE_TEST);

@@ -125,7 +125,7 @@ class DishRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    void createErrorDishPriceExсeed() throws Exception {
+    void createErrorPriceValue() throws Exception {
         Dish newDish = new Dish("tea", DATE_TEST, 100.1F);
         ResultActions action = perform(MockMvcRequestBuilders.post(REST_URL)
                 .param("restaurantId", valueOf(RESTAURANT1_ID))

@@ -21,7 +21,6 @@ public class SpringMain {
             System.out.println(s);
         }
 */
-
 /*
         DishRestController dishRestController = appCtx.getBean(DishRestController.class);
         MenuRestController menuRestController = appCtx.getBean(MenuRestController.class);

@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 import ru.javawebinar.topjava.model.Vote;
 import ru.javawebinar.topjava.repository.VoteRepository;
-import ru.javawebinar.topjava.repository.restaurant.CrudRestaurantRepository;
 import ru.javawebinar.topjava.repository.user.CrudUserRepository;
 
 import java.time.LocalDate;
@@ -17,17 +16,14 @@ public class DataJpaVoteRepository implements VoteRepository {
     private static final Logger log = LoggerFactory.getLogger("");
     private final CrudVoteRepository voteRepository;
     private final CrudUserRepository userRepository;
-    private final CrudRestaurantRepository restaurantRepository;
 
-    public DataJpaVoteRepository(CrudVoteRepository voteRepository, CrudUserRepository userRepository,
-                                 CrudRestaurantRepository restaurantRepository) {
+    public DataJpaVoteRepository(CrudVoteRepository voteRepository, CrudUserRepository userRepository) {
         this.voteRepository = voteRepository;
         this.userRepository = userRepository;
-        this.restaurantRepository = restaurantRepository;
     }
 
     @Override
-    public Vote save(Vote vote, int userID) throws NullPointerException {
+    public Vote save(Vote vote, int userID) {
         log.info("vote {}", vote);
         vote.setUserId(userRepository.getOne(userID).getId());
         return vote.isNew() || get(vote.id(), vote.getUserId()) != null ? voteRepository.save(vote) : null;
@@ -68,7 +64,7 @@ public class DataJpaVoteRepository implements VoteRepository {
     }
 
     @Override
-    public List<Vote> getByRestaurant(int restaurantId) throws NullPointerException{
+    public List<Vote> getByRestaurant(int restaurantId) {
         return Optional.ofNullable(voteRepository.getByRestaurant(restaurantId)).orElse(null);
     }
 

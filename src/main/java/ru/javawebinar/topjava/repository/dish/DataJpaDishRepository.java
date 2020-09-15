@@ -1,8 +1,5 @@
 package ru.javawebinar.topjava.repository.dish;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Repository;
 import ru.javawebinar.topjava.model.Dish;
 import ru.javawebinar.topjava.model.Restaurant;
@@ -15,7 +12,6 @@ import java.util.Optional;
 
 @Repository
 public class DataJpaDishRepository implements DishRepository {
-    private static final Logger log = LoggerFactory.getLogger("");
     private final CrudDishRepository dishRepository;
     private final CrudRestaurantRepository restaurantRepository;
 
@@ -31,7 +27,7 @@ public class DataJpaDishRepository implements DishRepository {
         return dish.isNew() || get(dish.id(), restaurant.getId()) != null ? dishRepository.save(dish) : null; }
 
     @Override
-    public List<Dish> saveAll(List<Dish> dishes, int restaurantId) throws IllegalArgumentException, DataIntegrityViolationException {
+    public List<Dish> saveAll(List<Dish> dishes, int restaurantId) {
         Restaurant restaurant = restaurantRepository.findById(restaurantId).orElse(null);
         if (restaurant == null) {
             return null;
@@ -61,7 +57,7 @@ public class DataJpaDishRepository implements DishRepository {
     }
 
     @Override
-    public List<Dish> getByRestaurantAndDate(int restaurantId, LocalDate date) throws DataIntegrityViolationException {
+    public List<Dish> getByRestaurantAndDate(int restaurantId, LocalDate date) {
         List<Dish> dishes = Optional.ofNullable(dishRepository.getByRestaurantAndDate(restaurantId, date)).orElse(null);
         return dishes.isEmpty() ? null : dishes;
     }
