@@ -20,10 +20,10 @@
         </encoder>
     </appender>
 
-    <!--<logger name="ru.javawebinar.topjava" level="debug"/>-->
-    <!--<logger name="org.springframework.cache.jcache.JCacheCacheManager" level="info"/>-->
+    <logger name="ru.javawebinar.topjava" level="debug"/>
+    <logger name="org.springframework.cache.jcache.JCacheCacheManager" level="info"/>
     <!--<logger name="org.springframework.orm.jpa.JpaTransactionManager" level="debug"/>-->
-    <logger name="org.springframework.security" level="debug"/>
+   <!-- <logger name="org.springframework.security" level="debug"/>-->
 
     <root level="info">
         <appender-ref ref="file"/>

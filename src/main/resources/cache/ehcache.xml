@@ -25,5 +25,4 @@
     </cache-template>
 
     <cache alias="restaurants" uses-template="expiryCache"/>
-    <cache alias="rest_restaurants" uses-template="expiryCache"/>
 </config>

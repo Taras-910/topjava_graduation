@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.javawebinar.topjava.model.Dish;
@@ -23,6 +24,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static ru.javawebinar.topjava.util.DateTimeUtil.thisDay;
 import static ru.javawebinar.topjava.util.MenuUtil.countWithin;
@@ -66,7 +68,14 @@ public class DishRestController {
 
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    public void update(@Valid @RequestBody Dish dish, @PathVariable(name = "id") int dishId, @RequestParam int restaurantId) {
+    public ResponseEntity<String>  update(@Valid @RequestBody Dish dish, @PathVariable(name = "id") int dishId, @RequestParam int restaurantId, BindingResult result) {
+        if (result != null && result.hasErrors()) {
+            String errorFieldsMsg = result.getFieldErrors().stream()
+                    .map(fe -> String.format("[%s] %s", fe.getField(), fe.getDefaultMessage()))
+                    .collect(Collectors.joining("<br>"));
+            return ResponseEntity.unprocessableEntity().body(errorFieldsMsg);
+        }
+
         log.info("update dish {} with restaurantId {}", dish, restaurantId);
         try {
             Assert.notNull(dish, "dish must not be null");
@@ -75,21 +84,22 @@ public class DishRestController {
         } catch (IllegalArgumentException | DataIntegrityViolationException | NullPointerException e) {
             throw new NotFoundException("error data of " + dish);
         }
+        return ResponseEntity.ok().build();
     }
 
     /* create with test limit dishesPerDay from 2 to 5*/
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Dish> createLimit(@Valid @RequestBody Dish dish, @RequestParam int restaurantId) {
         log.info("create dish {} for restaurantId {}", dish, restaurantId);
-        Dish created;
+         Dish created;
         try {
             Assert.notNull(dish, "dish must not be null");
             checkNew(dish);
             checkNotFound(countWithin(List.of(dish), repository.getByRestaurantAndDate(restaurantId, dish.getDate())),
                     "dishes so number should be within from 2 to 5");
             created = repository.save(dish, restaurantId);
-        } catch (IllegalArgumentException | DataIntegrityViolationException | NullPointerException e) {
-            throw new NotFoundException("error data dish or " + dish.getName() + " already exist in menu today(" + thisDay + ")");
+        } catch (IllegalArgumentException | DataIntegrityViolationException | NullPointerException | NotFoundException e) {
+            throw new NotFoundException("error dish=" + dish + ", or restaurantId=" + restaurantId + ", or dish already exist for date=" + thisDay);
         }
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path(REST_URL + "/{id}")

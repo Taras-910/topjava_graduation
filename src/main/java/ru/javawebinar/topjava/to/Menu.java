@@ -7,6 +7,7 @@ import java.util.List;
 
 public class Menu {
 
+    @NotNull
     Integer restaurantId;
 
     @NotNull
@@ -17,7 +18,7 @@ public class Menu {
 
     private boolean toVote = false;
 
-    public Menu(int restaurantId, @NotNull String restaurantName, @NotNull List<Dish> dishes, boolean toVote) {
+    public Menu(@NotNull int restaurantId, @NotNull String restaurantName, @NotNull List<Dish> dishes, boolean toVote) {
         this.restaurantId = restaurantId;
         this.restaurantName = restaurantName;
         this.dishes = dishes;

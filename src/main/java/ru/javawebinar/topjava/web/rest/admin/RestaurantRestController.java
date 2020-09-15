@@ -77,7 +77,7 @@ public class RestaurantRestController {
         return repository.getAllWithDishes();
     }
 
-    @Cacheable("rest_restaurants")
+    @Cacheable("restaurants")
     @GetMapping("/dishes/date/{date}")
     public List<Restaurant> getAllWithDishesOfDate(@PathVariable LocalDate date) {
         if (date == null ){
@@ -93,14 +93,14 @@ public class RestaurantRestController {
         return restaurants;
     }
 
-    @CacheEvict(value = "rest_restaurants", allEntries = true)
+    @CacheEvict(value = "restaurants", allEntries = true)
     @DeleteMapping("/{id}")
     public void delete(@PathVariable int id) {
         log.info("delete restaurant for id {}", id);
         checkNotFoundWithId(repository.delete(id), id);
     }
 
-    @CacheEvict(value = "rest_restaurants", allEntries = true)
+    @CacheEvict(value = "restaurants", allEntries = true)
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public ResponseEntity<Restaurant> update(@Valid @RequestBody Restaurant restaurant, @PathVariable int id) {
@@ -121,7 +121,7 @@ public class RestaurantRestController {
         return ResponseEntity.created(uriOfNewResource).body(updated);
     }
 
-    @CacheEvict(value = "rest_restaurants", allEntries = true)
+    @CacheEvict(value = "restaurants", allEntries = true)
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Restaurant> create(@Valid @RequestBody Restaurant restaurant) {
         log.info("create {}", restaurant);
