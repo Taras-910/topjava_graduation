@@ -64,8 +64,7 @@ class UserRestControllerTest extends AbstractControllerTest {
                 .with(userHttpBasic(ADMIN))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(updated)))
-                .andExpect(status().isNoContent());
-
+                .andExpect(status().isCreated());
         USER_MATCHER.assertMatch(controller.get(USER_ID), updated);
     }
 
@@ -77,7 +76,6 @@ class UserRestControllerTest extends AbstractControllerTest {
                 .with(userHttpBasic(ADMIN))
                 .content(UserTestData.jsonWithPassword(newUser, "newPass")))
                 .andExpect(status().isCreated());
-
         User created = readFromJson(action, User.class);
         log.info("created {}", created);
         int newId = created.getId();

@@ -120,10 +120,10 @@ class RestaurantRestControllerTest extends AbstractControllerTest {
 
     @Test
     void updateErrorData() throws Exception {
-        assertThrows(NotFoundException.class, () -> controller.update(new Restaurant(null, "Новый"), RESTAURANT1_ID));
-        assertThrows(NotFoundException.class, () -> controller.update(new Restaurant(RESTAURANT1_ID, "Новый"), NOT_FOUND));
-        assertThrows(NotFoundException.class, () -> controller.update(new Restaurant(null, null), RESTAURANT1_ID));
-        assertThrows(NotFoundException.class, () -> controller.update(new Restaurant(RESTAURANT1_ID, "Новый"), RESTAURANT2_ID));
+        assertThrows(IllegalArgumentException.class, () -> controller.update(new Restaurant(null, "Новый"), RESTAURANT1_ID));
+        assertThrows(IllegalArgumentException.class, () -> controller.update(new Restaurant(RESTAURANT1_ID, "Новый"), NOT_FOUND));
+        assertThrows(IllegalArgumentException.class, () -> controller.update(new Restaurant(null, null), RESTAURANT1_ID));
+        assertThrows(IllegalArgumentException.class, () -> controller.update(new Restaurant(RESTAURANT1_ID, "Новый"), RESTAURANT2_ID));
     }
 
     @Test
@@ -144,9 +144,9 @@ class RestaurantRestControllerTest extends AbstractControllerTest {
 
     @Test
     public void createErrorDate() throws Exception {
-        assertThrows(NotFoundException.class, () -> controller.create(new Restaurant(RESTAURANT1_ID, "Новый")));
-        assertThrows(NotFoundException.class, () -> controller.create(new Restaurant(NOT_FOUND, "Новый")));
-        assertThrows(NotFoundException.class, () -> controller.create(new Restaurant(RESTAURANT1_ID, null)));
+        assertThrows(IllegalArgumentException.class, () -> controller.create(new Restaurant(RESTAURANT1_ID, "Новый")));
+        assertThrows(IllegalArgumentException.class, () -> controller.create(new Restaurant(NOT_FOUND, "Новый")));
+        assertThrows(IllegalArgumentException.class, () -> controller.create(new Restaurant(RESTAURANT1_ID, null)));
     }
 
     @Test
@@ -155,7 +155,7 @@ class RestaurantRestControllerTest extends AbstractControllerTest {
                 .param("restaurantId", valueOf(RESTAURANT2_ID))
                 .with(userHttpBasic(ADMIN))
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
+                .andExpect(status().isNoContent());
         assertThrows(NotFoundException.class, () -> controller.getById(RESTAURANT2_ID));
     }
 

@@ -139,9 +139,9 @@ class DishRestControllerTest extends AbstractControllerTest {
     @Test
     void createErrorData() throws Exception {
         DateTimeUtil.setThisDay(LocalDate.now().minusDays(1));
-        assertThrows(NotFoundException.class, () -> controller.createLimit(new Dish(DISH1_ID, "tea", DATE_TEST, 1.1F), RESTAURANT1_ID));
-        assertThrows(NotFoundException.class, () -> controller.createLimit(new Dish(null, "tea", null, 1.1F), RESTAURANT1_ID));
-        assertThrows(NotFoundException.class, () -> controller.createLimit(new Dish(null, "tea", DATE_TEST, 1.0F), NOT_FOUND));
+        assertThrows(IllegalArgumentException.class, () -> controller.createLimit(new Dish(DISH1_ID, "tea", DATE_TEST, 1.1F), RESTAURANT1_ID, null));
+        assertThrows(NotFoundException.class, () -> controller.createLimit(new Dish(null, "tea", null, 1.1F), RESTAURANT1_ID, null));
+        assertThrows(NotFoundException.class, () -> controller.createLimit(new Dish(null, "tea", DATE_TEST, 1.0F), NOT_FOUND, null));
     }
 
     @Test
@@ -172,9 +172,9 @@ class DishRestControllerTest extends AbstractControllerTest {
     @Test
     void createListErrorData() throws Exception {
         DateTimeUtil.setThisDay(DATE_TEST);
-        assertThrows(NotFoundException.class, () -> controller.createListOfMenu(asList(DISH1, DISH1), RESTAURANT1_ID));
+        assertThrows(IllegalArgumentException.class, () -> controller.createListOfMenu(asList(DISH1, DISH1), RESTAURANT1_ID));
+        assertThrows(IllegalArgumentException.class, () -> controller.createListOfMenu(asList(DISH1, DISH2), NOT_FOUND));
         assertThrows(NotFoundException.class, () -> controller.createListOfMenu(asList(null, DISH1), RESTAURANT1_ID));
-        assertThrows(NotFoundException.class, () -> controller.createListOfMenu(asList(DISH1, DISH2), NOT_FOUND));
         assertThrows(NotFoundException.class, () -> controller.createListOfMenu(null, RESTAURANT1_ID));
     }
 
@@ -187,7 +187,7 @@ class DishRestControllerTest extends AbstractControllerTest {
                 .with(userHttpBasic(ADMIN))
                 .content(JsonUtil.writeValue(updated)))
                 .andDo(print())
-                .andExpect(status().isOk());
+                .andExpect(status().isCreated());
         DISH_MATCHER.assertMatch(controller.getById(DISH1_ID, RESTAURANT1_ID), updated);
     }
 
@@ -205,11 +205,11 @@ class DishRestControllerTest extends AbstractControllerTest {
 
     @Test
     void updateErrorData() throws Exception {
-        assertThrows(NotFoundException.class, () -> controller.update(DISH1, DISH10_ID ,RESTAURANT1_ID, null));
-        assertThrows(NotFoundException.class, () -> controller.update(DISH1, DISH10_ID ,RESTAURANT1_ID, null));
-        assertThrows(NotFoundException.class, () -> controller.update(DISH10, DISH1_ID ,RESTAURANT1_ID, null));
+        assertThrows(IllegalArgumentException.class, () -> controller.update(DISH1, DISH10_ID ,RESTAURANT1_ID, null));
+        assertThrows(IllegalArgumentException.class, () -> controller.update(DISH1, DISH10_ID ,RESTAURANT1_ID, null));
+        assertThrows(IllegalArgumentException.class, () -> controller.update(DISH10, DISH1_ID ,RESTAURANT1_ID, null));
+        assertThrows(IllegalArgumentException.class, () -> controller.update(DISH1, NOT_FOUND ,RESTAURANT1_ID, null));
         assertThrows(NotFoundException.class, () -> controller.update(null, DISH1_ID ,RESTAURANT1_ID, null));
-        assertThrows(NotFoundException.class, () -> controller.update(DISH1, NOT_FOUND ,RESTAURANT1_ID, null));
         assertThrows(NotFoundException.class, () -> controller.update(DISH1, DISH1_ID ,NOT_FOUND, null));
     }
 

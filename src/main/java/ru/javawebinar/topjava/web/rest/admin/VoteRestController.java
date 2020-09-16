@@ -2,27 +2,24 @@ package ru.javawebinar.topjava.web.rest.admin;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.javawebinar.topjava.model.Vote;
 import ru.javawebinar.topjava.repository.VoteRepository;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import javax.validation.Valid;
-import java.net.URI;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
 import static ru.javawebinar.topjava.util.DateTimeUtil.thisDay;
 import static ru.javawebinar.topjava.util.DateTimeUtil.сhangeVoteTime;
+import static ru.javawebinar.topjava.util.RestUtil.getResponseEntity;
 import static ru.javawebinar.topjava.util.ValidationUtil.*;
 import static ru.javawebinar.topjava.web.SecurityUtil.authUserId;
 
@@ -85,41 +82,30 @@ public class VoteRestController {
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void delete(@PathVariable(name = "id") int voteId) {
         log.info("delete vote {} for userId {}", voteId, authUserId());
-        checkNotFound(LocalTime.now().isBefore(сhangeVoteTime), voteId +" for change vote up to 11:00");
+        checkNotFound(LocalTime.now().isBefore(сhangeVoteTime), voteId +" for change vote up to " + сhangeVoteTime);
         checkNotFoundWithId(repository.delete(voteId, authUserId()), voteId);
     }
 
     @PutMapping(value = "/{id}/users/{userId}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    public void update(@Valid @RequestBody Vote vote, @PathVariable(name = "id") int voteId, @PathVariable int userId) {
+    public ResponseEntity<Vote> update(@Valid @RequestBody Vote vote, @PathVariable(name = "id") int voteId, @PathVariable int userId) {
         log.info("update vote {}", vote);
-        Vote updated;
-        try {
-            Assert.notNull(vote, "vote must not be null");
-            assureIdConsistent(vote, voteId);
-            checkNotFound(LocalTime.now().isBefore(сhangeVoteTime), voteId +" for change vote up to " + сhangeVoteTime);
-            updated = repository.save(vote, userId);
-            checkNotFoundWithId(updated, vote.id());
-        } catch (IllegalArgumentException | DataIntegrityViolationException e) {
-            throw new NotFoundException(" Illegal argument vote=" + vote + " or id=" + voteId);
-        }
+        assureIdConsistent(vote, voteId);
+        checkNotFound(LocalTime.now().isBefore(сhangeVoteTime), voteId +" for change vote up to " + сhangeVoteTime);
+        return getResponseEntity(checkNotFoundWithId(repository.save(vote, userId), vote.id()), REST_URL);
     }
 
     @Transactional
     @PostMapping(value = "/restaurants/{id}/users/{userId}")
     public ResponseEntity<Vote> create(@PathVariable(name = "id") int restaurantId, @PathVariable int userId) {
         log.info("create Vote {} for restaurantId", restaurantId);
-        Vote created;
         try {
-            checkNotFound(!isExistVote(userId, thisDay), userId +" - so as vote already exist for this day (" + thisDay + ")");
-            created = checkNotFound(repository.save(new Vote(null, thisDay, restaurantId, userId), authUserId()), "id=" + restaurantId);
-        } catch (IllegalArgumentException | DataIntegrityViolationException | NullPointerException e) {
-            throw new NotFoundException("vote of user " + userId + " for this date (" + thisDay + ") already exist");
+            checkNotFound(!isExistVote(userId, thisDay), userId +" so as vote already exist for this day=" + thisDay);
+            return getResponseEntity(checkNotFound(repository.save(
+                    new Vote(null, thisDay, restaurantId, userId), userId), "id=" + restaurantId), REST_URL);
+        } catch (NullPointerException e) {
+            throw new NotFoundException("error in data userId=" + userId + " or restaurantId=" + restaurantId);
         }
-        URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path(REST_URL + "/{id}")
-                .buildAndExpand(created.getId()).toUri();
-        return ResponseEntity.created(uriOfNewResource).body(created);
     }
 
     public boolean isExistVote(int userId, LocalDate date){

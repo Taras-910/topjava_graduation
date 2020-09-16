@@ -30,6 +30,7 @@ public class ProfileUserRestController {
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable int id) {
+        log.info("delete {}", id);
         service.delete(id);
     }
 

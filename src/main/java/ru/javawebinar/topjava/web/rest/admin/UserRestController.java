@@ -7,14 +7,13 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.service.UserService;
 
 import javax.validation.Valid;
-import java.net.URI;
 import java.util.List;
 
+import static ru.javawebinar.topjava.util.RestUtil.getResponseEntity;
 import static ru.javawebinar.topjava.util.ValidationUtil.assureIdConsistent;
 import static ru.javawebinar.topjava.util.ValidationUtil.checkNotFoundWithId;
 
@@ -31,38 +30,40 @@ public class UserRestController {
 
     @GetMapping
     public List<User> getAll() {
+        log.info("getAll");
         return service.getAll();
     }
 
     @GetMapping("/{id}")
     public User get(@PathVariable int id) {
+        log.info("get {}", id);
         return checkNotFoundWithId(service.get(id), id);
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<User> create(@Valid @RequestBody User user) {
-        User created = service.create(user);
-        URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path(REST_URL + "/{id}")
-                .buildAndExpand(created.getId()).toUri();
-        return ResponseEntity.created(uriOfNewResource).body(created);
+        log.info("create user {}", user);
+        return getResponseEntity(service.create(user), REST_URL);
+    }
+
+    @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
+    public ResponseEntity<User> update(@Valid @RequestBody User user, @PathVariable int id) {
+        log.info("update user {} by id {}", user, id);
+        assureIdConsistent(user, id);
+        return getResponseEntity(service.create(user), REST_URL);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable int id) {
+        log.info("delete {}", id);
         service.delete(id);
-    }
-
-    @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    public void update(@Valid @RequestBody User user, @PathVariable int id) {
-        assureIdConsistent(user, id);
-        service.update(user);
     }
 
     @GetMapping("/by")
     public User getByMail(@RequestParam String email) {
+        log.info("getByMail {}", email);
         return service.getByEmail(email);
     }
 

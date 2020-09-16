@@ -126,7 +126,7 @@ class VoteRestControllerTest extends AbstractControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(userHttpBasic(ADMIN))
                 .content(JsonUtil.writeValue(updated)))
-                .andExpect(status().isNoContent());
+                .andExpect(status().isCreated());
         VOTE_MATCHER.assertMatch(controller.getById(VOTE1_ID), updated);
     }
 
@@ -148,7 +148,7 @@ class VoteRestControllerTest extends AbstractControllerTest {
     void updateIllegalArgument() throws Exception {
         Vote updated = VoteTestData.getUpdated();
         setСhangeVoteTime(TIME_TEST_IN);
-        assertThrows(NotFoundException.class, () -> controller.update(updated, NOT_FOUND, ADMIN_ID));
+        assertThrows(IllegalArgumentException.class, () -> controller.update(updated, NOT_FOUND, ADMIN_ID));
     }
 
     @Test

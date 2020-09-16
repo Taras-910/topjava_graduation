@@ -2,19 +2,16 @@ package ru.javawebinar.topjava.web.rest.admin;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.javawebinar.topjava.model.Dish;
 import ru.javawebinar.topjava.repository.DishRepository;
-import ru.javawebinar.topjava.util.MenuUtil;
 import ru.javawebinar.topjava.util.ValidationUtil;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
@@ -24,10 +21,10 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
-import static ru.javawebinar.topjava.util.DateTimeUtil.thisDay;
+import static ru.javawebinar.topjava.util.MenuUtil.countLowerLimit;
 import static ru.javawebinar.topjava.util.MenuUtil.countWithin;
+import static ru.javawebinar.topjava.util.RestUtil.getResponseEntity;
 import static ru.javawebinar.topjava.util.ValidationUtil.*;
 
 @RestController
@@ -66,43 +63,32 @@ public class DishRestController {
     }
 
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    public ResponseEntity<String>  update(@Valid @RequestBody Dish dish, @PathVariable(name = "id") int dishId, @RequestParam int restaurantId, BindingResult result) {
-        if (result != null && result.hasErrors()) {
-            String errorFieldsMsg = result.getFieldErrors().stream()
-                    .map(fe -> String.format("[%s] %s", fe.getField(), fe.getDefaultMessage()))
-                    .collect(Collectors.joining(","));
-            return ResponseEntity.unprocessableEntity().body(errorFieldsMsg);
-        }
+    public ResponseEntity<Dish> update(@Valid @RequestBody Dish dish, @PathVariable(name = "id") int dishId, @RequestParam int restaurantId, BindingResult result) {
         log.info("update dish {} with restaurantId {}", dish, restaurantId);
-        try {
-            Assert.notNull(dish, "dish must not be null");
-            assureIdConsistent(dish, dishId);
-            checkNotFoundWithId(repository.save(dish, restaurantId), dish.id());
-        } catch (IllegalArgumentException | DataIntegrityViolationException | NullPointerException e) {
-            throw new NotFoundException("error data of " + dish);
+        if (result != null && result.hasErrors()) {
+            return new ResponseEntity<>(dish, HttpStatus.UNPROCESSABLE_ENTITY);
         }
-        return ResponseEntity.ok().build();
+        try {
+            assureIdConsistent(dish, dishId);
+            return getResponseEntity(checkNotFoundWithId(repository.save(dish, restaurantId), dish.id()), REST_URL);
+        } catch (NullPointerException e) {
+            throw new NotFoundException("error data of dish=" + dish);
+        }
     }
 
-    /* from 2 to 5*/
+    // from 2 to 5
+    @Transactional
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Dish> createLimit(@Valid @RequestBody Dish dish, @RequestParam int restaurantId) {
+    public ResponseEntity<Dish> createLimit(@Valid @RequestBody Dish dish, @RequestParam int restaurantId, BindingResult result) {
         log.info("create dish {} for restaurantId {}", dish, restaurantId);
-         Dish created;
-        try {
-            Assert.notNull(dish, "dish must not be null");
-            checkNew(dish);
-            checkNotFound(countWithin(List.of(dish), repository.getByRestaurantAndDate(restaurantId, dish.getDate())),
-                    "dishes so number should be within from 2 to 5");
-            created = repository.save(dish, restaurantId);
-        } catch (IllegalArgumentException | DataIntegrityViolationException | NullPointerException | NotFoundException e) {
-            throw new NotFoundException("error dish=" + dish + ", or restaurantId=" + restaurantId + ", or dish already exist for date=" + thisDay);
+        log.info("update dish {} with restaurantId {}", dish, restaurantId);
+        if (result != null && result.hasErrors()) {
+            return new ResponseEntity<>(dish, HttpStatus.UNPROCESSABLE_ENTITY);
         }
-        URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path(REST_URL + "/{id}")
-                .buildAndExpand(created.getId()).toUri();
-        return ResponseEntity.created(uriOfNewResource).body(created);
+        checkNew(dish);
+        checkNotFound(countWithin(List.of(dish), repository.getByRestaurantAndDate(restaurantId, dish.getDate())),
+                "dishes so number should be within from 2 to 5");
+        return getResponseEntity(repository.save(dish, restaurantId), REST_URL);
     }
 
     @Transactional
@@ -111,30 +97,29 @@ public class DishRestController {
         List<Dish> createdDishes = new ArrayList<>();
         final URI[] uriOfNewResource = new URI[1];
         try {
-            dishes.forEach(d -> Assert.notNull(d, "dish must not be null"));
             dishes.forEach(ValidationUtil::checkNew);
             List<Dish> storedDishes = Optional.ofNullable(repository.getByRestaurantAndDate(restaurantId, dishes.get(0).getDate())).orElse(null);
             checkNotFound(countWithin(dishes, storedDishes), "dishes so number should be within from 2 to 5");
             dishes.forEach(dish -> {
-                Dish storedDish;
-                storedDish = repository.save(dish, restaurantId);
+                Dish storedDish = repository.save(dish, restaurantId);
                 createdDishes.add(storedDish);
                 uriOfNewResource[0] = ServletUriComponentsBuilder.fromCurrentContextPath()
                         .path(REST_URL + "/{id}")
                         .buildAndExpand(storedDish.getId()).toUri();
             });
-        } catch (IllegalArgumentException | DataIntegrityViolationException | NullPointerException | ExceptionInInitializerError e) {
-            throw new NotFoundException("error argument or at least one dish from List (" + dishes + ")");
+        } catch (NullPointerException e) {
+            throw new NotFoundException("error argument dish on dishes=" + dishes );
         }
         return ResponseEntity.created(uriOfNewResource[0]).body(createdDishes);
     }
-
+    // at least 2
+    @Transactional
     @DeleteMapping("/{id}/restaurants/{restaurantId}")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void delete(@PathVariable(name = "id") int dishId, @PathVariable int restaurantId, @RequestParam LocalDate date) {
-        List<Dish> memoryDishes = repository.getByRestaurantAndDate(restaurantId, date);
-        log.info("delete dish {} of restaurant {} from memoryDishes {}", dishId, restaurantId, memoryDishes.size());
-        checkNotFound(MenuUtil.countLowerLimit(memoryDishes), dishId+" so as dishes number of menu should be at least 2");
+        List<Dish> memoryDishes = Optional.ofNullable(repository.getByRestaurantAndDate(restaurantId, date)).orElse(new ArrayList<>());
+        log.info("delete dish {} of restaurant {} from count {}", dishId, restaurantId, memoryDishes.size());
+        checkNotFound(countLowerLimit(memoryDishes), dishId+" so as dishes number of menu should be at least 2");
         checkNotFoundWithId(repository.delete(dishId, restaurantId), dishId);
     }
 

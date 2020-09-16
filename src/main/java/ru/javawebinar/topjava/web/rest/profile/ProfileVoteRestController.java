@@ -6,22 +6,19 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
-import org.springframework.util.Assert;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.javawebinar.topjava.model.Vote;
 import ru.javawebinar.topjava.repository.VoteRepository;
-import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import javax.validation.Valid;
-import java.net.URI;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
 import static java.time.LocalDate.now;
-import static ru.javawebinar.topjava.util.DateTimeUtil.thisDay;
 import static ru.javawebinar.topjava.util.DateTimeUtil.сhangeVoteTime;
+import static ru.javawebinar.topjava.util.RestUtil.getResponseEntity;
 import static ru.javawebinar.topjava.util.ValidationUtil.*;
 import static ru.javawebinar.topjava.web.SecurityUtil.authUserId;
 
@@ -71,31 +68,25 @@ public class ProfileVoteRestController {
     public void delete(@PathVariable(name = "id") int voteId) {
         int userId = authUserId();
         log.info("delete vote {} for userId {}", voteId, userId);
+        checkNotFound(LocalTime.now().isBefore(сhangeVoteTime), voteId +" for change vote up to " + сhangeVoteTime);
         checkNotFoundWithId(voteRepository.delete(voteId, userId), voteId);
     }
 
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    public void update(@Valid @RequestBody Vote vote, @PathVariable(name = "id") int voteId) {
+    public ResponseEntity<Vote>  update(@Valid @RequestBody Vote vote, @PathVariable(name = "id") int voteId, BindingResult result) {
         log.info("update vote {} with id {} for userId {}", vote, voteId, authUserId());
-        Assert.notNull(vote, "vote must not be null");
+        if (result != null && result.hasErrors()) {
+            return new ResponseEntity<>(vote, HttpStatus.UNPROCESSABLE_ENTITY);
+        }
         assureIdConsistent(vote, voteId);
-        checkNotFound(LocalTime.now().isBefore(сhangeVoteTime), voteId +" for change vote up to 11:00");
-        checkNotFoundWithId(voteRepository.save(vote, authUserId()), voteId);
+        checkNotFound(LocalTime.now().isBefore(сhangeVoteTime), voteId +" for change vote up to " + сhangeVoteTime);
+        return  getResponseEntity(checkNotFoundWithId(voteRepository.save(vote, authUserId()), voteId), REST_URL);
     }
 
     @PostMapping(value = "/restaurants/{id}")
     public ResponseEntity<Vote> create(@PathVariable(name = "id") int restaurantId) {
         log.info("create Vote for restaurantId {} ", restaurantId);
-        Vote createdVote = null;
-        try {
-            createdVote = voteRepository.save(new Vote(null, now(), restaurantId, authUserId()), authUserId());
-        } catch (Exception e) {
-            throw new NotFoundException("vote for this date (" + thisDay + ") already exist");
-        }
-        URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path(REST_URL + "/{id}")
-                .buildAndExpand(createdVote.getId()).toUri();
-        return ResponseEntity.created(uriOfNewResource).body(createdVote);
+        return  getResponseEntity(voteRepository.save(new Vote(null, now(), restaurantId, authUserId()), authUserId()), REST_URL);
     }
 }
