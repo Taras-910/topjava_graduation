@@ -1,13 +1,11 @@
 package ru.javawebinar.topjava.util;
 
-import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import ru.javawebinar.topjava.model.AbstractBaseEntity;
+import ru.javawebinar.topjava.util.exception.IllegalArgumentException;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import javax.validation.*;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public class ValidationUtil {
     private static final Validator validator;
@@ -56,6 +54,12 @@ public class ValidationUtil {
         }
     }
 
+    public static void checkId(AbstractBaseEntity entity) {
+        if (entity.isNew()) {
+            throw new NotFoundException(entity + " must be  not null");
+        }
+    }
+
     public static void assureIdConsistent(AbstractBaseEntity entity, int id) {
 //      conservative when you reply, but accept liberally (http://stackoverflow.com/a/32728226/548473)
         if (entity.isNew()) {
@@ -64,23 +68,4 @@ public class ValidationUtil {
             throw new IllegalArgumentException(entity + " must be with id=" + id);
         }
     }
-
-    //  http://stackoverflow.com/a/28565320/548473
-    public static Throwable getRootCause(Throwable t) {
-        Throwable result = t;
-        Throwable cause;
-
-        while (null != (cause = result.getCause()) && (result != cause)) {
-            result = cause;
-        }
-        return result;
-    }
-
-    public static ResponseEntity<String> errorBinding(BindingResult result) {
-        String errorFieldsMsg = result.getFieldErrors().stream()
-                .map(fe -> String.format("[%s] %s", fe.getField(), fe.getDefaultMessage()))
-                .collect(Collectors.joining("<br>"));
-        return ResponseEntity.unprocessableEntity().body(errorFieldsMsg);
-    }
-
 }

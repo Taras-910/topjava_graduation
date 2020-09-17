@@ -10,7 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import ru.javawebinar.topjava.model.Vote;
 import ru.javawebinar.topjava.repository.VoteRepository;
-import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import javax.validation.Valid;
 import java.time.LocalDate;
@@ -90,8 +89,8 @@ public class VoteRestController {
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public ResponseEntity<Vote> update(@Valid @RequestBody Vote vote, @PathVariable(name = "id") int voteId, @PathVariable int userId) {
         log.info("update vote {}", vote);
-        assureIdConsistent(vote, voteId);
         checkNotFound(LocalTime.now().isBefore(сhangeVoteTime), voteId +" for change vote up to " + сhangeVoteTime);
+        assureIdConsistent(vote, voteId);
         return getResponseEntity(checkNotFoundWithId(repository.save(vote, userId), vote.id()), REST_URL);
     }
 
@@ -99,17 +98,12 @@ public class VoteRestController {
     @PostMapping(value = "/restaurants/{id}/users/{userId}")
     public ResponseEntity<Vote> create(@PathVariable(name = "id") int restaurantId, @PathVariable int userId) {
         log.info("create Vote {} for restaurantId", restaurantId);
-        try {
-            checkNotFound(!isExistVote(userId, thisDay), userId +" so as vote already exist for this day=" + thisDay);
-            return getResponseEntity(checkNotFound(repository.save(
-                    new Vote(null, thisDay, restaurantId, userId), userId), "id=" + restaurantId), REST_URL);
-        } catch (NullPointerException e) {
-            throw new NotFoundException("error in data userId=" + userId + " or restaurantId=" + restaurantId);
-        }
+        checkNotFound(!isExistVote(userId, thisDay), userId +" so as vote already exist for this day=" + thisDay);
+        return getResponseEntity(checkNotFound(repository.save(
+                new Vote(null, thisDay, restaurantId, userId), userId), "id=" + restaurantId), REST_URL);
     }
 
     public boolean isExistVote(int userId, LocalDate date){
         return getByDateForUser(userId, date) != null;
     }
-
 }

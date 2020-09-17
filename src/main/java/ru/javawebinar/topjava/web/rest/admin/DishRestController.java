@@ -76,7 +76,7 @@ public class DishRestController {
         }
     }
 
-    // from 2 to 5
+    // keep in DB from 2 to 5 dishes
     @Transactional
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Dish> createLimit(@Valid @RequestBody Dish dish, @RequestParam int restaurantId, BindingResult result) {
@@ -111,7 +111,8 @@ public class DishRestController {
         }
         return ResponseEntity.created(uriOfNewResource[0]).body(createdDishes);
     }
-    // at least 2
+
+    // keep in DB at least 2 dishes
     @Transactional
     @DeleteMapping("/{id}/restaurants/{restaurantId}")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)

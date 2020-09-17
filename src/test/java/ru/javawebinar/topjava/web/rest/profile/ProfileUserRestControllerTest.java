@@ -55,4 +55,11 @@ class ProfileUserRestControllerTest extends AbstractControllerTest {
 
         USER_MATCHER.assertMatch(controller.get(USER_ID), updated);
     }
+
+    @Test
+    void getUnauth() throws Exception {
+        perform(MockMvcRequestBuilders.get(REST_URL + ADMIN_ID))
+                .andExpect(status().isUnauthorized());
+    }
+
 }

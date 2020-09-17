@@ -14,9 +14,8 @@ import ru.javawebinar.topjava.util.exception.NotFoundException;
 import ru.javawebinar.topjava.util.json.JsonUtil;
 import ru.javawebinar.topjava.web.AbstractControllerTest;
 
-import java.time.LocalDate;
-
 import static java.lang.String.valueOf;
+import static java.time.LocalDate.now;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -28,7 +27,6 @@ import static ru.javawebinar.topjava.testdata.RestaurantTestData.RESTAURANT2_ID;
 import static ru.javawebinar.topjava.testdata.UserTestData.*;
 import static ru.javawebinar.topjava.testdata.VoteTestData.*;
 import static ru.javawebinar.topjava.util.DateTimeUtil.*;
-import static ru.javawebinar.topjava.web.SecurityUtil.setAuthorizedUserTest;
 
 class VoteRestControllerTest extends AbstractControllerTest {
     private Logger log = LoggerFactory.getLogger(getClass());
@@ -50,7 +48,10 @@ class VoteRestControllerTest extends AbstractControllerTest {
 
     @Test
     void getNotFound() throws Exception {
-        assertThrows(NotFoundException.class, () -> controller.getById(NOT_FOUND));
+        perform(MockMvcRequestBuilders.get(REST_URL + NOT_FOUND)
+                .with(userHttpBasic(ADMIN)))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity());
     }
 
     @Test
@@ -132,28 +133,40 @@ class VoteRestControllerTest extends AbstractControllerTest {
 
     @Test
     void updateOverTime() throws Exception {
+        DateTimeUtil.setСhangeVoteTime(TIME_TEST_OUT);
         Vote updated = VoteTestData.getUpdated();
-        setСhangeVoteTime(TIME_TEST_OUT);
-        assertThrows(NotFoundException.class, () -> controller.update(updated, VOTE1_ID, ADMIN_ID));
+        perform(MockMvcRequestBuilders.put(REST_URL + VOTE1_ID + "/users/" + ADMIN_ID)
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(ADMIN))
+                .content(JsonUtil.writeValue(updated)))
+                .andExpect(status().isUnprocessableEntity());
     }
 
     @Test
     void updateNotOwn() throws Exception {
+        DateTimeUtil.setСhangeVoteTime(TIME_TEST_IN);
         Vote updated = VoteTestData.getUpdated();
-        setСhangeVoteTime(TIME_TEST_IN);
-        assertThrows(NotFoundException.class, () -> controller.update(updated, VOTE1_ID, USER_ID));
+        perform(MockMvcRequestBuilders.put(REST_URL + VOTE1_ID + "/users/" + USER_ID)
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(ADMIN))
+                .content(JsonUtil.writeValue(updated)))
+                .andExpect(status().isUnprocessableEntity());
     }
 
     @Test
     void updateIllegalArgument() throws Exception {
+        DateTimeUtil.setСhangeVoteTime(TIME_TEST_IN);
         Vote updated = VoteTestData.getUpdated();
-        setСhangeVoteTime(TIME_TEST_IN);
-        assertThrows(IllegalArgumentException.class, () -> controller.update(updated, NOT_FOUND, ADMIN_ID));
+        perform(MockMvcRequestBuilders.put(REST_URL + NOT_FOUND + "/users/" + ADMIN_ID)
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(ADMIN))
+                .content(JsonUtil.writeValue(updated)))
+                .andExpect(status().isConflict());
     }
 
     @Test
     void create() throws Exception {
-        setThisDay(LocalDate.now());
+        setThisDay(now());
         Vote newVote = VoteTestData.getNew();
         ResultActions action = perform(MockMvcRequestBuilders.post(
                 REST_URL + "restaurants/" + RESTAURANT2_ID + "/users/" + ADMIN_ID)
@@ -171,7 +184,12 @@ class VoteRestControllerTest extends AbstractControllerTest {
     @Test
     void createRepeatPerDay() throws Exception {
         setThisDay(DATE_TEST);
-        assertThrows(NotFoundException.class, () -> controller.create(RESTAURANT1_ID, ADMIN_ID));
+        Vote newVote = VoteTestData.getNew();
+        perform(MockMvcRequestBuilders.post(
+                REST_URL + "restaurants/" + RESTAURANT2_ID + "/users/" + ADMIN_ID)
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(ADMIN)))
+                .andExpect(status().isUnprocessableEntity());
     }
 
     @Test
@@ -186,21 +204,29 @@ class VoteRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    void deletedNotFound() throws Exception {
-        assertThrows(NotFoundException.class, () -> controller.delete(NOT_FOUND));
+    void deleteNotFound() throws Exception {
+        perform(MockMvcRequestBuilders.delete(REST_URL + NOT_FOUND)
+                .param("restaurantId", valueOf(RESTAURANT1_ID))
+                .with(userHttpBasic(ADMIN)))
+                .andExpect(status().isUnprocessableEntity());
     }
 
     @Test
     void deleteNotOwn() throws Exception {
-        setAuthorizedUserTest(USER);
         setСhangeVoteTime(TIME_TEST_IN);
-        assertThrows(NotFoundException.class, () -> controller.delete(VOTE1_ID));
+        perform(MockMvcRequestBuilders.delete(REST_URL + VOTE1_ID)
+                .param("restaurantId", valueOf(RESTAURANT1_ID))
+                .with(userHttpBasic(USER)))
+                .andExpect(status().isForbidden());
     }
 
     @Test
     void deleteOverTime() throws Exception {
-        setAuthorizedUserTest(ADMIN);
         setСhangeVoteTime(TIME_TEST_OUT);
-        assertThrows(NotFoundException.class, () -> controller.delete(VoteTestData.VOTE5_ID));
+        perform(MockMvcRequestBuilders.delete(REST_URL + VOTE1_ID)
+                .param("restaurantId", valueOf(RESTAURANT1_ID))
+                .with(userHttpBasic(ADMIN))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isUnprocessableEntity());
     }
 }

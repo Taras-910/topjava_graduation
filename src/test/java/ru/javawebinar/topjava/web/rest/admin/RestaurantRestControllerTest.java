@@ -23,7 +23,6 @@ import static ru.javawebinar.topjava.testdata.RestaurantTestData.*;
 import static ru.javawebinar.topjava.testdata.UserTestData.ADMIN;
 import static ru.javawebinar.topjava.testdata.UserTestData.NOT_FOUND;
 import static ru.javawebinar.topjava.util.DateTimeUtil.DATE_TEST;
-import static ru.javawebinar.topjava.util.DateTimeUtil.thisDay;
 
 class RestaurantRestControllerTest extends AbstractControllerTest {
     private static final String REST_URL = RestaurantRestController.REST_URL + '/';
@@ -41,6 +40,14 @@ class RestaurantRestControllerTest extends AbstractControllerTest {
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(RESTAURANT_MATCHER.contentJson(RESTAURANT1));
+    }
+
+    @Test
+    void getNotFound() throws Exception {
+        perform(MockMvcRequestBuilders.get(REST_URL + NOT_FOUND)
+                .with(userHttpBasic(ADMIN)))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity());
     }
 
     @Test
@@ -99,12 +106,12 @@ class RestaurantRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    void getErrorData() throws Exception {
-        assertThrows(NotFoundException.class, () -> controller.getById(NOT_FOUND));
-        assertThrows(NotFoundException.class, () -> controller.getByIdWithDishesOfDate(NOT_FOUND, thisDay));
-        assertThrows(NotFoundException.class, () -> controller.getByIdWithDishesOfDate(RESTAURANT1_ID, null));
+    void getErrorDate() throws Exception {
+        perform(MockMvcRequestBuilders.get(REST_URL + "dishes/date/" + "2020-20-20")
+                .with(userHttpBasic(ADMIN)))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
     }
-
 
     @Test
     void update() throws Exception {
@@ -119,11 +126,47 @@ class RestaurantRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    void updateErrorData() throws Exception {
-        assertThrows(IllegalArgumentException.class, () -> controller.update(new Restaurant(null, "Новый"), RESTAURANT1_ID));
-        assertThrows(IllegalArgumentException.class, () -> controller.update(new Restaurant(RESTAURANT1_ID, "Новый"), NOT_FOUND));
-        assertThrows(IllegalArgumentException.class, () -> controller.update(new Restaurant(null, null), RESTAURANT1_ID));
-        assertThrows(IllegalArgumentException.class, () -> controller.update(new Restaurant(RESTAURANT1_ID, "Новый"), RESTAURANT2_ID));
+    void updateErrorId() throws Exception {
+        Restaurant updated = new Restaurant(null, "Новый");
+        perform(MockMvcRequestBuilders.put(REST_URL + RESTAURANT1_ID)
+                .param("restaurantId", valueOf(RESTAURANT1_ID))
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(ADMIN))
+                .content(JsonUtil.writeValue(updated)))
+                .andExpect(status().isUnprocessableEntity());
+    }
+
+    @Test
+    void updateNyFound() throws Exception {
+        Restaurant updated = new Restaurant(null, "Новый");
+        perform(MockMvcRequestBuilders.put(REST_URL + NOT_FOUND)
+                .param("restaurantId", valueOf(RESTAURANT1_ID))
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(ADMIN))
+                .content(JsonUtil.writeValue(updated)))
+                .andExpect(status().isUnprocessableEntity());
+    }
+
+    @Test
+    void updateErrorName() throws Exception {
+        Restaurant updated = new Restaurant(null, null);
+        perform(MockMvcRequestBuilders.put(REST_URL + RESTAURANT1_ID)
+                .param("restaurantId", valueOf(RESTAURANT1_ID))
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(ADMIN))
+                .content(JsonUtil.writeValue(updated)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void updateNotOwn() throws Exception {
+        Restaurant updated = new Restaurant(null, "Новый");
+        perform(MockMvcRequestBuilders.put(REST_URL + RESTAURANT2_ID)
+                .param("restaurantId", valueOf(RESTAURANT1_ID))
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(ADMIN))
+                .content(JsonUtil.writeValue(updated)))
+                .andExpect(status().isUnprocessableEntity());
     }
 
     @Test
@@ -143,10 +186,23 @@ class RestaurantRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    public void createErrorDate() throws Exception {
-        assertThrows(IllegalArgumentException.class, () -> controller.create(new Restaurant(RESTAURANT1_ID, "Новый")));
-        assertThrows(IllegalArgumentException.class, () -> controller.create(new Restaurant(NOT_FOUND, "Новый")));
-        assertThrows(IllegalArgumentException.class, () -> controller.create(new Restaurant(RESTAURANT1_ID, null)));
+    void createErrorName() throws Exception {
+        Restaurant updated = new Restaurant(null, null);
+        perform(MockMvcRequestBuilders.post(REST_URL)
+                .param("restaurantId", valueOf(RESTAURANT1_ID))
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(ADMIN)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void createDuplicate() throws Exception {
+        Restaurant updated = new Restaurant(null, "Новый");
+        perform(MockMvcRequestBuilders.post(REST_URL)
+                .param("restaurantId", valueOf(RESTAURANT1_ID))
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(ADMIN)))
+                .andExpect(status().isBadRequest());
     }
 
     @Test

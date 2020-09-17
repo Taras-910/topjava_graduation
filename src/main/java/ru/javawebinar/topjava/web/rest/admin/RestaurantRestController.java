@@ -7,7 +7,6 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 import ru.javawebinar.topjava.model.Restaurant;
 import ru.javawebinar.topjava.repository.RestaurantRepository;
@@ -79,7 +78,7 @@ public class RestaurantRestController {
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Restaurant> update(@Valid @RequestBody Restaurant restaurant, @PathVariable int id) {
         log.info("update restaurant {} for id {}", restaurant, id);
-        Assert.notNull(restaurant.getId(), "id of restaurant must not be null");
+        checkId(restaurant);
         assureIdConsistent(restaurant, id);
         return getResponseEntity(checkNotFoundWithId(repository.save(restaurant), id), REST_URL);
     }

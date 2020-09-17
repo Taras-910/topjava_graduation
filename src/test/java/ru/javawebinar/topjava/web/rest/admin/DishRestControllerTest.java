@@ -50,7 +50,6 @@ class DishRestControllerTest extends AbstractControllerTest {
                 .andExpect(DISH_MATCHER.contentJson(DISH1));
     }
 
-
     @Test
     void getNotFound() throws Exception {
         assertThrows(NotFoundException.class, () -> controller.getById(NOT_FOUND, RESTAURANT1_ID));
@@ -125,7 +124,7 @@ class DishRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    void createErrorPriceValue() throws Exception {
+    void createPriceExceedValue() throws Exception {
         Dish newDish = new Dish("tea", DATE_TEST, 100.1F);
         ResultActions action = perform(MockMvcRequestBuilders.post(REST_URL)
                 .param("restaurantId", valueOf(RESTAURANT1_ID))
@@ -137,11 +136,29 @@ class DishRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    void createErrorData() throws Exception {
+    void createErrorId() throws Exception {
         DateTimeUtil.setThisDay(LocalDate.now().minusDays(1));
-        assertThrows(IllegalArgumentException.class, () -> controller.createLimit(new Dish(DISH1_ID, "tea", DATE_TEST, 1.1F), RESTAURANT1_ID, null));
-        assertThrows(NotFoundException.class, () -> controller.createLimit(new Dish(null, "tea", null, 1.1F), RESTAURANT1_ID, null));
-        assertThrows(NotFoundException.class, () -> controller.createLimit(new Dish(null, "tea", DATE_TEST, 1.0F), NOT_FOUND, null));
+        Dish newDish = new Dish(DISH1_ID, "tea", DATE_TEST, 1.1F);
+        perform(MockMvcRequestBuilders.post(REST_URL)
+                .param("restaurantId", valueOf(RESTAURANT1_ID))
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(ADMIN))
+                .content(JsonUtil.writeValue(newDish)))
+                .andDo(print())
+                .andExpect(status().isConflict());
+    }
+
+    @Test
+    void createErrorDate() throws Exception {
+        DateTimeUtil.setThisDay(LocalDate.now().minusDays(1));
+        Dish newDish = new Dish(null, "tea", null, 1.1F);
+        perform(MockMvcRequestBuilders.post(REST_URL)
+                .param("restaurantId", valueOf(RESTAURANT1_ID))
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(ADMIN))
+                .content(JsonUtil.writeValue(newDish)))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -164,18 +181,58 @@ class DishRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    void createOverLimit() throws Exception {
-        assertThrows(NotFoundException.class, () -> controller.createListOfMenu(overLimitMax(), RESTAURANT1_ID));
-        assertThrows(NotFoundException.class, () -> controller.createListOfMenu(overLimitMin(), RESTAURANT2_ID));
+    void createUpLimit() throws Exception {
+        List<Dish> newDishes = overLimitMax();
+        perform(MockMvcRequestBuilders.post(REST_URL + "restaurants/" + RESTAURANT1_ID)
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(ADMIN))
+                .content(JsonUtil.writeValue(newDishes)))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity());
     }
 
     @Test
-    void createListErrorData() throws Exception {
-        DateTimeUtil.setThisDay(DATE_TEST);
-        assertThrows(IllegalArgumentException.class, () -> controller.createListOfMenu(asList(DISH1, DISH1), RESTAURANT1_ID));
-        assertThrows(IllegalArgumentException.class, () -> controller.createListOfMenu(asList(DISH1, DISH2), NOT_FOUND));
-        assertThrows(NotFoundException.class, () -> controller.createListOfMenu(asList(null, DISH1), RESTAURANT1_ID));
-        assertThrows(NotFoundException.class, () -> controller.createListOfMenu(null, RESTAURANT1_ID));
+    void createDownLimit() throws Exception {
+        List<Dish> newDishes = overLimitMin();
+        perform(MockMvcRequestBuilders.post(REST_URL + "restaurants/" + RESTAURANT1_ID)
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(ADMIN))
+                .content(JsonUtil.writeValue(newDishes)))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity());
+    }
+
+    @Test
+    void createDuplicate() throws Exception {
+        List<Dish> newDishes = asList(DISH1, DISH1);
+        perform(MockMvcRequestBuilders.post(REST_URL + "restaurants/" + RESTAURANT1_ID)
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(ADMIN))
+                .content(JsonUtil.writeValue(newDishes)))
+                .andDo(print())
+                .andExpect(status().isConflict());
+    }
+
+    @Test
+    void createNotFound() throws Exception {
+        List<Dish> newDishes = asList(DISH1, DISH2);
+        perform(MockMvcRequestBuilders.post(REST_URL + "restaurants/" + NOT_FOUND)
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(ADMIN))
+                .content(JsonUtil.writeValue(newDishes)))
+                .andDo(print())
+                .andExpect(status().isConflict());
+    }
+
+    @Test
+    void createErrorDish() throws Exception {
+        List<Dish> newDishes = asList(null, DISH2);
+        perform(MockMvcRequestBuilders.post(REST_URL + "restaurants/" + RESTAURANT1_ID)
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(ADMIN))
+                .content(JsonUtil.writeValue(newDishes)))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity());
     }
 
     @Test
@@ -202,15 +259,16 @@ class DishRestControllerTest extends AbstractControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
-
     @Test
-    void updateErrorData() throws Exception {
-        assertThrows(IllegalArgumentException.class, () -> controller.update(DISH1, DISH10_ID ,RESTAURANT1_ID, null));
-        assertThrows(IllegalArgumentException.class, () -> controller.update(DISH1, DISH10_ID ,RESTAURANT1_ID, null));
-        assertThrows(IllegalArgumentException.class, () -> controller.update(DISH10, DISH1_ID ,RESTAURANT1_ID, null));
-        assertThrows(IllegalArgumentException.class, () -> controller.update(DISH1, NOT_FOUND ,RESTAURANT1_ID, null));
-        assertThrows(NotFoundException.class, () -> controller.update(null, DISH1_ID ,RESTAURANT1_ID, null));
-        assertThrows(NotFoundException.class, () -> controller.update(DISH1, DISH1_ID ,NOT_FOUND, null));
+    void updateNotFound() throws Exception {
+        Dish updated = DishTestData.getUpdated();
+        perform(MockMvcRequestBuilders.put(REST_URL + NOT_FOUND)
+                .param("restaurantId", valueOf(RESTAURANT1_ID))
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(ADMIN))
+                .content(JsonUtil.writeValue(updated)))
+                .andDo(print())
+                .andExpect(status().isConflict());
     }
 
     @Test
@@ -227,20 +285,35 @@ class DishRestControllerTest extends AbstractControllerTest {
 
     @Test
     void deleteOverLimit() throws Exception {
-        DateTimeUtil.setThisDay(DATE_TEST);
-        assertThrows(NotFoundException.class, () -> controller.delete(DISH1_ID, RESTAURANT1_ID, DATE_TEST));
+        setThisDay(DATE_TEST);
+        perform(MockMvcRequestBuilders.delete(REST_URL + DISH1_ID + "/restaurants/" + RESTAURANT1_ID)
+                .param("date", String.valueOf(DATE_TEST))
+                .with(userHttpBasic(ADMIN))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity());
     }
 
     @Test
     void deleteNotFound() throws Exception {
-        DateTimeUtil.setThisDay(DATE_TEST);
-        assertThrows(NotFoundException.class, () -> controller.delete(NOT_FOUND, RESTAURANT2_ID, DATE_TEST));
+        setThisDay(DATE_TEST);
+        perform(MockMvcRequestBuilders.delete(REST_URL + NOT_FOUND + "/restaurants/" + RESTAURANT1_ID)
+                .param("date", String.valueOf(DATE_TEST))
+                .with(userHttpBasic(ADMIN))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity());
     }
 
     @Test
     void deleteNotOwn() throws Exception {
-        DateTimeUtil.setThisDay(DATE_TEST);
-        assertThrows(NotFoundException.class, () -> controller.delete(DISH1_ID, RESTAURANT2_ID, DATE_TEST));
+        setThisDay(DATE_TEST);
+        perform(MockMvcRequestBuilders.delete(REST_URL + DISH1_ID + "/restaurants/" + RESTAURANT2_ID)
+                .param("date", String.valueOf(DATE_TEST))
+                .with(userHttpBasic(ADMIN))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity());
     }
 
     @Test
