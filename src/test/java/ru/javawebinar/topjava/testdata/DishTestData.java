@@ -4,6 +4,7 @@ import ru.javawebinar.topjava.TestMatcher;
 import ru.javawebinar.topjava.model.Dish;
 
 import java.time.Month;
+import java.util.Collections;
 import java.util.List;
 
 import static java.time.LocalDate.now;
@@ -30,27 +31,31 @@ public class DishTestData {
     public static final Dish DISH11 = new Dish(DISH1_ID + 10, "сок",of(2020, Month.JULY, 30), 2.5F);
     public static final Dish DISH12 = new Dish("Созданный пирог", of(2020, Month.FEBRUARY, 1), 5.0F);
     public static final Dish DISH13 = new Dish("Созданный чай", of(2020, Month.FEBRUARY, 1), 5.0F);
-    public static final Dish DISH14 = new Dish(null, "Created еда3",of(2020, Month.JULY, 30), 2.2F);
-    public static final Dish DISH15 = new Dish(null, "Created еда4",of(2020, Month.JULY, 30), 2.3F);
-    public static final Dish DISH16 = new Dish(null, "Created еда5",of(2020, Month.JULY, 30), 2.4F);
-    public static final Dish DISH17 = new Dish(null, "Created еда6",of(2020, Month.JULY, 30), 2.5F);
-    public static final Dish DISH18 = new Dish(null, "Created еда7",of(2020, Month.JULY, 30), 2.5F);
-    public static final Dish DISH19 = new Dish(null, "Created еда8",of(2020, Month.JULY, 30), 2.5F);
+    public static final Dish DISH14 = new Dish("Созданная еда3",of(2020, Month.JULY, 30), 2.2F);
+    public static final Dish DISH15 = new Dish("Созданная еда4",of(2020, Month.JULY, 30), 2.3F);
+    public static final Dish DISH16 = new Dish("Созданная еда5",of(2020, Month.JULY, 30), 2.4F);
+    public static final Dish DISH17 = new Dish("Созданная еда6",of(2020, Month.JULY, 30), 2.5F);
+    public static final Dish DISH18 = new Dish("Созданная еда7",of(2020, Month.JULY, 30), 2.5F);
+    public static final Dish DISH19 = new Dish("Созданная еда8",of(2020, Month.JULY, 30), 2.5F);
 
     public static final List<Dish> DISHES_GET_ALL = List.of(DISH1, DISH2, DISH3, DISH4, DISH5, DISH6, DISH7, DISH8, DISH9, DISH10, DISH11);
+
     public static final List<Dish> DISHES_RESTAURANT_DATE = List.of(DISH6, DISH5);
 
     public static Dish getNew() {
         return new Dish("Созданный ужин", of(2020, 07, 30), 5.0F);
     }
+
     public static List<Dish> getNewList() {
         return asList(DISH12, DISH13);
     }
+
     public static List<Dish> overLimitMax() {
         return asList(DISH14, DISH15, DISH16, DISH17,DISH18, DISH19);
     }
+
     public static List<Dish> overLimitMin() {
-        return asList(new Dish(null, "Created еда3", now(), 2.2F));
+        return Collections.singletonList(new Dish("Созданная еда3", now(), 2.2F));
     }
 
     public static Dish getUpdated() {

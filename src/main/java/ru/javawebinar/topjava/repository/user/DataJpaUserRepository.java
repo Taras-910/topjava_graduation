@@ -1,7 +1,5 @@
 package ru.javawebinar.topjava.repository.user;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 import ru.javawebinar.topjava.model.User;
@@ -12,7 +10,6 @@ import java.util.Optional;
 
 @Repository
 public class DataJpaUserRepository implements UserRepository {
-    private static final Logger log = LoggerFactory.getLogger("");
     private static final Sort SORT_NAME_EMAIL = Sort.by(Sort.Direction.ASC, "name", "email");
 
     private final CrudUserRepository crudUserRepository;

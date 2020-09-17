@@ -58,7 +58,7 @@ public class Dish extends AbstractBaseEntity {
 
     public LocalDate getDate() { return date; }
 
-    public void setDate(LocalDate dateTime) { this.date = date; }
+    public void setDate(LocalDate date) { this.date = date; }
 
     public void setName(String name) { this.name = name; }
 

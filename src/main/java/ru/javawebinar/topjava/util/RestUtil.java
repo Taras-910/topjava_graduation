@@ -10,7 +10,7 @@ public class RestUtil {
     public static <T extends AbstractBaseEntity> ResponseEntity<T> getResponseEntity(T object  , String url) {
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
                     .path(url + "/{id}")
-                    .buildAndExpand(((T) object).getId())
+                    .buildAndExpand(object.getId())
                     .toUri();
         return ResponseEntity.created(uriOfNewResource).body(object);
     }

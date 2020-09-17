@@ -11,19 +11,17 @@ import java.util.stream.Collectors;
 public class MenuUtil {
 
     public static List<Menu> toListMenus(List<Restaurant> restaurants, Vote vote) {
-
-        List<Menu> list = restaurants.stream()
-                .map(restaurant -> toMenu(restaurant, vote == null ? false : vote.getRestaurantId() == restaurant.id()))
+        return restaurants.stream()
+                .map(restaurant -> toMenu(restaurant, vote != null && vote.getRestaurantId() == restaurant.id()))
                 .collect(Collectors.toList());
-        return list;
     }
+
     public static Menu toMenu (Restaurant restaurant, boolean toVote){
-        return new Menu(restaurant.getId(), restaurant.getName(), restaurant.getDishes(), toVote);
+        return new Menu(restaurant.id(), restaurant.getName(), restaurant.getDishes(), toVote);
     }
 
     public static boolean countWithin(List<Dish> newDishes, List<Dish> storedDishes){
-        return storedDishes == null ? newDishes.size() >=2 && newDishes.size() <=5 :
-                newDishes.size() + storedDishes.size() >=2 && newDishes.size() + storedDishes.size() <=5;
+        return countWithin(newDishes.size(), storedDishes);
     }
 
     public static boolean countWithin(int newDishes, List<Dish> storedDishes){

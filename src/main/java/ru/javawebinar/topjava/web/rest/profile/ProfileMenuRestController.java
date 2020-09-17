@@ -81,7 +81,6 @@ public class ProfileMenuRestController {
     @GetMapping(value = "/date/{date}")
     public List<Menu> getAllByDate(@Nullable @PathVariable LocalDate date){
         log.info("getMenusToday date {}", date);
-        boolean toVote = voteRestController.isExistVote(authUserId(), date);
         Vote vote = voteRestController.getByDateForUser(authUserId(), thisDay);
         return toListMenus(restaurantRestController.getAllWithDishesOfDate(date), vote);
     }

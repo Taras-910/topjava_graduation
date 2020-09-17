@@ -24,7 +24,7 @@ public class DataJpaDishRepository implements DishRepository {
     public Dish save(Dish dish, int restaurantId) throws IllegalArgumentException{
         Restaurant restaurant = restaurantRepository.getOne(restaurantId);
         dish.setRestaurant(restaurant);
-        return dish.isNew() || get(dish.id(), restaurant.getId()) != null ? dishRepository.save(dish) : null; }
+        return dish.isNew() || get(dish.id(), restaurant.id()) != null ? dishRepository.save(dish) : null; }
 
     @Override
     public List<Dish> saveAll(List<Dish> dishes, int restaurantId) {
@@ -41,8 +41,7 @@ public class DataJpaDishRepository implements DishRepository {
 
     @Override
     public boolean delete(int id, int restaurantId) {
-        int exist = Optional.ofNullable(dishRepository.delete(id, restaurantId)).orElse(0);
-        return exist != 0;
+        return Optional.of(dishRepository.delete(id, restaurantId)).orElse(0) != 0;
     }
 
     @Override

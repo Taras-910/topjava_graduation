@@ -97,10 +97,6 @@ public class User extends AbstractNamedEntity implements Serializable {
         this.password = password;
     }
 
-    public void setRegistered(Date registered) {
-        this.registered = registered;
-    }
-
     @Override
     public String toString() {
         return "User{" +
