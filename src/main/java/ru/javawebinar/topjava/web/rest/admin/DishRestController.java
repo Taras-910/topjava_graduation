@@ -80,7 +80,6 @@ public class DishRestController {
     @Transactional
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Dish> createLimit(@Valid @RequestBody Dish dish, @RequestParam int restaurantId, BindingResult result) {
-        log.info("create dish {} for restaurantId {}", dish, restaurantId);
         log.info("update dish {} with restaurantId {}", dish, restaurantId);
         if (result != null && result.hasErrors()) {
             return new ResponseEntity<>(dish, HttpStatus.UNPROCESSABLE_ENTITY);

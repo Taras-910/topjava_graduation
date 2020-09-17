@@ -11,7 +11,7 @@ import java.util.Date;
 import static ru.javawebinar.topjava.model.AbstractBaseEntity.START_SEQ;
 
 public class UserTestData {
-    public static TestMatcher<User> USER_MATCHER = TestMatcher.usingFieldsComparator(User.class,"registered");
+    public static TestMatcher<User> USER_MATCHER = TestMatcher.usingFieldsComparator(User.class,"registered", "password");
 
     public static final int NOT_FOUND = 100;
     public static final int ADMIN_ID = START_SEQ;
