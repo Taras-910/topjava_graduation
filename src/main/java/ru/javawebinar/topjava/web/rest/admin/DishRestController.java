@@ -2,6 +2,7 @@ package ru.javawebinar.topjava.web.rest.admin;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -12,8 +13,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.javawebinar.topjava.model.Dish;
 import ru.javawebinar.topjava.repository.DishRepository;
-import ru.javawebinar.topjava.util.ValidationUtil;
-import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import javax.validation.Valid;
 import java.net.URI;
@@ -62,22 +61,21 @@ public class DishRestController {
         return checkNotFoundWithId(repository.getByRestaurantAndDate(restaurantId, date), restaurantId);
     }
 
+    @CacheEvict(value = "restaurants", allEntries = true)
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Dish> update(@Valid @RequestBody Dish dish, @PathVariable(name = "id") int dishId, @RequestParam int restaurantId, BindingResult result) {
         log.info("update dish {} with restaurantId {}", dish, restaurantId);
         if (result != null && result.hasErrors()) {
             return new ResponseEntity<>(dish, HttpStatus.UNPROCESSABLE_ENTITY);
         }
-        try {
-            assureIdConsistent(dish, dishId);
-            return getResponseEntity(checkNotFoundWithId(repository.save(dish, restaurantId), dish.id()), REST_URL);
-        } catch (NullPointerException e) {
-            throw new NotFoundException("error data of dish=" + dish);
-        }
+        checkId(dish);
+        assureIdConsistent(dish, dishId);
+        return getResponseEntity(checkNotFoundWithId(repository.save(dish, restaurantId), dish.id()), REST_URL);
     }
 
     // keep in DB from 2 to 5 dishes
     @Transactional
+    @CacheEvict(value = "restaurants", allEntries = true)
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Dish> createLimit(@Valid @RequestBody Dish dish, @RequestParam int restaurantId, BindingResult result) {
         log.info("update dish {} with restaurantId {}", dish, restaurantId);
@@ -91,29 +89,30 @@ public class DishRestController {
     }
 
     @Transactional
+    @CacheEvict(value = "restaurants", allEntries = true)
     @PostMapping(value = "/restaurants/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<Dish>> createListOfMenu(@Valid @RequestBody List<Dish> dishes, @PathVariable(name = "id") int restaurantId) {
         List<Dish> createdDishes = new ArrayList<>();
         final URI[] uriOfNewResource = new URI[1];
-        try {
-            dishes.forEach(ValidationUtil::checkNew);
-            List<Dish> storedDishes = Optional.ofNullable(repository.getByRestaurantAndDate(restaurantId, dishes.get(0).getDate())).orElse(null);
-            checkNotFound(countWithin(dishes, storedDishes), "dishes so number should be within from 2 to 5");
-            dishes.forEach(dish -> {
-                Dish storedDish = repository.save(dish, restaurantId);
-                createdDishes.add(storedDish);
-                uriOfNewResource[0] = ServletUriComponentsBuilder.fromCurrentContextPath()
-                        .path(REST_URL + "/{id}")
-                        .buildAndExpand(storedDish.getId()).toUri();
-            });
-        } catch (NullPointerException e) {
-            throw new NotFoundException("error argument dish on dishes=" + dishes );
-        }
+        dishes.forEach(dish -> {
+            checkNotFound(dish, "dish=" + dish + " must not be null");
+            checkNew(dish);
+        });
+        List<Dish> beforeStoredDishes = Optional.ofNullable(repository.getByRestaurantAndDate(restaurantId, dishes.get(0).getDate())).orElse(null);
+        checkNotFound(countWithin(dishes, beforeStoredDishes), "dishes so number should be within from 2 to 5");
+        List<Dish> nowStoredDishes = Optional.ofNullable(repository.saveAll(dishes, restaurantId)).orElse(null);
+        nowStoredDishes.forEach(dish -> {
+            createdDishes.add(dish);
+            uriOfNewResource[0] = ServletUriComponentsBuilder.fromCurrentContextPath()
+                    .path(REST_URL + "/{id}")
+                    .buildAndExpand(dish.getId()).toUri();
+        });
         return ResponseEntity.created(uriOfNewResource[0]).body(createdDishes);
     }
 
     // keep in DB at least 2 dishes
     @Transactional
+    @CacheEvict(value = "restaurants", allEntries = true)
     @DeleteMapping("/{id}/restaurants/{restaurantId}")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void delete(@PathVariable(name = "id") int dishId, @PathVariable int restaurantId, @RequestParam LocalDate date) {
@@ -123,6 +122,7 @@ public class DishRestController {
         checkNotFoundWithId(repository.delete(dishId, restaurantId), dishId);
     }
 
+    @CacheEvict(value = "restaurants", allEntries = true)
     @DeleteMapping("restaurants/{id}/date/{date}")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void deleteListOfMenu(@PathVariable(name = "id") @Nullable int restaurantId, @PathVariable @Nullable LocalDate date) {

@@ -22,6 +22,7 @@ import static ru.javawebinar.topjava.util.RestUtil.getResponseEntity;
 import static ru.javawebinar.topjava.util.ValidationUtil.*;
 import static ru.javawebinar.topjava.web.SecurityUtil.authUserId;
 
+
 @RestController
 @RequestMapping(value = VoteRestController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 public class VoteRestController {
