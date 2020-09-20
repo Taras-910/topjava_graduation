@@ -17,7 +17,7 @@ public class MenuTestData {
     public static TestMatcher<Menu> MENU_MATCHER = TestMatcher.usingFieldsComparator(Menu.class, "dishes");
     public static final Menu MENU = testMenu();
     public static Dish getNew() {
-        return new Dish("Созданный ужин", of(2020, Month.FEBRUARY, 1), 5.0F);
+        return new Dish("Созданный ужин", of(2020, Month.FEBRUARY, 1), 500);
     }
 
     public static Menu testMenu() {

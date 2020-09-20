@@ -102,7 +102,7 @@ class DishRestControllerTest extends AbstractControllerTest {
 
     @Test
     void createErrorDishName() throws Exception {
-        Dish newDish = new Dish(null, DATE_TEST, 1.1F);
+        Dish newDish = new Dish(null, DATE_TEST, 110);
         ResultActions action = perform(MockMvcRequestBuilders.post(REST_URL)
                 .param("restaurantId", valueOf(RESTAURANT1_ID))
                 .contentType(MediaType.APPLICATION_JSON)
@@ -114,7 +114,7 @@ class DishRestControllerTest extends AbstractControllerTest {
 
     @Test
     void createErrorDishPrice() throws Exception {
-        Dish newDish = new Dish("tea", DATE_TEST, -1.1F);
+        Dish newDish = new Dish("tea", DATE_TEST, -110);
         ResultActions action = perform(MockMvcRequestBuilders.post(REST_URL)
                 .param("restaurantId", valueOf(RESTAURANT1_ID))
                 .contentType(MediaType.APPLICATION_JSON)
@@ -126,7 +126,7 @@ class DishRestControllerTest extends AbstractControllerTest {
 
     @Test
     void createPriceExceedValue() throws Exception {
-        Dish newDish = new Dish("tea", DATE_TEST, 100.1F);
+        Dish newDish = new Dish("tea", DATE_TEST, 100001);
         ResultActions action = perform(MockMvcRequestBuilders.post(REST_URL)
                 .param("restaurantId", valueOf(RESTAURANT1_ID))
                 .contentType(MediaType.APPLICATION_JSON)
@@ -139,7 +139,7 @@ class DishRestControllerTest extends AbstractControllerTest {
     @Test
     void createErrorId() throws Exception {
         DateTimeUtil.setThisDay(LocalDate.now().minusDays(1));
-        Dish newDish = new Dish(DISH1_ID, "tea", DATE_TEST, 1.1F);
+        Dish newDish = new Dish(DISH1_ID, "tea", DATE_TEST, 110);
         perform(MockMvcRequestBuilders.post(REST_URL)
                 .param("restaurantId", valueOf(RESTAURANT1_ID))
                 .contentType(MediaType.APPLICATION_JSON)
@@ -152,7 +152,7 @@ class DishRestControllerTest extends AbstractControllerTest {
     @Test
     void createErrorDate() throws Exception {
         DateTimeUtil.setThisDay(LocalDate.now().minusDays(1));
-        Dish newDish = new Dish(null, "tea", null, 1.1F);
+        Dish newDish = new Dish(null, "tea", null, 110);
         perform(MockMvcRequestBuilders.post(REST_URL)
                 .param("restaurantId", valueOf(RESTAURANT1_ID))
                 .contentType(MediaType.APPLICATION_JSON)
@@ -251,7 +251,7 @@ class DishRestControllerTest extends AbstractControllerTest {
 
     @Test
     void updateNotOwn() throws Exception {
-        Dish updated = new Dish(DISH1_ID, "Обновленный завтрак", DATE_TEST, 7.0F);
+        Dish updated = new Dish(DISH1_ID, "Обновленный завтрак", DATE_TEST, 700);
         perform(MockMvcRequestBuilders.put(REST_URL + DISH1_ID)
                 .param("restaurantId", valueOf(RESTAURANT2_ID))
                 .contentType(MediaType.APPLICATION_JSON)
