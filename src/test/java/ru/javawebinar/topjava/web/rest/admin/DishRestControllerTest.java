@@ -73,8 +73,9 @@ class DishRestControllerTest extends AbstractControllerTest {
 
     @Test
     void getByRestaurantAndDate() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL + "/restaurants/100002/date/2020-07-30")
+        perform(MockMvcRequestBuilders.get(REST_URL + "/menus")
                 .param("restaurantId", valueOf(RESTAURANT1_ID))
+                .param("date", valueOf(DATE_TEST))
                 .with(userHttpBasic(ADMIN))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
@@ -318,8 +319,8 @@ class DishRestControllerTest extends AbstractControllerTest {
 
     @Test
     void deleteListOfMenu() throws Exception  {
-        perform(MockMvcRequestBuilders.delete(REST_URL + "restaurants/" + RESTAURANT1_ID + "/date/2020-06-29")
-                .with(userHttpBasic(ADMIN))
+        perform(MockMvcRequestBuilders.delete(REST_URL + "restaurants/" + RESTAURANT1_ID)
+                .param("date", "2020-06-29").with(userHttpBasic(ADMIN))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isNoContent());

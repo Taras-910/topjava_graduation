@@ -77,8 +77,9 @@ class VoteRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    void getByDate() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL + "date/2020-06-30")
+    void getAllByDate() throws Exception {
+        perform(MockMvcRequestBuilders.get(REST_URL + "date")
+                .param("date", "2020-06-30")
                 .with(userHttpBasic(ADMIN))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -89,7 +90,8 @@ class VoteRestControllerTest extends AbstractControllerTest {
 
     @Test
     void getByDateForUser() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL + "/date/" + DATE_TEST + "/users/" + USER_ID)
+        perform(MockMvcRequestBuilders.get(REST_URL + "/users/" + USER_ID)
+                .param("date", "2020-06-30")
                 .with(userHttpBasic(ADMIN))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -99,7 +101,8 @@ class VoteRestControllerTest extends AbstractControllerTest {
 
     @Test
     void getAllForUser() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL + "/users/" + ADMIN_ID)
+        perform(MockMvcRequestBuilders.get(REST_URL + "/users")
+                .param("id", String.valueOf(ADMIN_ID))
                 .with(userHttpBasic(ADMIN))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -110,7 +113,10 @@ class VoteRestControllerTest extends AbstractControllerTest {
 
     @Test
     void getBetweenForUser() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL + "between/users/" + ADMIN_ID + "/start/2020-06-28/end/2020-06-29")
+        perform(MockMvcRequestBuilders.get(REST_URL + "between")
+                .param("startDate", "2020-06-28")
+                .param("endDate", "2020-06-29")
+                .param("userId", String.valueOf(ADMIN_ID))
                 .with(userHttpBasic(ADMIN))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -123,7 +129,7 @@ class VoteRestControllerTest extends AbstractControllerTest {
     void update() throws Exception {
         DateTimeUtil.setСhangeVoteTime(TIME_TEST_IN);
         Vote updated = VoteTestData.getUpdated();
-        perform(MockMvcRequestBuilders.put(REST_URL + VOTE1_ID + "/users/" + ADMIN_ID)
+        perform(MockMvcRequestBuilders.put(REST_URL + VOTE1_ID)
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(userHttpBasic(ADMIN))
                 .content(JsonUtil.writeValue(updated)))
@@ -135,7 +141,7 @@ class VoteRestControllerTest extends AbstractControllerTest {
     void updateOverTime() throws Exception {
         DateTimeUtil.setСhangeVoteTime(TIME_TEST_OUT);
         Vote updated = VoteTestData.getUpdated();
-        perform(MockMvcRequestBuilders.put(REST_URL + VOTE1_ID + "/users/" + ADMIN_ID)
+        perform(MockMvcRequestBuilders.put(REST_URL + VOTE1_ID)
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(userHttpBasic(ADMIN))
                 .content(JsonUtil.writeValue(updated)))
@@ -146,18 +152,18 @@ class VoteRestControllerTest extends AbstractControllerTest {
     void updateNotOwn() throws Exception {
         DateTimeUtil.setСhangeVoteTime(TIME_TEST_IN);
         Vote updated = VoteTestData.getUpdated();
-        perform(MockMvcRequestBuilders.put(REST_URL + VOTE1_ID + "/users/" + USER_ID)
+        perform(MockMvcRequestBuilders.put(REST_URL + VOTE3_ID)
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(userHttpBasic(ADMIN))
                 .content(JsonUtil.writeValue(updated)))
-                .andExpect(status().isUnprocessableEntity());
+                .andExpect(status().isConflict());
     }
 
     @Test
     void updateIllegalArgument() throws Exception {
         DateTimeUtil.setСhangeVoteTime(TIME_TEST_IN);
         Vote updated = VoteTestData.getUpdated();
-        perform(MockMvcRequestBuilders.put(REST_URL + NOT_FOUND + "/users/" + ADMIN_ID)
+        perform(MockMvcRequestBuilders.put(REST_URL + NOT_FOUND)
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(userHttpBasic(ADMIN))
                 .content(JsonUtil.writeValue(updated)))
@@ -168,8 +174,8 @@ class VoteRestControllerTest extends AbstractControllerTest {
     void create() throws Exception {
         setThisDay(now());
         Vote newVote = VoteTestData.getNew();
-        ResultActions action = perform(MockMvcRequestBuilders.post(
-                REST_URL + "restaurants/" + RESTAURANT2_ID + "/users/" + ADMIN_ID)
+        ResultActions action = perform(MockMvcRequestBuilders.post(REST_URL)
+                .param("restaurantId", String.valueOf(RESTAURANT2_ID))
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(userHttpBasic(ADMIN))
                 .content(JsonUtil.writeValue(newVote)))
@@ -185,8 +191,8 @@ class VoteRestControllerTest extends AbstractControllerTest {
     void createRepeatPerDay() throws Exception {
         setThisDay(DATE_TEST);
         Vote newVote = VoteTestData.getNew();
-        perform(MockMvcRequestBuilders.post(
-                REST_URL + "restaurants/" + RESTAURANT2_ID + "/users/" + ADMIN_ID)
+        perform(MockMvcRequestBuilders.post(REST_URL)
+                .param("restaurantId", String.valueOf(RESTAURANT2_ID))
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(userHttpBasic(ADMIN)))
                 .andExpect(status().isUnprocessableEntity());

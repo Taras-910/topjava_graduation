@@ -33,16 +33,16 @@ public class ProfileVoteRestController {
         this.voteRepository = voteRepository;
     }
 
-    @GetMapping(value = "/{id}")
-    public Vote get(@PathVariable(name = "id") int voteId) {
-        log.info("get vote {} for user {}", voteId, authUserId());
-        return checkNotFoundWithId(voteRepository.get(voteId, authUserId()), voteId);
-    }
-
     @GetMapping
     public List<Vote> getAllForAuth() {
         log.info("getAllForUser with userId {}", authUserId());
         return voteRepository.getAllForAuthUser(authUserId());
+    }
+
+    @GetMapping(value = "/{id}")
+    public Vote get(@PathVariable(name = "id") int voteId) {
+        log.info("get vote {} for user {}", voteId, authUserId());
+        return checkNotFoundWithId(voteRepository.get(voteId, authUserId()), voteId);
     }
 
     @GetMapping(value = "/restaurants/{id}")
@@ -51,14 +51,14 @@ public class ProfileVoteRestController {
         return checkNotFound(voteRepository.getByRestaurantAuth(restaurantId, authUserId()), " for restaurant " + restaurantId);
     }
 
-    @GetMapping(value = "/date/{date}")
-    public Vote getByDateForAuth(@PathVariable LocalDate date) {
+    @GetMapping(value = "/date")
+    public Vote getByDateForAuth(@RequestParam LocalDate date) {
         log.info("get for user {} by date {}", authUserId(), date);
         return checkNotFound(voteRepository.getByDateForAuth(date, authUserId()), "for date " + date);
     }
 
-    @GetMapping(value = "/between/start/{startDate}/end/{endDate}")
-    public List<Vote> getBetween(@PathVariable @Nullable LocalDate startDate, @PathVariable @Nullable LocalDate endDate) {
+    @GetMapping(value = "/between")
+    public List<Vote> getBetween(@RequestParam @Nullable LocalDate startDate, @RequestParam @Nullable LocalDate endDate) {
         log.info("getBetween with dates({} - {}) for userId {}", startDate, endDate, authUserId());
         return voteRepository.getBetween(startDate, endDate, authUserId());
     }
@@ -84,8 +84,8 @@ public class ProfileVoteRestController {
         return  getResponseEntity(checkNotFoundWithId(voteRepository.save(vote, authUserId()), voteId), REST_URL);
     }
 
-    @PostMapping(value = "/restaurants/{id}")
-    public ResponseEntity<Vote> create(@PathVariable(name = "id") int restaurantId) {
+    @PostMapping
+    public ResponseEntity<Vote> create(@RequestParam int restaurantId) {
         log.info("create Vote for restaurantId {} ", restaurantId);
         return  getResponseEntity(voteRepository.save(new Vote(null, now(), restaurantId, authUserId()), authUserId()), REST_URL);
     }

@@ -26,7 +26,7 @@ class ProfileMenuRestControllerTest extends AbstractControllerTest {
     private ProfileMenuRestController controller;
 
     @Test
-    void getAllToday() throws Exception {
+    void getAll() throws Exception {
         perform(MockMvcRequestBuilders.get(REST_URL)
                 .with(userHttpBasic(ADMIN))
                 .content(JsonUtil.writeValue(allMenusOfDay()))
@@ -37,8 +37,8 @@ class ProfileMenuRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    void getAll() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL + "all")
+    void getAllToday() throws Exception {
+        perform(MockMvcRequestBuilders.get(REST_URL + "today")
                 .with(userHttpBasic(ADMIN))
                 .content(JsonUtil.writeValue(allMenusOfDay()))
                 .contentType(MediaType.APPLICATION_JSON))
@@ -61,7 +61,8 @@ class ProfileMenuRestControllerTest extends AbstractControllerTest {
 
     @Test
     void getAllByDate() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL + "date/2020-07-30")
+        perform(MockMvcRequestBuilders.get(REST_URL + "date")
+                .param("date", String.valueOf(DATE_TEST))
                 .with(userHttpBasic(ADMIN))
                 .content(JsonUtil.writeValue(allMenusOfDay()))
                 .contentType(MediaType.APPLICATION_JSON))
@@ -72,7 +73,9 @@ class ProfileMenuRestControllerTest extends AbstractControllerTest {
 
     @Test
     void getByRestaurantNameAndDate() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL + "restaurants/names/" + RESTAURANT1.getName() + "/date/" + DATE_TEST)
+        perform(MockMvcRequestBuilders.get(REST_URL + "menu")
+                .param("restaurantName", RESTAURANT1.getName())
+                .param("date", String.valueOf(DATE_TEST))
                 .with(userHttpBasic(ADMIN))
                 .content(JsonUtil.writeValue(MENU))
                 .contentType(MediaType.APPLICATION_JSON))
@@ -83,7 +86,8 @@ class ProfileMenuRestControllerTest extends AbstractControllerTest {
 
     @Test
     void getByRestaurantIdAndDate() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL + "restaurants/" + RESTAURANT1_ID + "/date/" + DATE_TEST)
+        perform(MockMvcRequestBuilders.get(REST_URL + "menu/" + RESTAURANT1_ID)
+                .param("date", String.valueOf(DATE_TEST))
                 .with(userHttpBasic(ADMIN))
                 .content(JsonUtil.writeValue(MENU))
                 .contentType(MediaType.APPLICATION_JSON))

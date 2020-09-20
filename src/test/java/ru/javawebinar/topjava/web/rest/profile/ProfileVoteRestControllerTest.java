@@ -8,6 +8,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.javawebinar.topjava.model.Vote;
+import ru.javawebinar.topjava.testdata.VoteTestData;
+import ru.javawebinar.topjava.util.DateTimeUtil;
 import ru.javawebinar.topjava.util.json.JsonUtil;
 import ru.javawebinar.topjava.web.AbstractControllerTest;
 
@@ -20,9 +22,9 @@ import static ru.javawebinar.topjava.TestUtil.userHttpBasic;
 import static ru.javawebinar.topjava.testdata.RestaurantTestData.RESTAURANT1_ID;
 import static ru.javawebinar.topjava.testdata.RestaurantTestData.RESTAURANT2_ID;
 import static ru.javawebinar.topjava.testdata.UserTestData.ADMIN;
+import static ru.javawebinar.topjava.testdata.UserTestData.NOT_FOUND;
 import static ru.javawebinar.topjava.testdata.VoteTestData.*;
-import static ru.javawebinar.topjava.util.DateTimeUtil.TIME_TEST_IN;
-import static ru.javawebinar.topjava.util.DateTimeUtil.setСhangeVoteTime;
+import static ru.javawebinar.topjava.util.DateTimeUtil.*;
 
 class ProfileVoteRestControllerTest extends AbstractControllerTest {
     private Logger log = LoggerFactory.getLogger(getClass());
@@ -55,7 +57,8 @@ class ProfileVoteRestControllerTest extends AbstractControllerTest {
 
     @Test
     void getByDateForAuth() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL + "date/2020-07-30")
+        perform(MockMvcRequestBuilders.get(REST_URL + "date")
+                .param("date", String.valueOf(DATE_TEST))
                 .with(userHttpBasic(ADMIN))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -78,7 +81,9 @@ class ProfileVoteRestControllerTest extends AbstractControllerTest {
 
     @Test
     void getBetween() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL + "between/start/2020-06-28/end/2020-06-29")
+        perform(MockMvcRequestBuilders.get(REST_URL + "between")
+                .param("startDate", "2020-06-28")
+                .param("endDate", "2020-06-29")
                 .with(userHttpBasic(ADMIN))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -100,9 +105,43 @@ class ProfileVoteRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
+    void updateOverTime() throws Exception {
+        DateTimeUtil.setСhangeVoteTime(TIME_TEST_OUT);
+        Vote updated = VoteTestData.getUpdated();
+        perform(MockMvcRequestBuilders.put(REST_URL + VOTE1_ID)
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(ADMIN))
+                .content(JsonUtil.writeValue(updated)))
+                .andExpect(status().isUnprocessableEntity());
+    }
+
+    @Test
+    void updateNotOwn() throws Exception {
+        DateTimeUtil.setСhangeVoteTime(TIME_TEST_IN);
+        Vote updated = VoteTestData.getUpdated();
+        perform(MockMvcRequestBuilders.put(REST_URL + VOTE3_ID)
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(ADMIN))
+                .content(JsonUtil.writeValue(updated)))
+                .andExpect(status().isConflict());
+    }
+
+    @Test
+    void updateIllegalArgument() throws Exception {
+        DateTimeUtil.setСhangeVoteTime(TIME_TEST_IN);
+        Vote updated = VoteTestData.getUpdated();
+        perform(MockMvcRequestBuilders.put(REST_URL + NOT_FOUND)
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(ADMIN))
+                .content(JsonUtil.writeValue(updated)))
+                .andExpect(status().isConflict());
+    }
+
+    @Test
     void create() throws Exception {
         Vote newVote = getNew();
-        ResultActions action = perform(MockMvcRequestBuilders.post(REST_URL + "restaurants/" + RESTAURANT2_ID)
+        ResultActions action = perform(MockMvcRequestBuilders.post(REST_URL)
+                .param("restaurantId", String.valueOf(RESTAURANT2_ID))
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(userHttpBasic(ADMIN))
                 .content(JsonUtil.writeValue(newVote)))

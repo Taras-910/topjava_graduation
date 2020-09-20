@@ -40,15 +40,15 @@ public class RestaurantRestController {
         log.info("get restaurant for id {}", id);
         return checkNotFoundWithId(repository.getById(id), id);
     }
-
-    @GetMapping("/names/{name}")
-    public Restaurant getByName(@PathVariable String name) {
-        log.info("getByName {}", name);
-        return checkNotFound(repository.getByName(name), "RestaurantName=" + name);
+//
+    @GetMapping("/names")
+    public Restaurant getByName(@RequestParam String restaurantName) {
+        log.info("getByName {}", restaurantName);
+        return checkNotFound(repository.getByName(restaurantName), " restaurantName=" + restaurantName);
     }
-
-    @GetMapping("/{id}/date/{date}")
-    public Restaurant getByIdWithDishesOfDate(@PathVariable(name = "id") int restaurantId, @PathVariable LocalDate date) {
+//
+    @GetMapping("/{id}/date")
+    public Restaurant getByIdWithDishesOfDate(@PathVariable(name = "id") int restaurantId, @RequestParam LocalDate date) {
         log.info("getByIdWithDishesOfDate id {} and date {}", restaurantId, date);
         return checkNotFound(repository.getByIdWithDishesOfDate(restaurantId, date), " illegal argument date=" + date);
     }
@@ -58,10 +58,10 @@ public class RestaurantRestController {
         log.info("get Restaurants With Dishes");
         return repository.getAllWithDishes();
     }
-
+//
     @Cacheable("restaurants")
-    @GetMapping("/dishes/date/{date}")
-    public List<Restaurant> getAllWithDishesOfDate(@PathVariable LocalDate date) {
+    @GetMapping("/menus")
+    public List<Restaurant> getAllWithDishesOfDate(@RequestParam LocalDate date) {
         log.info("getAllWithDishesOfDate {}",date);
         return checkNotFound(repository.getAllWithDishesOfDate(date), " illegal argument date=" + date);
     }

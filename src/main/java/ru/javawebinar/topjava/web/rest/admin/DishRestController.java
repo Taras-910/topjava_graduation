@@ -54,9 +54,9 @@ public class DishRestController {
         log.info("getAllByRestaurant restaurant {}", restaurantId);
         return checkNotFoundWithId(repository.getAllByRestaurant(restaurantId), restaurantId);
     }
-
-    @GetMapping(value = "/restaurants/{id}/date/{date}")
-    public List<Dish> getByRestaurantAndDate(@PathVariable(name = "id") int restaurantId, @PathVariable LocalDate date) {
+//
+    @GetMapping(value = "/menus")
+    public List<Dish> getByRestaurantAndDate(@RequestParam int restaurantId, @RequestParam LocalDate date) {
         log.info("getAll dishes for restaurant {}", restaurantId);
         return checkNotFoundWithId(repository.getByRestaurantAndDate(restaurantId, date), restaurantId);
     }
@@ -73,7 +73,7 @@ public class DishRestController {
         return getResponseEntity(checkNotFoundWithId(repository.save(dish, restaurantId), dish.id()), REST_URL);
     }
 
-    // keep in DB from 2 to 5 dishes
+    // monitor quality dishes in DB from 2 to 5
     @Transactional
     @CacheEvict(value = "restaurants", allEntries = true)
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -110,7 +110,7 @@ public class DishRestController {
         return ResponseEntity.created(uriOfNewResource[0]).body(createdDishes);
     }
 
-    // keep in DB at least 2 dishes
+    // monitor quality dishes in DB at least 2
     @Transactional
     @CacheEvict(value = "restaurants", allEntries = true)
     @DeleteMapping("/{id}/restaurants/{restaurantId}")
@@ -123,9 +123,9 @@ public class DishRestController {
     }
 
     @CacheEvict(value = "restaurants", allEntries = true)
-    @DeleteMapping("restaurants/{id}/date/{date}")
+    @DeleteMapping("restaurants/{id}")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    public void deleteListOfMenu(@PathVariable(name = "id") @Nullable int restaurantId, @PathVariable @Nullable LocalDate date) {
+    public void deleteListOfMenu(@PathVariable(name = "id") @Nullable int restaurantId, @RequestParam @Nullable LocalDate date) {
         log.info("deleteListOfMenu for restaurant {} and date {}", restaurantId, date);
         checkNotFoundWithId(repository.deleteListOfMenu(restaurantId, date), restaurantId);
     }

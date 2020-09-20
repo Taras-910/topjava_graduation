@@ -53,27 +53,27 @@ public class VoteRestController {
         return repository.getByRestaurant(id);
     }
 
-    @GetMapping(value = "/date/{date}")
-    public List<Vote> getAllByDate(@PathVariable @Nullable LocalDate date) {
+    @GetMapping(value = "/date")
+    public List<Vote> getAllByDate(@RequestParam @Nullable LocalDate date) {
         log.info("get by date {}", date);
         return repository.getByDate(date);
     }
 
-    @GetMapping(value = "/date/{date}/users/{id}")
-    public Vote getByDateForUser(@PathVariable(name = "id") int userId, @PathVariable LocalDate date) {
+    @GetMapping(value = "/users/{id}")
+    public Vote getByDateForUser(@PathVariable(name = "id") int userId, @RequestParam LocalDate date) {
         log.info("get for user {} by date {}", userId, date);
         return repository.getByDateForAuth(date, userId );
     }
 
-    @GetMapping(value = "/users/{id}")
-    public List<Vote> getAllForUser(@PathVariable(name = "id") int userId) {
+    @GetMapping(value = "/users")
+    public List<Vote> getAllForUser(@RequestParam(name = "id") int userId) {
         log.info("getAllForUser with userId {}", userId);
         return repository.getAllForAuthUser(userId);
     }
 
-    @GetMapping(value = "/between/users/{id}/start/{startDate}/end/{endDate}")
-    public List<Vote> getBetweenForUser(@PathVariable @Nullable LocalDate startDate, @PathVariable @Nullable LocalDate endDate,
-                                        @PathVariable(name = "id") int userId) {
+    @GetMapping(value = "/between")
+    public List<Vote> getBetweenForUser(@RequestParam @Nullable LocalDate startDate, @RequestParam @Nullable LocalDate endDate,
+                                        @RequestParam int userId) {
         log.info("getBetween with dates({} - {}) for userId {}", startDate, endDate, userId);
         return repository.getBetween(startDate, endDate, userId);
     }
@@ -86,22 +86,21 @@ public class VoteRestController {
         checkNotFoundWithId(repository.delete(voteId, authUserId()), voteId);
     }
 
-    @PutMapping(value = "/{id}/users/{userId}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    public ResponseEntity<Vote> update(@Valid @RequestBody Vote vote, @PathVariable(name = "id") int voteId, @PathVariable int userId) {
+    @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Vote> update(@Valid @RequestBody Vote vote, @PathVariable(name = "id") int voteId) {
         log.info("update vote {}", vote);
         checkNotFound(LocalTime.now().isBefore(сhangeVoteTime), voteId +" for change vote up to " + сhangeVoteTime);
         assureIdConsistent(vote, voteId);
-        return getResponseEntity(checkNotFoundWithId(repository.save(vote, userId), vote.id()), REST_URL);
+        return getResponseEntity(checkNotFoundWithId(repository.save(vote, authUserId()), vote.id()), REST_URL);
     }
 
     @Transactional
-    @PostMapping(value = "/restaurants/{id}/users/{userId}")
-    public ResponseEntity<Vote> create(@PathVariable(name = "id") int restaurantId, @PathVariable int userId) {
+    @PostMapping
+    public ResponseEntity<Vote> create(@RequestParam int restaurantId) {
         log.info("create Vote {} for restaurantId", restaurantId);
-        checkNotFound(!isExistVote(userId, thisDay), userId +" so as vote already exist for this day=" + thisDay);
+        checkNotFound(!isExistVote(authUserId(), thisDay), authUserId() +" so as vote already exist for this day=" + thisDay);
         return getResponseEntity(checkNotFound(repository.save(
-                new Vote(null, thisDay, restaurantId, userId), userId), "id=" + restaurantId), REST_URL);
+                new Vote(null, thisDay, restaurantId, authUserId()), authUserId()), "id=" + restaurantId), REST_URL);
     }
 
     public boolean isExistVote(int userId, LocalDate date){
