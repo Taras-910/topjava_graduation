@@ -18,7 +18,7 @@ INSERT INTO restaurants (name)
 VALUES ('Венеция'),
        ('Прага');
 
-INSERT INTO dishes (name, date, price, restaurant_id)
+INSERT INTO dishes (name, local_date, price, restaurant_id)
 VALUES ('Суп','2020-06-29', 0.1, 100002),
        ('Чай','2020-06-29', 0.2,  100002),
        ('Борщ','2020-07-29', 1.1, 100002),
@@ -31,7 +31,7 @@ VALUES ('Суп','2020-06-29', 0.1, 100002),
        ('Сладости','2020-07-30', 2.4, 100003),
        ('сок','2020-07-30', 2.5, 100003);
 
-INSERT INTO votes (date, restaurant_id, user_id)
+INSERT INTO votes (local_date, restaurant_id, user_id)
 VALUES ('2020-06-28', 100002, 100000),
        ('2020-06-29', 100002, 100000),
        ('2020-06-29', 100002, 100001),

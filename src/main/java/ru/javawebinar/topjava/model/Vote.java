@@ -10,9 +10,9 @@ import java.time.LocalDate;
 @Table(name = "votes")
 public class Vote extends AbstractBaseEntity {
 
-    @Column(name = "date", nullable = false)
+    @Column(name = "local_date", nullable = false)
     @NotNull
-    private LocalDate date;
+    private LocalDate localDate;
 
     @Column(name = "restaurant_id", nullable = false)
     @NotNull
@@ -24,20 +24,20 @@ public class Vote extends AbstractBaseEntity {
 
     public Vote(){}
 
-    public Vote(Integer id, @NotNull LocalDate date, @NotNull Integer restaurantId, @NotNull Integer userId) {
+    public Vote(Integer id, @NotNull LocalDate localDate, @NotNull Integer restaurantId, @NotNull Integer userId) {
         super(id);
-        this.date = date;
+        this.localDate = localDate;
         this.restaurantId = restaurantId;
         this.userId = userId;
     }
 
     public Vote(Vote v) {
-        this(v.getId(), v.getDate(), v.getRestaurantId(), v.getUserId());
+        this(v.getId(), v.getLocalDate(), v.getRestaurantId(), v.getUserId());
     }
 
-    public LocalDate getDate() { return date; }
+    public LocalDate getLocalDate() { return localDate; }
 
-    public void setDate(LocalDate date) { this.date = date; }
+    public void setLocalDate(LocalDate date) { this.localDate = date; }
 
     public Integer getRestaurantId() { return restaurantId; }
 
@@ -51,7 +51,7 @@ public class Vote extends AbstractBaseEntity {
     public String toString() {
         return "Vote{" +
                 "id=" + id +
-                ", date=" + date +
+                ", localDate=" + localDate +
                 ", restaurantId=" + restaurantId +
                 ", userId=" + userId +
                 '}';

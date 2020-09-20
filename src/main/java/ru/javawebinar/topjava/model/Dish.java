@@ -15,9 +15,9 @@ public class Dish extends AbstractBaseEntity {
     @NotNull
     private String name;
 
-    @Column(name="date", nullable = false)
+    @Column(name="local_date", nullable = false)
     @NotNull
-    private LocalDate date;
+    private LocalDate localDate;
 
     @Column(name="price", nullable = false)
     @Range(max = 100, min = 0)
@@ -31,19 +31,19 @@ public class Dish extends AbstractBaseEntity {
     public Dish() {
     }
 
-    public Dish(String name, LocalDate date, float price) {
-        this(null, name, date, price);
+    public Dish(String name, LocalDate localDate, float price) {
+        this(null, name, localDate, price);
     }
 
-    public Dish(Integer id, String name, LocalDate date, float price) {
+    public Dish(Integer id, String name, LocalDate localDate, float price) {
         super(id);
         this.name = name;
-        this.date = date;
+        this.localDate = localDate;
         this.price = price;
     }
 
     public Dish(Dish d) {
-        this(d.getId(), d.getName(), d.getDate(), d.getPrice());
+        this(d.getId(), d.getName(), d.getLocalDate(), d.getPrice());
     }
 
     public String getName() { return name; }
@@ -56,9 +56,9 @@ public class Dish extends AbstractBaseEntity {
         return restaurant;
     }
 
-    public LocalDate getDate() { return date; }
+    public LocalDate getLocalDate() { return localDate; }
 
-    public void setDate(LocalDate date) { this.date = date; }
+    public void setLocalDate(LocalDate date) { this.localDate = date; }
 
     public void setName(String name) { this.name = name; }
 
@@ -75,7 +75,7 @@ public class Dish extends AbstractBaseEntity {
         return "Dish{" +
                 "id=" + id +
                 ", name=" + name +
-                ", dateTime=" + date +
+                ", localDate=" + localDate +
                 ", price='" + price + '\'' +
                 '}';
     }

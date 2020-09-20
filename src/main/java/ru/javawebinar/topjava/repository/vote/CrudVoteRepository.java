@@ -27,12 +27,12 @@ public interface CrudVoteRepository extends JpaRepository<Vote, Integer> {
     @Query("SELECT v FROM Vote v WHERE v.restaurantId=:restaurantId AND v.userId=:userId")
     List<Vote> getByRestaurantAuth(@Param("restaurantId") int restaurantId, @Param("userId") int userId);
 
-    @Query("SELECT v FROM Vote v WHERE v.date>=:startDate AND v.date<=:endDate AND v.userId=:userId")
+    @Query("SELECT v FROM Vote v WHERE v.localDate>=:startDate AND v.localDate<=:endDate AND v.userId=:userId")
     List<Vote> getBetween(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate, @Param("userId") int userId);
 
-    @Query("SELECT v FROM Vote v WHERE v.date=:date ORDER BY v.date DESC ")
+    @Query("SELECT v FROM Vote v WHERE v.localDate=:date ORDER BY v.localDate DESC ")
     List<Vote> getByDate(@Param("date") LocalDate date);
 
-    @Query("SELECT v FROM Vote v WHERE v.date=:date AND v.userId=:userId")
+    @Query("SELECT v FROM Vote v WHERE v.localDate=:date AND v.userId=:userId")
     Vote getByDateForAuth(@Param("date") LocalDate date, @Param("userId") int userId);
 }
