@@ -20,10 +20,6 @@ public class MenuUtil {
         return new Menu(restaurant.id(), restaurant.getName(), restaurant.getDishes(), toVote);
     }
 
-    public static boolean countWithin(List<Dish> newDishes, List<Dish> storedDishes){
-        return countWithin(newDishes.size(), storedDishes);
-    }
-
     public static boolean countWithin(int newDishes, List<Dish> storedDishes){
         return storedDishes == null ? newDishes >=2 && newDishes <=5 :
                 newDishes + storedDishes.size() >=2 && newDishes + storedDishes.size() <=5;

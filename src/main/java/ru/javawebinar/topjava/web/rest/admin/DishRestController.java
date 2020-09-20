@@ -85,7 +85,7 @@ public class DishRestController {
             return new ResponseEntity<>(dish, HttpStatus.UNPROCESSABLE_ENTITY);
         }
         checkNew(dish);
-        checkNotFound(countWithin(List.of(dish), repository.getByRestaurantAndDate(restaurantId, dish.getDate())),
+        checkNotFound(countWithin(List.of(dish).size(), repository.getByRestaurantAndDate(restaurantId, dish.getDate())),
                 "dishes so number should be within from 2 to 5");
         return getResponseEntity(repository.save(dish, restaurantId), REST_URL);
     }
@@ -103,7 +103,7 @@ public class DishRestController {
         });
         List<Dish> dishesDB = Optional.ofNullable(repository.getByRestaurantAndDate(restaurantId, dishes.get(0).getDate()))
                 .orElse(null);
-        checkNotFound(countWithin(dishes, dishesDB), "dishes so number should be within from 2 to 5");
+        checkNotFound(countWithin(dishes.size(), dishesDB), "dishes so number should be within from 2 to 5");
         List<Dish> nowStoredDishes = Optional.ofNullable(repository.saveAll(dishes, restaurantId)).orElse(null);
         nowStoredDishes.forEach(dish -> {
             createdDishes.add(dish);

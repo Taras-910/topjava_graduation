@@ -4,17 +4,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.javawebinar.topjava.model.Restaurant;
-import ru.javawebinar.topjava.repository.RestaurantRepository;
+import ru.javawebinar.topjava.repository.restaurant.CrudRestaurantRepository;
 
 import javax.validation.Valid;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static ru.javawebinar.topjava.util.RestUtil.getResponseEntity;
 import static ru.javawebinar.topjava.util.ValidationUtil.*;
@@ -24,22 +27,23 @@ import static ru.javawebinar.topjava.util.ValidationUtil.*;
 public class RestaurantRestController {
     private static final Logger log = LoggerFactory.getLogger(RestaurantRestController.class);
     protected static final String REST_URL = "/rest/admin/restaurants";
-    private final RestaurantRepository repository;
+    private static final Sort SORT_NAME = Sort.by(Sort.Direction.ASC, "name");
+    public final CrudRestaurantRepository repository;
 
-    public RestaurantRestController(RestaurantRepository repository) {
+    public RestaurantRestController(CrudRestaurantRepository repository) {
         this.repository = repository;
     }
 
     @GetMapping
     public List<Restaurant> getAll() {
         log.info("getAll");
-        return repository.getAll();
+        return repository.findAll(SORT_NAME);
     }
 
     @GetMapping("/{id}")
     public Restaurant getById(@PathVariable int id) {
         log.info("get restaurant for id {}", id);
-        return checkNotFoundWithId(repository.getById(id), id);
+        return checkNotFoundWithId(repository.findById(id).orElse(null), id);
     }
 //
     @GetMapping("/names")
@@ -47,11 +51,12 @@ public class RestaurantRestController {
         log.info("getByName {}", restaurantName);
         return checkNotFound(repository.getByName(restaurantName), " restaurantName=" + restaurantName);
     }
-//
+
     @GetMapping("/{id}/date")
     public Restaurant getByIdWithDishesOfDate(@PathVariable(name = "id") int restaurantId, @RequestParam LocalDate date) {
         log.info("getByIdWithDishesOfDate id {} and date {}", restaurantId, date);
-        return checkNotFound(repository.getByIdWithDishesOfDate(restaurantId, date), " illegal argument date=" + date);
+        return checkNotFound(Optional.ofNullable(repository.getByIdWithDishesOfDate(restaurantId, date))
+                .orElse(null), " illegal variable restaurantId=" + restaurantId + " or date=" + date);
     }
 
     @GetMapping("/dishes")
@@ -59,12 +64,13 @@ public class RestaurantRestController {
         log.info("get Restaurants With Dishes");
         return repository.getAllWithDishes();
     }
-//
+
     @Cacheable("restaurants")
     @GetMapping("/menus")
     public List<Restaurant> getAllWithDishesOfDate(@RequestParam LocalDate date) {
         log.info("getAllWithDishesOfDate {}",date);
-        return checkNotFound(repository.getAllWithDishesOfDate(date), " illegal argument date=" + date);
+        return checkNotFound(Optional.ofNullable(repository.getAllWithDishesOfDate(date))
+                .orElse(new ArrayList<>()), " illegal argument date=" + date);
     }
 
     @CacheEvict(value = "restaurants", allEntries = true)
@@ -72,7 +78,7 @@ public class RestaurantRestController {
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void delete(@PathVariable int id) {
         log.info("delete restaurant for id {}", id);
-        checkNotFoundWithId(repository.delete(id), id);
+        checkNotFoundWithId(repository.delete(id) != 0, id);
     }
 
     @CacheEvict(value = "restaurants", allEntries = true)

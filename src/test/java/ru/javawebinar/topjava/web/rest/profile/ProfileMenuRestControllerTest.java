@@ -38,6 +38,7 @@ class ProfileMenuRestControllerTest extends AbstractControllerTest {
 
     @Test
     void getAllToday() throws Exception {
+        setThisDay(DATE_TEST);
         perform(MockMvcRequestBuilders.get(REST_URL + "today")
                 .with(userHttpBasic(ADMIN))
                 .content(JsonUtil.writeValue(allMenusOfDay()))
