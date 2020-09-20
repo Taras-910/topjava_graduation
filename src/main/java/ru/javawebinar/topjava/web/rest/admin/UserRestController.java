@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.service.UserService;
@@ -48,10 +49,13 @@ public class UserRestController {
 
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    public ResponseEntity<User> update(@Valid @RequestBody User user, @PathVariable int id) {
+    public ResponseEntity<User> update(@Valid @RequestBody User user, @PathVariable int id, BindingResult result) {
+        if (result != null && result.hasErrors()) {
+            return new ResponseEntity<>(user, HttpStatus.UNPROCESSABLE_ENTITY);
+        }
         log.info("update user {} by id {}", user, id);
         assureIdConsistent(user, id);
-        return getResponseEntity(service.create(user), REST_URL);
+        return new ResponseEntity(service.create(user), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")

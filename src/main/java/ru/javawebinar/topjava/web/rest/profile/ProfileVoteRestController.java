@@ -81,7 +81,7 @@ public class ProfileVoteRestController {
         }
         assureIdConsistent(vote, voteId);
         checkNotFound(LocalTime.now().isBefore(сhangeVoteTime), voteId +" for change vote up to " + сhangeVoteTime);
-        return  getResponseEntity(checkNotFoundWithId(voteRepository.save(vote, authUserId()), voteId), REST_URL);
+        return  new ResponseEntity(checkNotFoundWithId(voteRepository.save(vote, authUserId()), voteId), HttpStatus.OK);
     }
 
     @PostMapping

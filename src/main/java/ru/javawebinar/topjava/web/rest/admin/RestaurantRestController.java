@@ -7,6 +7,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.javawebinar.topjava.model.Restaurant;
 import ru.javawebinar.topjava.repository.RestaurantRepository;
@@ -76,11 +77,15 @@ public class RestaurantRestController {
 
     @CacheEvict(value = "restaurants", allEntries = true)
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Restaurant> update(@Valid @RequestBody Restaurant restaurant, @PathVariable int id) {
+    public ResponseEntity<Restaurant> update(@Valid @RequestBody Restaurant restaurant, @PathVariable int id,
+                                             BindingResult result) {
+        if (result != null && result.hasErrors()) {
+            return new ResponseEntity<>(restaurant, HttpStatus.UNPROCESSABLE_ENTITY);
+        }
         log.info("update restaurant {} for id {}", restaurant, id);
         checkId(restaurant);
         assureIdConsistent(restaurant, id);
-        return getResponseEntity(checkNotFoundWithId(repository.save(restaurant), id), REST_URL);
+        return new ResponseEntity(checkNotFoundWithId(repository.save(restaurant), id), HttpStatus.OK);
     }
 
     @CacheEvict(value = "restaurants", allEntries = true)

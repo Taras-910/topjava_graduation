@@ -64,7 +64,7 @@ class UserRestControllerTest extends AbstractControllerTest {
                 .with(userHttpBasic(ADMIN))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(updated)))
-                .andExpect(status().isCreated());
+                .andExpect(status().isOk());
         USER_MATCHER.assertMatch(controller.get(USER_ID), updated);
     }
 

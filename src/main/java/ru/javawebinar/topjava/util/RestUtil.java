@@ -12,6 +12,7 @@ public class RestUtil {
                     .path(url + "/{id}")
                     .buildAndExpand(object.getId())
                     .toUri();
-        return ResponseEntity.created(uriOfNewResource).body(object);
+        ResponseEntity<T> responseEntity = ResponseEntity.created(uriOfNewResource).body(object);
+        return responseEntity;
     }
 }

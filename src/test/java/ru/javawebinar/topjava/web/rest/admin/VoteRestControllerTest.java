@@ -133,7 +133,7 @@ class VoteRestControllerTest extends AbstractControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(userHttpBasic(ADMIN))
                 .content(JsonUtil.writeValue(updated)))
-                .andExpect(status().isCreated());
+                .andExpect(status().isOk());
         VOTE_MATCHER.assertMatch(controller.getById(VOTE1_ID), updated);
     }
 

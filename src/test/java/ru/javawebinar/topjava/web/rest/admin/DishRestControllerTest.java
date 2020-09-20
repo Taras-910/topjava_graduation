@@ -245,7 +245,7 @@ class DishRestControllerTest extends AbstractControllerTest {
                 .with(userHttpBasic(ADMIN))
                 .content(JsonUtil.writeValue(updated)))
                 .andDo(print())
-                .andExpect(status().isCreated());
+                .andExpect(status().isOk());
         DISH_MATCHER.assertMatch(controller.getById(DISH1_ID, RESTAURANT1_ID), updated);
     }
 

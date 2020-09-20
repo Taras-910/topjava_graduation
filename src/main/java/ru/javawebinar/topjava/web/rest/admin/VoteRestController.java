@@ -7,6 +7,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.javawebinar.topjava.model.Vote;
 import ru.javawebinar.topjava.repository.VoteRepository;
@@ -87,11 +88,14 @@ public class VoteRestController {
     }
 
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Vote> update(@Valid @RequestBody Vote vote, @PathVariable(name = "id") int voteId) {
+    public ResponseEntity<Vote> update(@Valid @RequestBody Vote vote, @PathVariable(name = "id") int voteId, BindingResult result) {
+        if (result != null && result.hasErrors()) {
+            return new ResponseEntity<>(vote, HttpStatus.UNPROCESSABLE_ENTITY);
+        }
         log.info("update vote {}", vote);
         checkNotFound(LocalTime.now().isBefore(сhangeVoteTime), voteId +" for change vote up to " + сhangeVoteTime);
         assureIdConsistent(vote, voteId);
-        return getResponseEntity(checkNotFoundWithId(repository.save(vote, authUserId()), vote.id()), REST_URL);
+        return new ResponseEntity(checkNotFoundWithId(repository.save(vote, authUserId()), vote.id()), HttpStatus.OK);
     }
 
     @Transactional

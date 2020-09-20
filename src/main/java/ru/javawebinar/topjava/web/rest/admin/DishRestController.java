@@ -63,21 +63,23 @@ public class DishRestController {
 
     @CacheEvict(value = "restaurants", allEntries = true)
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Dish> update(@Valid @RequestBody Dish dish, @PathVariable(name = "id") int dishId, @RequestParam int restaurantId, BindingResult result) {
+    public ResponseEntity<Dish> update(@Valid @RequestBody Dish dish, @PathVariable(name = "id") int dishId,
+                                       @RequestParam int restaurantId, BindingResult result) {
         log.info("update dish {} with restaurantId {}", dish, restaurantId);
         if (result != null && result.hasErrors()) {
             return new ResponseEntity<>(dish, HttpStatus.UNPROCESSABLE_ENTITY);
         }
         checkId(dish);
         assureIdConsistent(dish, dishId);
-        return getResponseEntity(checkNotFoundWithId(repository.save(dish, restaurantId), dish.id()), REST_URL);
+        return new ResponseEntity<>(checkNotFoundWithId(repository.save(dish, restaurantId), dish.id()), HttpStatus.OK);
     }
 
     // monitor quality dishes in DB from 2 to 5
     @Transactional
     @CacheEvict(value = "restaurants", allEntries = true)
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Dish> createLimit(@Valid @RequestBody Dish dish, @RequestParam int restaurantId, BindingResult result) {
+    public ResponseEntity<Dish> createLimit(@Valid @RequestBody Dish dish,
+                                            @RequestParam int restaurantId, BindingResult result) {
         log.info("update dish {} with restaurantId {}", dish, restaurantId);
         if (result != null && result.hasErrors()) {
             return new ResponseEntity<>(dish, HttpStatus.UNPROCESSABLE_ENTITY);
@@ -91,15 +93,17 @@ public class DishRestController {
     @Transactional
     @CacheEvict(value = "restaurants", allEntries = true)
     @PostMapping(value = "/restaurants/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<Dish>> createListOfMenu(@Valid @RequestBody List<Dish> dishes, @PathVariable(name = "id") int restaurantId) {
+    public ResponseEntity<List<Dish>> createListOfMenu(@Valid @RequestBody List<Dish> dishes,
+                                                       @PathVariable(name = "id") int restaurantId) {
         List<Dish> createdDishes = new ArrayList<>();
         final URI[] uriOfNewResource = new URI[1];
         dishes.forEach(dish -> {
             checkNotFound(dish, "dish=" + dish + " must not be null");
             checkNew(dish);
         });
-        List<Dish> beforeStoredDishes = Optional.ofNullable(repository.getByRestaurantAndDate(restaurantId, dishes.get(0).getDate())).orElse(null);
-        checkNotFound(countWithin(dishes, beforeStoredDishes), "dishes so number should be within from 2 to 5");
+        List<Dish> dishesDB = Optional.ofNullable(repository.getByRestaurantAndDate(restaurantId, dishes.get(0).getDate()))
+                .orElse(null);
+        checkNotFound(countWithin(dishes, dishesDB), "dishes so number should be within from 2 to 5");
         List<Dish> nowStoredDishes = Optional.ofNullable(repository.saveAll(dishes, restaurantId)).orElse(null);
         nowStoredDishes.forEach(dish -> {
             createdDishes.add(dish);
@@ -116,7 +120,8 @@ public class DishRestController {
     @DeleteMapping("/{id}/restaurants/{restaurantId}")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void delete(@PathVariable(name = "id") int dishId, @PathVariable int restaurantId, @RequestParam LocalDate date) {
-        List<Dish> memoryDishes = Optional.ofNullable(repository.getByRestaurantAndDate(restaurantId, date)).orElse(new ArrayList<>());
+        List<Dish> memoryDishes = Optional.ofNullable(repository.getByRestaurantAndDate(restaurantId, date))
+                .orElse(new ArrayList<>());
         log.info("delete dish {} of restaurant {} from count {}", dishId, restaurantId, memoryDishes.size());
         checkNotFound(countLowerLimit(memoryDishes), dishId+" so as dishes number of menu should be at least 2");
         checkNotFoundWithId(repository.delete(dishId, restaurantId), dishId);
@@ -125,7 +130,8 @@ public class DishRestController {
     @CacheEvict(value = "restaurants", allEntries = true)
     @DeleteMapping("restaurants/{id}")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    public void deleteListOfMenu(@PathVariable(name = "id") @Nullable int restaurantId, @RequestParam @Nullable LocalDate date) {
+    public void deleteListOfMenu(@PathVariable(name = "id") @Nullable int restaurantId,
+                                 @RequestParam @Nullable LocalDate date) {
         log.info("deleteListOfMenu for restaurant {} and date {}", restaurantId, date);
         checkNotFoundWithId(repository.deleteListOfMenu(restaurantId, date), restaurantId);
     }
