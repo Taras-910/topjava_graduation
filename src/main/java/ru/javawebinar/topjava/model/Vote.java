@@ -3,11 +3,12 @@ package ru.javawebinar.topjava.model;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "votes")
+@Table(name = "votes", uniqueConstraints = {@UniqueConstraint(columnNames = {"local_date", "user_id"}, name = "votes_idx")})
 public class Vote extends AbstractBaseEntity {
 
     @Column(name = "local_date", nullable = false)

@@ -36,7 +36,7 @@ Each restaurant provides new menu each day.
 - репозиторий [Spring Data JPA]
 - транзакционность [Springframework]
 - пул коннектов [Tomcat]
-- кеш [Spring cache], кешируются "все меню на сегодня" в RestaurantRestController, метод getAllWithDishesOfDate()
+- кеш [EhCache-based Cache], кешируются "все меню на сегодня" в RestaurantRestController, метод getAllWithDishesOfDate()
   это позволяет не обращаться к DB при стандартном запросе актуального списка меню
 - базовая авторизация [SpringSecurity], доступ к ресурсам по ролям:
               `/rest/admin/**'`  - 'ADMIN'
