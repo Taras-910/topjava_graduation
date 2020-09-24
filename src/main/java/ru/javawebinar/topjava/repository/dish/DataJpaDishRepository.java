@@ -6,7 +6,7 @@ import ru.javawebinar.topjava.model.Restaurant;
 import ru.javawebinar.topjava.repository.DishRepository;
 import ru.javawebinar.topjava.repository.restaurant.CrudRestaurantRepository;
 
-import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,7 +37,9 @@ public class DataJpaDishRepository implements DishRepository {
     }
 
     @Override
-    public boolean deleteListOfMenu(int restaurantId, LocalDate date) { return dishRepository.deleteListOfMenu(restaurantId, date) != 0; }
+    public boolean deleteListOfMenu(int restaurantId, Date localDate) {
+        return dishRepository.deleteListOfMenu(restaurantId, localDate) != 0;
+    }
 
     @Override
     public boolean delete(int id, int restaurantId) {
@@ -50,8 +52,8 @@ public class DataJpaDishRepository implements DishRepository {
     }
 
     @Override
-    public List<Dish> getByRestaurantAndDate(int restaurantId, LocalDate date) {
-        List<Dish> dishes = Optional.ofNullable(dishRepository.getByRestaurantAndDate(restaurantId, date)).orElse(null);
+    public List<Dish> getByRestaurantAndDate(int restaurantId, Date localDate) {
+        List<Dish> dishes = Optional.ofNullable(dishRepository.getByRestaurantAndDate(restaurantId, localDate)).orElse(null);
         return dishes.isEmpty() ? null : dishes;
     }
 

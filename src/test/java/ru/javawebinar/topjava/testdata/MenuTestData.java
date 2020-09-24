@@ -4,11 +4,10 @@ import ru.javawebinar.topjava.TestMatcher;
 import ru.javawebinar.topjava.model.Dish;
 import ru.javawebinar.topjava.to.Menu;
 
-import java.time.Month;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
-import static java.time.LocalDate.of;
 import static ru.javawebinar.topjava.testdata.DishTestData.*;
 import static ru.javawebinar.topjava.testdata.RestaurantTestData.RESTAURANT1;
 import static ru.javawebinar.topjava.testdata.RestaurantTestData.RESTAURANT2;
@@ -17,7 +16,7 @@ public class MenuTestData {
     public static TestMatcher<Menu> MENU_MATCHER = TestMatcher.usingFieldsComparator(Menu.class, "dishes");
     public static final Menu MENU = testMenu();
     public static Dish getNew() {
-        return new Dish("Созданный ужин", of(2020, Month.FEBRUARY, 1), 500);
+        return new Dish("Созданный ужин", new Date(2020, 02, 1), 500);
     }
 
     public static Menu testMenu() {

@@ -2,7 +2,7 @@ package ru.javawebinar.topjava.repository;
 
 import ru.javawebinar.topjava.model.Restaurant;
 
-import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 
 public interface RestaurantRepository {
@@ -17,9 +17,9 @@ public interface RestaurantRepository {
 
     List<Restaurant> getAll();
 
-    List<Restaurant> getAllWithDishesOfDate(LocalDate date);
+    List<Restaurant> getAllWithDishesOfDate(Date localDate);
 
-    Restaurant getByIdWithDishesOfDate(int restaurantId, LocalDate date);
+    Restaurant getByIdWithDishesOfDate(int restaurantId, Date localDate);
 
     Restaurant getByName(String name);
 

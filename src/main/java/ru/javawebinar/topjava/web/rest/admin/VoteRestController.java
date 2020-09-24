@@ -13,16 +13,15 @@ import ru.javawebinar.topjava.model.Vote;
 import ru.javawebinar.topjava.repository.VoteRepository;
 
 import javax.validation.Valid;
-import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Date;
 import java.util.List;
 
 import static ru.javawebinar.topjava.util.DateTimeUtil.thisDay;
 import static ru.javawebinar.topjava.util.DateTimeUtil.сhangeVoteTime;
-import static ru.javawebinar.topjava.util.RestUtil.getResponseEntity;
+import static ru.javawebinar.topjava.util.ResponseEntityUtil.getResponseEntity;
 import static ru.javawebinar.topjava.util.ValidationUtil.*;
 import static ru.javawebinar.topjava.web.SecurityUtil.authUserId;
-
 
 @RestController
 @RequestMapping(value = VoteRestController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -55,15 +54,15 @@ public class VoteRestController {
     }
 
     @GetMapping(value = "/date")
-    public List<Vote> getAllByDate(@RequestParam @Nullable LocalDate date) {
+    public List<Vote> getAllByDate(@RequestParam @Nullable Date date) {
         log.info("get by date {}", date);
         return repository.getByDate(date);
     }
 
     @GetMapping(value = "/users/{id}")
-    public Vote getByDateForUser(@PathVariable(name = "id") int userId, @RequestParam LocalDate date) {
-        log.info("get for user {} by date {}", userId, date);
-        return repository.getByDateForAuth(date, userId );
+    public Vote getByDateForUser(@PathVariable(name = "id") int userId, @RequestParam Date localDate) {
+        log.info("get for user {} by date {}", userId, localDate);
+        return repository.getByDateForAuth(localDate, userId );
     }
 
     @GetMapping(value = "/users")
@@ -73,7 +72,7 @@ public class VoteRestController {
     }
 
     @GetMapping(value = "/between")
-    public List<Vote> getBetweenForUser(@RequestParam @Nullable LocalDate startDate, @RequestParam @Nullable LocalDate endDate,
+    public List<Vote> getBetweenForUser(@RequestParam @Nullable Date startDate, @RequestParam @Nullable Date endDate,
                                         @RequestParam int userId) {
         log.info("getBetween with dates({} - {}) for userId {}", startDate, endDate, userId);
         return repository.getBetween(startDate, endDate, userId);
@@ -107,7 +106,7 @@ public class VoteRestController {
                 new Vote(null, thisDay, restaurantId, authUserId()), authUserId()), "id=" + restaurantId), REST_URL);
     }
 
-    public boolean isExistVote(int userId, LocalDate date){
+    public boolean isExistVote(int userId, Date date){
         return getByDateForUser(userId, date) != null;
     }
 }

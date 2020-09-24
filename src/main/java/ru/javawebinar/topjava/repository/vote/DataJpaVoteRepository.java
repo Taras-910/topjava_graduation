@@ -7,7 +7,7 @@ import ru.javawebinar.topjava.model.Vote;
 import ru.javawebinar.topjava.repository.VoteRepository;
 import ru.javawebinar.topjava.repository.user.CrudUserRepository;
 
-import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -54,12 +54,12 @@ public class DataJpaVoteRepository implements VoteRepository {
     }
 
     @Override
-    public List<Vote> getBetween(LocalDate startDate, LocalDate endDate, int userId) {
+    public List<Vote> getBetween(Date startDate, Date endDate, int userId) {
         return Optional.ofNullable(voteRepository.getBetween(startDate, endDate, userId)).orElse(null);
     }
 
     @Override
-    public Vote getByDateForAuth(LocalDate date, int userId) {
+    public Vote getByDateForAuth(Date date, int userId) {
         return Optional.ofNullable(voteRepository.getByDateForAuth(date, userId)).orElse(null);
     }
 
@@ -74,7 +74,7 @@ public class DataJpaVoteRepository implements VoteRepository {
     }
 
     @Override
-    public List<Vote> getByDate(LocalDate date) {
+    public List<Vote> getByDate(Date date) {
         return Optional.ofNullable(voteRepository.getByDate(date)).orElse(null);
     }
 }

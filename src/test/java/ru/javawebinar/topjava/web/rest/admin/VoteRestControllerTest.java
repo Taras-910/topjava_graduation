@@ -1,8 +1,6 @@
 package ru.javawebinar.topjava.web.rest.admin;
 
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
@@ -14,8 +12,9 @@ import ru.javawebinar.topjava.util.exception.NotFoundException;
 import ru.javawebinar.topjava.util.json.JsonUtil;
 import ru.javawebinar.topjava.web.AbstractControllerTest;
 
+import java.util.Date;
+
 import static java.lang.String.valueOf;
-import static java.time.LocalDate.now;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -29,7 +28,6 @@ import static ru.javawebinar.topjava.testdata.VoteTestData.*;
 import static ru.javawebinar.topjava.util.DateTimeUtil.*;
 
 class VoteRestControllerTest extends AbstractControllerTest {
-    private Logger log = LoggerFactory.getLogger(getClass());
     private static final String REST_URL = VoteRestController.REST_URL + '/';
 
     @Autowired
@@ -91,12 +89,12 @@ class VoteRestControllerTest extends AbstractControllerTest {
     @Test
     void getByDateForUser() throws Exception {
         perform(MockMvcRequestBuilders.get(REST_URL + "/users/" + USER_ID)
-                .param("date", "2020-06-30")
+                .param("localDate", "2020-06-30")
                 .with(userHttpBasic(ADMIN))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andDo(print());
-        VOTE_MATCHER.assertMatch(controller.getByDateForUser(ADMIN_ID, DATE_TEST), VOTE7);
+                .andDo(print())
+                .andExpect(VOTE_MATCHER.contentJson(VOTE5));
     }
 
     @Test
@@ -172,7 +170,7 @@ class VoteRestControllerTest extends AbstractControllerTest {
 
     @Test
     void create() throws Exception {
-        setThisDay(now());
+        setThisDay(new Date());
         Vote newVote = VoteTestData.getNew();
         ResultActions action = perform(MockMvcRequestBuilders.post(REST_URL)
                 .param("restaurantId", String.valueOf(RESTAURANT2_ID))
@@ -183,6 +181,7 @@ class VoteRestControllerTest extends AbstractControllerTest {
         Vote created = readFromJson(action, Vote.class);
         int newId = created.id();
         newVote.setId(newId);
+        newVote.setLocalDate(created.getLocalDate());
         VOTE_MATCHER.assertMatch(created, newVote);
         VOTE_MATCHER.assertMatch(controller.getById(newId), newVote);
     }

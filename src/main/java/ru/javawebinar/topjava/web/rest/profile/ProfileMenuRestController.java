@@ -12,7 +12,7 @@ import ru.javawebinar.topjava.to.Menu;
 import ru.javawebinar.topjava.web.rest.admin.RestaurantRestController;
 import ru.javawebinar.topjava.web.rest.admin.VoteRestController;
 
-import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 
 import static ru.javawebinar.topjava.util.DateTimeUtil.thisDay;
@@ -59,27 +59,27 @@ public class ProfileMenuRestController {
 
     @Transactional
     @GetMapping("/menu/{id}")
-    public Menu getByRestaurantIdAndDate(@PathVariable(name = "id") int restaurantId, @Nullable @RequestParam LocalDate date) {
+    public Menu getByRestaurantIdAndDate(@PathVariable(name = "id") int restaurantId, @Nullable @RequestParam Date localDate) {
         log.info("getTodayMenu for restaurant {}", restaurantId);
         boolean toVote = voteRestController.isExistVote(authUserId(), thisDay);
-        return toMenu(restaurantRestController.getByIdWithDishesOfDate(restaurantId, date), toVote);
+        return toMenu(restaurantRestController.getByIdWithDishesOfDate(restaurantId, localDate), toVote);
     }
 
     @Transactional
     @GetMapping("/menu")
-    public Menu getByRestaurantNameAndDate(@RequestParam String restaurantName, @Nullable @RequestParam LocalDate date) {
+    public Menu getByRestaurantNameAndDate(@RequestParam String restaurantName, @Nullable @RequestParam Date localDate) {
         log.info("getTodayMenu for restaurant {}", restaurantName);
         Restaurant restaurantDB = restaurantRestController.getByName(restaurantName);
         boolean toVote = voteRestController.isExistVote(authUserId(), thisDay);
-        return toMenu(restaurantRestController.getByIdWithDishesOfDate(restaurantDB.id(), date), toVote);
+        return toMenu(restaurantRestController.getByIdWithDishesOfDate(restaurantDB.id(), localDate), toVote);
     }
 
     @Transactional
     @GetMapping(value = "/date")
-    public List<Menu> getAllByDate(@Nullable @RequestParam LocalDate date){
-        log.info("getMenusToday date {}", date);
+    public List<Menu> getAllByDate(@Nullable @RequestParam Date localDate){
+        log.info("getMenusToday date {}", localDate);
         Vote vote = voteRestController.getByDateForUser(authUserId(), thisDay);
-        return toListMenus(restaurantRestController.getAllWithDishesOfDate(date), vote);
+        return toListMenus(restaurantRestController.getAllWithDishesOfDate(localDate), vote);
     }
 
 }

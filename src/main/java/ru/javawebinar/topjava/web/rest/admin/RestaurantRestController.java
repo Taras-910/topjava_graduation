@@ -14,12 +14,12 @@ import ru.javawebinar.topjava.model.Restaurant;
 import ru.javawebinar.topjava.repository.restaurant.CrudRestaurantRepository;
 
 import javax.validation.Valid;
-import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-import static ru.javawebinar.topjava.util.RestUtil.getResponseEntity;
+import static ru.javawebinar.topjava.util.ResponseEntityUtil.getResponseEntity;
 import static ru.javawebinar.topjava.util.ValidationUtil.*;
 
 @RestController
@@ -53,7 +53,7 @@ public class RestaurantRestController {
     }
 
     @GetMapping("/{id}/date")
-    public Restaurant getByIdWithDishesOfDate(@PathVariable(name = "id") int restaurantId, @RequestParam LocalDate date) {
+    public Restaurant getByIdWithDishesOfDate(@PathVariable(name = "id") int restaurantId, @RequestParam Date date) {
         log.info("getByIdWithDishesOfDate id {} and date {}", restaurantId, date);
         return checkNotFound(Optional.ofNullable(repository.getByIdWithDishesOfDate(restaurantId, date))
                 .orElse(null), " illegal variable restaurantId=" + restaurantId + " or date=" + date);
@@ -67,10 +67,10 @@ public class RestaurantRestController {
 
     @Cacheable("restaurants")
     @GetMapping("/menus")
-    public List<Restaurant> getAllWithDishesOfDate(@RequestParam LocalDate date) {
-        log.info("getAllWithDishesOfDate {}",date);
-        return checkNotFound(Optional.ofNullable(repository.getAllWithDishesOfDate(date))
-                .orElse(new ArrayList<>()), " illegal argument date=" + date);
+    public List<Restaurant> getAllWithDishesOfDate(@RequestParam Date localDate) {
+        log.info("getAllWithDishesOfDate {}",localDate);
+        return checkNotFound(Optional.ofNullable(repository.getAllWithDishesOfDate(localDate))
+                .orElse(new ArrayList<>()), " illegal argument date=" + localDate);
     }
 
     @CacheEvict(value = "restaurants", allEntries = true)

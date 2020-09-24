@@ -6,7 +6,7 @@ import ru.javawebinar.topjava.model.AbstractBaseEntity;
 
 import java.net.URI;
 
-public class RestUtil {
+public class ResponseEntityUtil {
     public static <T extends AbstractBaseEntity> ResponseEntity<T> getResponseEntity(T object  , String url) {
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
                     .path(url + "/{id}")

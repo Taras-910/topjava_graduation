@@ -5,7 +5,7 @@ import org.hibernate.validator.constraints.Range;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.time.LocalDate;
+import java.util.Date;
 
 @Entity
 @Table(name = "dishes", uniqueConstraints =
@@ -17,7 +17,7 @@ public class Dish extends AbstractBaseEntity {
 
     @Column(name="local_date", nullable = false)
     @NotNull
-    private LocalDate localDate;
+    private Date localDate;
 
     @Column(name="price", nullable = false)
     @Range(max = 100000, min = 0)
@@ -31,11 +31,11 @@ public class Dish extends AbstractBaseEntity {
     public Dish() {
     }
 
-    public Dish(String name, LocalDate localDate, Integer price) {
+    public Dish(String name, Date localDate, Integer price) {
         this(null, name, localDate, price);
     }
 
-    public Dish(Integer id, String name, LocalDate localDate, Integer price) {
+    public Dish(Integer id, String name, Date localDate, Integer price) {
         super(id);
         this.name = name;
         this.localDate = localDate;
@@ -56,9 +56,9 @@ public class Dish extends AbstractBaseEntity {
         return restaurant;
     }
 
-    public LocalDate getLocalDate() { return localDate; }
+    public Date getLocalDate() { return localDate; }
 
-    public void setLocalDate(LocalDate date) { this.localDate = date; }
+    public void setLocalDate(Date date) { this.localDate = date; }
 
     public void setName(String name) { this.name = name; }
 

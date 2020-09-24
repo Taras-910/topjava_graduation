@@ -14,7 +14,7 @@ import ru.javawebinar.topjava.service.UserService;
 import javax.validation.Valid;
 import java.util.List;
 
-import static ru.javawebinar.topjava.util.RestUtil.getResponseEntity;
+import static ru.javawebinar.topjava.util.ResponseEntityUtil.getResponseEntity;
 import static ru.javawebinar.topjava.util.ValidationUtil.assureIdConsistent;
 import static ru.javawebinar.topjava.util.ValidationUtil.checkNotFoundWithId;
 

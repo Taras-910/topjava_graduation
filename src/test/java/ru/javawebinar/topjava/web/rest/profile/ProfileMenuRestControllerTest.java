@@ -1,7 +1,6 @@
 package ru.javawebinar.topjava.web.rest.profile;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.javawebinar.topjava.util.json.JsonUtil;
@@ -21,9 +20,6 @@ import static ru.javawebinar.topjava.util.DateTimeUtil.setThisDay;
 
 class ProfileMenuRestControllerTest extends AbstractControllerTest {
     private static final String REST_URL = ProfileMenuRestController.REST_URL + '/';
-
-    @Autowired
-    private ProfileMenuRestController controller;
 
     @Test
     void getAll() throws Exception {
@@ -63,7 +59,7 @@ class ProfileMenuRestControllerTest extends AbstractControllerTest {
     @Test
     void getAllByDate() throws Exception {
         perform(MockMvcRequestBuilders.get(REST_URL + "date")
-                .param("date", String.valueOf(DATE_TEST))
+                .param("localDate", "2020-07-30")
                 .with(userHttpBasic(ADMIN))
                 .content(JsonUtil.writeValue(allMenusOfDay()))
                 .contentType(MediaType.APPLICATION_JSON))
@@ -76,7 +72,7 @@ class ProfileMenuRestControllerTest extends AbstractControllerTest {
     void getByRestaurantNameAndDate() throws Exception {
         perform(MockMvcRequestBuilders.get(REST_URL + "menu")
                 .param("restaurantName", RESTAURANT1.getName())
-                .param("date", String.valueOf(DATE_TEST))
+                .param("localDate", "2020-07-30")
                 .with(userHttpBasic(ADMIN))
                 .content(JsonUtil.writeValue(MENU))
                 .contentType(MediaType.APPLICATION_JSON))
@@ -88,7 +84,7 @@ class ProfileMenuRestControllerTest extends AbstractControllerTest {
     @Test
     void getByRestaurantIdAndDate() throws Exception {
         perform(MockMvcRequestBuilders.get(REST_URL + "menu/" + RESTAURANT1_ID)
-                .param("date", String.valueOf(DATE_TEST))
+                .param("localDate", "2020-07-30")
                 .with(userHttpBasic(ADMIN))
                 .content(JsonUtil.writeValue(MENU))
                 .contentType(MediaType.APPLICATION_JSON))

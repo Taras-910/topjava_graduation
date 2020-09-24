@@ -10,13 +10,12 @@ import org.springframework.web.bind.annotation.*;
 import ru.javawebinar.topjava.model.Vote;
 import ru.javawebinar.topjava.repository.VoteRepository;
 
-import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Date;
 import java.util.List;
 
-import static java.time.LocalDate.now;
 import static ru.javawebinar.topjava.util.DateTimeUtil.сhangeVoteTime;
-import static ru.javawebinar.topjava.util.RestUtil.getResponseEntity;
+import static ru.javawebinar.topjava.util.ResponseEntityUtil.getResponseEntity;
 import static ru.javawebinar.topjava.util.ValidationUtil.checkNotFound;
 import static ru.javawebinar.topjava.util.ValidationUtil.checkNotFoundWithId;
 import static ru.javawebinar.topjava.web.SecurityUtil.authUserId;
@@ -51,13 +50,13 @@ public class ProfileVoteRestController {
     }
 
     @GetMapping(value = "/date")
-    public Vote getByDateForAuth(@RequestParam LocalDate date) {
-        log.info("get for user {} by date {}", authUserId(), date);
-        return checkNotFound(voteRepository.getByDateForAuth(date, authUserId()), "for date " + date);
+    public Vote getByDateForAuth(@RequestParam Date localDate) {
+        log.info("get for user {} by date {}", authUserId(), localDate);
+        return checkNotFound(voteRepository.getByDateForAuth(localDate, authUserId()), "for date " + localDate);
     }
 
     @GetMapping(value = "/between")
-    public List<Vote> getBetween(@RequestParam @Nullable LocalDate startDate, @RequestParam @Nullable LocalDate endDate) {
+    public List<Vote> getBetween(@RequestParam @Nullable Date startDate, @RequestParam @Nullable Date endDate) {
         log.info("getBetween with dates({} - {}) for userId {}", startDate, endDate, authUserId());
         return voteRepository.getBetween(startDate, endDate, authUserId());
     }
@@ -76,13 +75,13 @@ public class ProfileVoteRestController {
     public ResponseEntity<Vote>  update(@PathVariable(name = "id") int voteId, @RequestParam int restaurantId) {
         log.info("update Vote {} for restaurantId {}", voteId, restaurantId);
         checkNotFound(LocalTime.now().isBefore(сhangeVoteTime), voteId +" for change vote up to " + сhangeVoteTime);
-        Vote vote = new Vote(voteId, now(), restaurantId, authUserId());
+        Vote vote = new Vote(voteId, new Date(), restaurantId, authUserId());
         return  new ResponseEntity(checkNotFoundWithId(voteRepository.save(vote, authUserId()), voteId), HttpStatus.OK);
     }
 
     @PostMapping
     public ResponseEntity<Vote> create(@RequestParam int restaurantId) {
         log.info("create Vote for restaurantId {} ", restaurantId);
-        return  getResponseEntity(voteRepository.save(new Vote(null, now(), restaurantId, authUserId()), authUserId()), REST_URL);
+        return  getResponseEntity(voteRepository.save(new Vote(null, new Date(), restaurantId, authUserId()), authUserId()), REST_URL);
     }
 }

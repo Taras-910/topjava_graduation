@@ -3,7 +3,6 @@ package ru.javawebinar.topjava.web.rest.profile;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -29,9 +28,6 @@ import static ru.javawebinar.topjava.util.DateTimeUtil.*;
 class ProfileVoteRestControllerTest extends AbstractControllerTest {
     private Logger log = LoggerFactory.getLogger(getClass());
     private static final String REST_URL = ProfileVoteRestController.REST_URL + '/';
-
-    @Autowired
-    private ProfileVoteRestController controller;
 
     @Test
     void get() throws Exception {
@@ -59,7 +55,7 @@ class ProfileVoteRestControllerTest extends AbstractControllerTest {
     @Test
     void getByDateForAuth() throws Exception {
         perform(MockMvcRequestBuilders.get(REST_URL + "date")
-                .param("date", String.valueOf(DATE_TEST))
+                .param("localDate", "2020-07-30")
                 .with(userHttpBasic(ADMIN))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -92,15 +88,7 @@ class ProfileVoteRestControllerTest extends AbstractControllerTest {
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(VOTE_MATCHER.contentJson(between()));
     }
-/*    @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    public ResponseEntity<Vote>  update(@PathVariable(name = "id") int voteId, @RequestParam int restaurantId) {
-        log.info("update Vote {} for restaurantId {}", voteId, restaurantId);
-        checkNotFound(LocalTime.now().isBefore(сhangeVoteTime), voteId +" for change vote up to " + сhangeVoteTime);
-        Vote vote = new Vote(voteId, now(), restaurantId, authUserId());
-        return  new ResponseEntity(checkNotFoundWithId(voteRepository.save(vote, authUserId()), voteId), HttpStatus.OK);
-    }
-*/
+
     @Test
     void update() throws Exception {
         setСhangeVoteTime(TIME_TEST_IN);
@@ -163,6 +151,7 @@ class ProfileVoteRestControllerTest extends AbstractControllerTest {
         log.info("created {}", created);
         int newId = created.id();
         newVote.setId(newId);
+        newVote.setLocalDate(created.getLocalDate());
         VOTE_MATCHER.assertMatch(created, newVote);
     }
 

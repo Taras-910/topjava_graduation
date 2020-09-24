@@ -2,7 +2,7 @@ package ru.javawebinar.topjava.repository;
 
 import ru.javawebinar.topjava.model.Vote;
 
-import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 
 public interface VoteRepository {
@@ -23,13 +23,13 @@ public interface VoteRepository {
 
     List<Vote> getAll();
 
-    List<Vote> getBetween(LocalDate startDate, LocalDate endDate, int userId);
+    List<Vote> getBetween(Date startDate, Date endDate, int userId);
 
-    Vote getByDateForAuth(LocalDate date, int userId);
+    Vote getByDateForAuth(Date date, int userId);
 
     List<Vote> getByRestaurant(int restaurantId);
 
     List<Vote> getByRestaurantAuth(int id, int authUserId);
 
-    List<Vote> getByDate(LocalDate date);
+    List<Vote> getByDate(Date date);
 }

@@ -5,7 +5,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
-import java.time.LocalDate;
+import java.util.Date;
 
 @Entity
 @Table(name = "votes", uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "local_date"}, name = "votes_idx")})
@@ -13,7 +13,7 @@ public class Vote extends AbstractBaseEntity {
 
     @Column(name = "local_date", nullable = false)
     @NotNull
-    private LocalDate localDate;
+    private Date localDate;
 
     @Column(name = "restaurant_id", nullable = false)
     @NotNull
@@ -25,7 +25,7 @@ public class Vote extends AbstractBaseEntity {
 
     public Vote(){}
 
-    public Vote(Integer id, @NotNull LocalDate localDate, @NotNull Integer restaurantId, @NotNull Integer userId) {
+    public Vote(Integer id, @NotNull Date localDate, @NotNull Integer restaurantId, @NotNull Integer userId) {
         super(id);
         this.localDate = localDate;
         this.restaurantId = restaurantId;
@@ -36,9 +36,9 @@ public class Vote extends AbstractBaseEntity {
         this(v.getId(), v.getLocalDate(), v.getRestaurantId(), v.getUserId());
     }
 
-    public LocalDate getLocalDate() { return localDate; }
+    public Date getLocalDate() { return localDate; }
 
-    public void setLocalDate(LocalDate date) { this.localDate = date; }
+    public void setLocalDate(Date date) { this.localDate = date; }
 
     public Integer getRestaurantId() { return restaurantId; }
 
