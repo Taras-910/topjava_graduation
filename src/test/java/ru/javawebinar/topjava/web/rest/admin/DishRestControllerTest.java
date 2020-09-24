@@ -182,28 +182,6 @@ class DishRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    void createUpLimit() throws Exception {
-        List<Dish> newDishes = overLimitMax();
-        perform(MockMvcRequestBuilders.post(REST_URL + "restaurants/" + RESTAURANT1_ID)
-                .contentType(MediaType.APPLICATION_JSON)
-                .with(userHttpBasic(ADMIN))
-                .content(JsonUtil.writeValue(newDishes)))
-                .andDo(print())
-                .andExpect(status().isUnprocessableEntity());
-    }
-
-    @Test
-    void createDownLimit() throws Exception {
-        List<Dish> newDishes = overLimitMin();
-        perform(MockMvcRequestBuilders.post(REST_URL + "restaurants/" + RESTAURANT1_ID)
-                .contentType(MediaType.APPLICATION_JSON)
-                .with(userHttpBasic(ADMIN))
-                .content(JsonUtil.writeValue(newDishes)))
-                .andDo(print())
-                .andExpect(status().isUnprocessableEntity());
-    }
-
-    @Test
     void createDuplicate() throws Exception {
         List<Dish> newDishes = asList(DISH1, DISH1);
         perform(MockMvcRequestBuilders.post(REST_URL + "restaurants/" + RESTAURANT1_ID)
@@ -276,23 +254,11 @@ class DishRestControllerTest extends AbstractControllerTest {
     void delete() throws Exception {
         setThisDay(DATE_TEST);
         perform(MockMvcRequestBuilders.delete(REST_URL + DISH10_ID + "/restaurants/" + RESTAURANT2_ID)
-                .param("date", String.valueOf(DATE_TEST))
                 .with(userHttpBasic(ADMIN))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isNoContent());
         assertThrows(NotFoundException.class, () -> controller.getById(DISH10_ID, RESTAURANT2_ID));
-    }
-
-    @Test
-    void deleteOverLimit() throws Exception {
-        setThisDay(DATE_TEST);
-        perform(MockMvcRequestBuilders.delete(REST_URL + DISH1_ID + "/restaurants/" + RESTAURANT1_ID)
-                .param("date", String.valueOf(DATE_TEST))
-                .with(userHttpBasic(ADMIN))
-                .contentType(MediaType.APPLICATION_JSON))
-                .andDo(print())
-                .andExpect(status().isUnprocessableEntity());
     }
 
     @Test

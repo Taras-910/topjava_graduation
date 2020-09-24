@@ -85,7 +85,7 @@ class VoteRestControllerTest extends AbstractControllerTest {
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(VOTE_MATCHER.contentJson(VOTE5, VOTE4));
+                .andExpect(VOTE_MATCHER.contentJson(VOTE4, VOTE5));
     }
 
     @Test

@@ -50,12 +50,6 @@ public class DataJpaDishRepository implements DishRepository {
     }
 
     @Override
-    public List<Dish> getAllByRestaurant(int restaurantId) {
-        List<Dish> dishes = Optional.ofNullable(dishRepository.getAll(restaurantId)).orElse(null);
-        return dishes.isEmpty() ? null : dishes;
-    }
-
-    @Override
     public List<Dish> getByRestaurantAndDate(int restaurantId, LocalDate date) {
         List<Dish> dishes = Optional.ofNullable(dishRepository.getByRestaurantAndDate(restaurantId, date)).orElse(null);
         return dishes.isEmpty() ? null : dishes;

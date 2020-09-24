@@ -45,8 +45,9 @@ class ProfileVoteRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    void getByRestaurant() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL + "restaurants/" + RESTAURANT1_ID)
+    void getByRestaurantAuth() throws Exception {
+        perform(MockMvcRequestBuilders.get(REST_URL + "restaurant")
+                .param("restaurantId", String.valueOf(RESTAURANT1_ID))
                 .with(userHttpBasic(ADMIN))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -91,12 +92,21 @@ class ProfileVoteRestControllerTest extends AbstractControllerTest {
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(VOTE_MATCHER.contentJson(between()));
     }
-
+/*    @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
+    public ResponseEntity<Vote>  update(@PathVariable(name = "id") int voteId, @RequestParam int restaurantId) {
+        log.info("update Vote {} for restaurantId {}", voteId, restaurantId);
+        checkNotFound(LocalTime.now().isBefore(сhangeVoteTime), voteId +" for change vote up to " + сhangeVoteTime);
+        Vote vote = new Vote(voteId, now(), restaurantId, authUserId());
+        return  new ResponseEntity(checkNotFoundWithId(voteRepository.save(vote, authUserId()), voteId), HttpStatus.OK);
+    }
+*/
     @Test
     void update() throws Exception {
         setСhangeVoteTime(TIME_TEST_IN);
         Vote updated = getUpdated();
         perform(MockMvcRequestBuilders.put(REST_URL + VOTE1_ID)
+                .param("restaurantId", String.valueOf(RESTAURANT1_ID))
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(userHttpBasic(ADMIN))
                 .content(JsonUtil.writeValue(updated)))
@@ -109,6 +119,7 @@ class ProfileVoteRestControllerTest extends AbstractControllerTest {
         DateTimeUtil.setСhangeVoteTime(TIME_TEST_OUT);
         Vote updated = VoteTestData.getUpdated();
         perform(MockMvcRequestBuilders.put(REST_URL + VOTE1_ID)
+                .param("restaurantId", String.valueOf(RESTAURANT1_ID))
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(userHttpBasic(ADMIN))
                 .content(JsonUtil.writeValue(updated)))
@@ -120,10 +131,11 @@ class ProfileVoteRestControllerTest extends AbstractControllerTest {
         DateTimeUtil.setСhangeVoteTime(TIME_TEST_IN);
         Vote updated = VoteTestData.getUpdated();
         perform(MockMvcRequestBuilders.put(REST_URL + VOTE3_ID)
+                .param("restaurantId", String.valueOf(RESTAURANT1_ID))
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(userHttpBasic(ADMIN))
                 .content(JsonUtil.writeValue(updated)))
-                .andExpect(status().isConflict());
+                .andExpect(status().isUnprocessableEntity());
     }
 
     @Test
@@ -131,10 +143,11 @@ class ProfileVoteRestControllerTest extends AbstractControllerTest {
         DateTimeUtil.setСhangeVoteTime(TIME_TEST_IN);
         Vote updated = VoteTestData.getUpdated();
         perform(MockMvcRequestBuilders.put(REST_URL + NOT_FOUND)
+                .param("restaurantId", String.valueOf(RESTAURANT1_ID))
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(userHttpBasic(ADMIN))
                 .content(JsonUtil.writeValue(updated)))
-                .andExpect(status().isConflict());
+                .andExpect(status().isUnprocessableEntity());
     }
 
     @Test

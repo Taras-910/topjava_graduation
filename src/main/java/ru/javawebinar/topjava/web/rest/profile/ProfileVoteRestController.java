@@ -6,12 +6,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.javawebinar.topjava.model.Vote;
 import ru.javawebinar.topjava.repository.VoteRepository;
 
-import javax.validation.Valid;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
@@ -19,7 +17,8 @@ import java.util.List;
 import static java.time.LocalDate.now;
 import static ru.javawebinar.topjava.util.DateTimeUtil.сhangeVoteTime;
 import static ru.javawebinar.topjava.util.RestUtil.getResponseEntity;
-import static ru.javawebinar.topjava.util.ValidationUtil.*;
+import static ru.javawebinar.topjava.util.ValidationUtil.checkNotFound;
+import static ru.javawebinar.topjava.util.ValidationUtil.checkNotFoundWithId;
 import static ru.javawebinar.topjava.web.SecurityUtil.authUserId;
 
 @RestController
@@ -45,8 +44,8 @@ public class ProfileVoteRestController {
         return checkNotFoundWithId(voteRepository.get(voteId, authUserId()), voteId);
     }
 
-    @GetMapping(value = "/restaurants/{id}")
-    public List<Vote> getByRestaurantAuth(@PathVariable(name = "id") int restaurantId) {
+    @GetMapping(value = "/restaurant")
+    public List<Vote> getByRestaurantAuth(@RequestParam int restaurantId) {
         log.info("get all of restaurant {}", restaurantId);
         return checkNotFound(voteRepository.getByRestaurantAuth(restaurantId, authUserId()), " for restaurant " + restaurantId);
     }
@@ -74,13 +73,10 @@ public class ProfileVoteRestController {
 
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    public ResponseEntity<Vote>  update(@Valid @RequestBody Vote vote, @PathVariable(name = "id") int voteId, BindingResult result) {
-        log.info("update vote {} with id {} for userId {}", vote, voteId, authUserId());
-        if (result != null && result.hasErrors()) {
-            return new ResponseEntity<>(vote, HttpStatus.UNPROCESSABLE_ENTITY);
-        }
-        assureIdConsistent(vote, voteId);
+    public ResponseEntity<Vote>  update(@PathVariable(name = "id") int voteId, @RequestParam int restaurantId) {
+        log.info("update Vote {} for restaurantId {}", voteId, restaurantId);
         checkNotFound(LocalTime.now().isBefore(сhangeVoteTime), voteId +" for change vote up to " + сhangeVoteTime);
+        Vote vote = new Vote(voteId, now(), restaurantId, authUserId());
         return  new ResponseEntity(checkNotFoundWithId(voteRepository.save(vote, authUserId()), voteId), HttpStatus.OK);
     }
 

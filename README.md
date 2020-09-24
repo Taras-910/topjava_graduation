@@ -28,10 +28,7 @@ Each restaurant provides new menu each day.
 - для обслуживания запросов анонимных пользователей (anonymous) и авторизованных (profile) 
   формирования список меню ресторанов в классе ТО [Menu] 
 - бизнес-логика:
-   в MenuRestController - проверка количества блюд в меню (от 2 до 5). Разрешается добавлять блюда только списком,
-   или по одному блюду при условии, что в DB уже хранятся не меньше двух блюд на этот день. Удалять разрешается 
-   только весь список за этот день, либо по одному блюду, если DB хранятся больше двух блюд на этот день.
-   Не разрешается дублирование блюд в этот день.
+   в MenuRestController - не разрешается дублирование блюд одного ресторана в один день.
    в VoteRestController - проверка голосований. Можно голосовать один раз в день. До 11:00 голос разрешено изменять.
 - репозиторий [Spring Data JPA]
 - транзакционность [Springframework]
@@ -48,11 +45,11 @@ Each restaurant provides new menu each day.
 
 #### curl (`topjava_graduation`).
 
-#### anonymous getAllMenusThisDay
+#### getAllMenusThisDay
 `curl -L -X GET 'http://localhost:8080/topjava/anonymous' \
  -H 'Authorization: Basic Og=='`
 
-#### anonymous getMenuByRestaurantIdThisDay
+#### getMenuByRestaurantIdThisDay
 `curl -L -X GET 'http://localhost:8080/topjava/anonymous/restaurants/100003' \
  -H 'Authorization: Basic Og=='`
 

@@ -21,8 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static ru.javawebinar.topjava.util.MenuUtil.countLowerLimit;
-import static ru.javawebinar.topjava.util.MenuUtil.countWithin;
 import static ru.javawebinar.topjava.util.RestUtil.getResponseEntity;
 import static ru.javawebinar.topjava.util.ValidationUtil.*;
 
@@ -49,12 +47,6 @@ public class DishRestController {
         return checkNotFoundWithId(repository.get(id, restaurantId), id);
     }
 
-    @GetMapping(value = "/restaurants/{id}")
-    public List<Dish> getAllByRestaurant(@PathVariable(name = "id") int restaurantId) {
-        log.info("getAllByRestaurant restaurant {}", restaurantId);
-        return checkNotFoundWithId(repository.getAllByRestaurant(restaurantId), restaurantId);
-    }
-//
     @GetMapping(value = "/menus")
     public List<Dish> getByRestaurantAndDate(@RequestParam int restaurantId, @RequestParam LocalDate date) {
         log.info("getAll dishes for restaurant {}", restaurantId);
@@ -74,19 +66,15 @@ public class DishRestController {
         return new ResponseEntity<>(checkNotFoundWithId(repository.save(dish, restaurantId), dish.id()), HttpStatus.OK);
     }
 
-    // monitor quality dishes in DB from 2 to 5
     @Transactional
     @CacheEvict(value = "restaurants", allEntries = true)
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Dish> createLimit(@Valid @RequestBody Dish dish,
-                                            @RequestParam int restaurantId, BindingResult result) {
+    public ResponseEntity<Dish> create(@Valid @RequestBody Dish dish, @RequestParam int restaurantId, BindingResult result) {
         log.info("update dish {} with restaurantId {}", dish, restaurantId);
         if (result != null && result.hasErrors()) {
             return new ResponseEntity<>(dish, HttpStatus.UNPROCESSABLE_ENTITY);
         }
         checkNew(dish);
-        checkNotFound(countWithin(List.of(dish).size(), repository.getByRestaurantAndDate(restaurantId, dish.getLocalDate())),
-                "dishes so number should be within from 2 to 5");
         return getResponseEntity(repository.save(dish, restaurantId), REST_URL);
     }
 
@@ -101,9 +89,6 @@ public class DishRestController {
             checkNotFound(dish, "dish=" + dish + " must not be null");
             checkNew(dish);
         });
-        List<Dish> dishesDB = Optional.ofNullable(repository.getByRestaurantAndDate(restaurantId, dishes.get(0).getLocalDate()))
-                .orElse(null);
-        checkNotFound(countWithin(dishes.size(), dishesDB), "dishes so number should be within from 2 to 5");
         List<Dish> nowStoredDishes = Optional.ofNullable(repository.saveAll(dishes, restaurantId)).orElse(null);
         nowStoredDishes.forEach(dish -> {
             createdDishes.add(dish);
@@ -114,24 +99,19 @@ public class DishRestController {
         return ResponseEntity.created(uriOfNewResource[0]).body(createdDishes);
     }
 
-    // monitor quality dishes in DB at least 2
     @Transactional
     @CacheEvict(value = "restaurants", allEntries = true)
     @DeleteMapping("/{id}/restaurants/{restaurantId}")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable(name = "id") int dishId, @PathVariable int restaurantId, @RequestParam LocalDate date) {
-        List<Dish> memoryDishes = Optional.ofNullable(repository.getByRestaurantAndDate(restaurantId, date))
-                .orElse(new ArrayList<>());
-        log.info("delete dish {} of restaurant {} from count {}", dishId, restaurantId, memoryDishes.size());
-        checkNotFound(countLowerLimit(memoryDishes), dishId+" so as dishes number of menu should be at least 2");
+    public void delete(@PathVariable(name = "id") int dishId, @PathVariable int restaurantId) {
+        log.info("delete dish {} of restaurant {}", dishId, restaurantId);
         checkNotFoundWithId(repository.delete(dishId, restaurantId), dishId);
     }
 
     @CacheEvict(value = "restaurants", allEntries = true)
     @DeleteMapping("restaurants/{id}")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    public void deleteListOfMenu(@PathVariable(name = "id") @Nullable int restaurantId,
-                                 @RequestParam @Nullable LocalDate date) {
+    public void deleteListOfMenu(@PathVariable(name = "id") @Nullable int restaurantId, @RequestParam @Nullable LocalDate date) {
         log.info("deleteListOfMenu for restaurant {} and date {}", restaurantId, date);
         checkNotFoundWithId(repository.deleteListOfMenu(restaurantId, date), restaurantId);
     }
