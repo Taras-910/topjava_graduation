@@ -1,4 +1,4 @@
-package ru.javawebinar.topjava.util.converter;
+package ru.javawebinar.topjava.util.formatter;
 
 import org.springframework.format.Formatter;
 
@@ -11,13 +11,19 @@ import java.util.Locale;
 
 import static ru.javawebinar.topjava.util.DateTimeUtil.parseLocalTime;
 
-public class DateTimeFormatters {
+public class DateAndLocalTimeFormatters {
 
     public static class DateFormatter implements Formatter<Date> {
 
         @Override
-        public Date parse(String text, Locale locale) throws ParseException {
-            return new SimpleDateFormat("yyyy-MM-dd").parse(text);
+        public Date parse(String text, Locale locale) {
+            Date localDate;
+            try {
+                localDate = new SimpleDateFormat("yyyy-MM-dd").parse(text);
+            } catch (ParseException e) {
+                throw new IllegalArgumentException("error argument localDate=" + text);
+            }
+            return localDate;
         }
 
         @Override

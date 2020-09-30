@@ -76,7 +76,7 @@ class RestaurantRestControllerTest extends AbstractControllerTest {
     @Test
     void getByIdWithDishesOfDate() throws Exception {
         perform(MockMvcRequestBuilders.get(REST_URL + RESTAURANT1_ID)
-                .param("date", String.valueOf(DATE_TEST))
+                .param("localDate", String.valueOf(DATE_TEST))
                 .with(userHttpBasic(ADMIN))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -114,7 +114,7 @@ class RestaurantRestControllerTest extends AbstractControllerTest {
                 .param("date", "2020-20-20")
                 .with(userHttpBasic(ADMIN)))
                 .andDo(print())
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isInternalServerError());
     }
 
     @Test
@@ -130,47 +130,36 @@ class RestaurantRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    void updateErrorId() throws Exception {
-        Restaurant updated = new Restaurant(null, "Новый");
-        perform(MockMvcRequestBuilders.put(REST_URL + RESTAURANT1_ID)
-                .param("restaurantId", valueOf(RESTAURANT1_ID))
-                .contentType(MediaType.APPLICATION_JSON)
-                .with(userHttpBasic(ADMIN))
-                .content(JsonUtil.writeValue(updated)))
-                .andExpect(status().isUnprocessableEntity());
-    }
-
-    @Test
-    void updateNyFound() throws Exception {
-        Restaurant updated = new Restaurant(null, "Новый");
+    void updateNotFound() throws Exception {
+        Restaurant updated = new Restaurant(RESTAURANT1_ID, "Венеция Обновленная");
         perform(MockMvcRequestBuilders.put(REST_URL + NOT_FOUND)
                 .param("restaurantId", valueOf(RESTAURANT1_ID))
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(userHttpBasic(ADMIN))
                 .content(JsonUtil.writeValue(updated)))
-                .andExpect(status().isUnprocessableEntity());
+                .andExpect(status().isConflict());
     }
 
     @Test
     void updateErrorName() throws Exception {
-        Restaurant updated = new Restaurant(null, null);
+        Restaurant updated = new Restaurant(RESTAURANT1_ID, null);
         perform(MockMvcRequestBuilders.put(REST_URL + RESTAURANT1_ID)
                 .param("restaurantId", valueOf(RESTAURANT1_ID))
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(userHttpBasic(ADMIN))
                 .content(JsonUtil.writeValue(updated)))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isUnprocessableEntity());
     }
 
     @Test
     void updateNotOwn() throws Exception {
-        Restaurant updated = new Restaurant(null, "Новый");
+        Restaurant updated = new Restaurant(RESTAURANT1_ID, "Краков Обновленный");
         perform(MockMvcRequestBuilders.put(REST_URL + RESTAURANT2_ID)
                 .param("restaurantId", valueOf(RESTAURANT1_ID))
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(userHttpBasic(ADMIN))
                 .content(JsonUtil.writeValue(updated)))
-                .andExpect(status().isUnprocessableEntity());
+                .andExpect(status().isConflict());
     }
 
     @Test
@@ -196,7 +185,7 @@ class RestaurantRestControllerTest extends AbstractControllerTest {
                 .param("restaurantId", valueOf(RESTAURANT1_ID))
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(userHttpBasic(ADMIN)))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isUnprocessableEntity());
     }
 
     @Test
@@ -206,7 +195,7 @@ class RestaurantRestControllerTest extends AbstractControllerTest {
                 .param("restaurantId", valueOf(RESTAURANT1_ID))
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(userHttpBasic(ADMIN)))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isUnprocessableEntity());
     }
 
     @Test

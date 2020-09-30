@@ -7,18 +7,14 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.javawebinar.topjava.model.Vote;
 import ru.javawebinar.topjava.repository.VoteRepository;
 
-import javax.validation.Valid;
-import java.time.LocalTime;
 import java.util.Date;
 import java.util.List;
 
 import static ru.javawebinar.topjava.util.DateTimeUtil.thisDay;
-import static ru.javawebinar.topjava.util.DateTimeUtil.сhangeVoteTime;
 import static ru.javawebinar.topjava.util.ResponseEntityUtil.getResponseEntity;
 import static ru.javawebinar.topjava.util.ValidationUtil.*;
 import static ru.javawebinar.topjava.web.SecurityUtil.authUserId;
@@ -54,9 +50,9 @@ public class VoteRestController {
     }
 
     @GetMapping(value = "/date")
-    public List<Vote> getAllByDate(@RequestParam @Nullable Date date) {
-        log.info("get by date {}", date);
-        return repository.getByDate(date);
+    public List<Vote> getAllByDate(@RequestParam @Nullable Date localDate) {
+        log.info("get by date {}", localDate);
+        return repository.getByDate(localDate);
     }
 
     @GetMapping(value = "/users/{id}")
@@ -82,31 +78,29 @@ public class VoteRestController {
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void delete(@PathVariable(name = "id") int voteId) {
         log.info("delete vote {} for userId {}", voteId, authUserId());
-        checkNotFound(LocalTime.now().isBefore(сhangeVoteTime), voteId +" for change vote up to " + сhangeVoteTime);
+        checkInTime(voteId);
         checkNotFoundWithId(repository.delete(voteId, authUserId()), voteId);
     }
 
-    @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Vote> update(@Valid @RequestBody Vote vote, @PathVariable(name = "id") int voteId, BindingResult result) {
-        if (result != null && result.hasErrors()) {
-            return new ResponseEntity<>(vote, HttpStatus.UNPROCESSABLE_ENTITY);
-        }
-        log.info("update vote {}", vote);
-        checkNotFound(LocalTime.now().isBefore(сhangeVoteTime), voteId +" for change vote up to " + сhangeVoteTime);
-        assureIdConsistent(vote, voteId);
-        return new ResponseEntity(checkNotFoundWithId(repository.save(vote, authUserId()), vote.id()), HttpStatus.OK);
+    @PutMapping
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
+    public ResponseEntity<Vote> update(@RequestParam int voteId, @RequestParam int restaurantId) {
+        log.info("update vote {} for restaurantId {}", voteId, restaurantId);
+        checkInTime(voteId);
+        Vote vote = new Vote(voteId, thisDay, restaurantId, authUserId());
+        return new ResponseEntity(checkNotFoundWithId(repository.save(vote, authUserId()), voteId), HttpStatus.OK);
     }
 
     @Transactional
     @PostMapping
     public ResponseEntity<Vote> create(@RequestParam int restaurantId) {
         log.info("create Vote {} for restaurantId", restaurantId);
-        checkNotFound(!isExistVote(authUserId(), thisDay), authUserId() +" so as vote already exist for this day=" + thisDay);
+        checkNotFound(!isExist(authUserId(), thisDay), authUserId() +" so as vote already exist for this day=" + thisDay);
         return getResponseEntity(checkNotFound(repository.save(
                 new Vote(null, thisDay, restaurantId, authUserId()), authUserId()), "id=" + restaurantId), REST_URL);
     }
 
-    public boolean isExistVote(int userId, Date date){
-        return getByDateForUser(userId, date) != null;
+    public boolean isExist(int userId, Date localDate){
+        return getByDateForUser(userId, localDate) != null;
     }
 }

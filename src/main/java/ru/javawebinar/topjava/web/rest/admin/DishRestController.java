@@ -7,7 +7,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.javawebinar.topjava.model.Dish;
 import ru.javawebinar.topjava.repository.DishRepository;
@@ -48,15 +47,11 @@ public class DishRestController {
         return checkNotFoundWithId(repository.getByRestaurantAndDate(restaurantId, localDate), restaurantId);
     }
 
+    @Transactional
     @CacheEvict(value = "restaurants", allEntries = true)
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Dish> update(@Valid @RequestBody Dish dish, @PathVariable(name = "id") int dishId,
-                                       @RequestParam int restaurantId, BindingResult result) {
-        log.info("update dish {} with restaurantId {}", dish, restaurantId);
-        if (result != null && result.hasErrors()) {
-            return new ResponseEntity<>(dish, HttpStatus.UNPROCESSABLE_ENTITY);
-        }
-        checkId(dish);
+    public ResponseEntity<Dish> update(@Valid @RequestBody Dish dish, @PathVariable(name = "id") int dishId, @RequestParam int restaurantId) {
+        log.info("update dish with id {} for restaurantId {}", dishId, restaurantId);
         assureIdConsistent(dish, dishId);
         return new ResponseEntity<>(checkNotFoundWithId(repository.save(dish, restaurantId), dish.id()), HttpStatus.OK);
     }
@@ -64,11 +59,8 @@ public class DishRestController {
     @Transactional
     @CacheEvict(value = "restaurants", allEntries = true)
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Dish> create(@Valid @RequestBody Dish dish, @RequestParam int restaurantId, BindingResult result) {
-        log.info("update dish {} with restaurantId {}", dish, restaurantId);
-        if (result != null && result.hasErrors()) {
-            return new ResponseEntity<>(dish, HttpStatus.UNPROCESSABLE_ENTITY);
-        }
+    public ResponseEntity<Dish> create(@Valid @RequestBody Dish dish, @RequestParam int restaurantId) {
+        log.info("create dish {} with restaurantId {}", dish, restaurantId);
         checkNew(dish);
         return getResponseEntity(repository.save(dish, restaurantId), REST_URL);
     }

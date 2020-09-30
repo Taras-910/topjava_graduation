@@ -49,12 +49,22 @@ class DishRestControllerTest extends AbstractControllerTest {
 
     @Test
     void getNotFound() throws Exception {
-        assertThrows(NotFoundException.class, () -> controller.getById(NOT_FOUND, RESTAURANT1_ID));
+        perform(MockMvcRequestBuilders.get(REST_URL + NOT_FOUND)
+                .param("restaurantId", String.valueOf(RESTAURANT1_ID))
+                .with(userHttpBasic(ADMIN))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isUnprocessableEntity())
+                .andDo(print());
     }
 
     @Test
     void getNotOwn() throws Exception {
-        assertThrows(NotFoundException.class, () -> controller.getById(DISH1_ID, RESTAURANT2_ID));
+        perform(MockMvcRequestBuilders.get(REST_URL + DISH1_ID)
+                .param("restaurantId", String.valueOf(RESTAURANT2_ID))
+                .with(userHttpBasic(ADMIN))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isUnprocessableEntity())
+                .andDo(print());
     }
 
     @Test
@@ -106,7 +116,7 @@ class DishRestControllerTest extends AbstractControllerTest {
                 .with(userHttpBasic(ADMIN))
                 .content(JsonUtil.writeValue(newDish)))
                 .andDo(print())
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isUnprocessableEntity());
     }
 
     @Test
@@ -118,7 +128,7 @@ class DishRestControllerTest extends AbstractControllerTest {
                 .with(userHttpBasic(ADMIN))
                 .content(JsonUtil.writeValue(newDish)))
                 .andDo(print())
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isUnprocessableEntity());
     }
 
     @Test
@@ -130,7 +140,7 @@ class DishRestControllerTest extends AbstractControllerTest {
                 .with(userHttpBasic(ADMIN))
                 .content(JsonUtil.writeValue(newDish)))
                 .andDo(print())
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isUnprocessableEntity());
     }
 
     @Test
@@ -156,7 +166,7 @@ class DishRestControllerTest extends AbstractControllerTest {
                 .with(userHttpBasic(ADMIN))
                 .content(JsonUtil.writeValue(newDish)))
                 .andDo(print())
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isUnprocessableEntity());
     }
 
 
@@ -181,7 +191,7 @@ class DishRestControllerTest extends AbstractControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(userHttpBasic(ADMIN)))
                 .andDo(print())
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isUnprocessableEntity());
     }
 
     @Test

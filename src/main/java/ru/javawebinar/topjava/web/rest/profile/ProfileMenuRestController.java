@@ -53,7 +53,7 @@ public class ProfileMenuRestController {
     @GetMapping("/restaurants/{id}")
     public Menu getByRestaurantToday(@PathVariable(name = "id")int restaurantId) {
         log.info("getMenu for restaurantId {}", restaurantId);
-        boolean toVote = voteRestController.isExistVote(authUserId(), thisDay);
+        boolean toVote = voteRestController.isExist(authUserId(), thisDay);
         return toMenu(restaurantRestController.getByIdWithDishesOfDate(restaurantId, thisDay), toVote);
     }
 
@@ -61,7 +61,7 @@ public class ProfileMenuRestController {
     @GetMapping("/menu/{id}")
     public Menu getByRestaurantIdAndDate(@PathVariable(name = "id") int restaurantId, @Nullable @RequestParam Date localDate) {
         log.info("getTodayMenu for restaurant {}", restaurantId);
-        boolean toVote = voteRestController.isExistVote(authUserId(), thisDay);
+        boolean toVote = voteRestController.isExist(authUserId(), thisDay);
         return toMenu(restaurantRestController.getByIdWithDishesOfDate(restaurantId, localDate), toVote);
     }
 
@@ -70,7 +70,7 @@ public class ProfileMenuRestController {
     public Menu getByRestaurantNameAndDate(@RequestParam String restaurantName, @Nullable @RequestParam Date localDate) {
         log.info("getTodayMenu for restaurant {}", restaurantName);
         Restaurant restaurantDB = restaurantRestController.getByName(restaurantName);
-        boolean toVote = voteRestController.isExistVote(authUserId(), thisDay);
+        boolean toVote = voteRestController.isExist(authUserId(), thisDay);
         return toMenu(restaurantRestController.getByIdWithDishesOfDate(restaurantDB.id(), localDate), toVote);
     }
 
@@ -81,5 +81,4 @@ public class ProfileMenuRestController {
         Vote vote = voteRestController.getByDateForUser(authUserId(), thisDay);
         return toListMenus(restaurantRestController.getAllWithDishesOfDate(localDate), vote);
     }
-
 }

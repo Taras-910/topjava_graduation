@@ -8,7 +8,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.javawebinar.topjava.model.Restaurant;
 import ru.javawebinar.topjava.repository.restaurant.CrudRestaurantRepository;
@@ -45,7 +44,7 @@ public class RestaurantRestController {
         log.info("get restaurant for id {}", id);
         return checkNotFoundWithId(repository.findById(id).orElse(null), id);
     }
-//
+
     @GetMapping("/names")
     public Restaurant getByName(@RequestParam String restaurantName) {
         log.info("getByName {}", restaurantName);
@@ -53,10 +52,10 @@ public class RestaurantRestController {
     }
 
     @GetMapping("/{id}/date")
-    public Restaurant getByIdWithDishesOfDate(@PathVariable(name = "id") int restaurantId, @RequestParam Date date) {
-        log.info("getByIdWithDishesOfDate id {} and date {}", restaurantId, date);
-        return checkNotFound(Optional.ofNullable(repository.getByIdWithDishesOfDate(restaurantId, date))
-                .orElse(null), " illegal variable restaurantId=" + restaurantId + " or date=" + date);
+    public Restaurant getByIdWithDishesOfDate(@PathVariable(name = "id") int restaurantId, @RequestParam Date localDate) {
+        log.info("getByIdWithDishesOfDate id {} and date {}", restaurantId, localDate);
+        return checkNotFound(Optional.ofNullable(repository.getByIdWithDishesOfDate(restaurantId, localDate))
+                .orElse(null), " illegal variable restaurantId=" + restaurantId + " or date=" + localDate);
     }
 
     @GetMapping("/dishes")
@@ -83,13 +82,8 @@ public class RestaurantRestController {
 
     @CacheEvict(value = "restaurants", allEntries = true)
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Restaurant> update(@Valid @RequestBody Restaurant restaurant, @PathVariable int id,
-                                             BindingResult result) {
-        if (result != null && result.hasErrors()) {
-            return new ResponseEntity<>(restaurant, HttpStatus.UNPROCESSABLE_ENTITY);
-        }
+    public ResponseEntity<Restaurant> update(@Valid @RequestBody Restaurant restaurant, @PathVariable int id) {
         log.info("update restaurant {} for id {}", restaurant, id);
-        checkId(restaurant);
         assureIdConsistent(restaurant, id);
         return new ResponseEntity(checkNotFoundWithId(repository.save(restaurant), id), HttpStatus.OK);
     }

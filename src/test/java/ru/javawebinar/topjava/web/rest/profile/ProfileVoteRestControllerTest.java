@@ -92,9 +92,10 @@ class ProfileVoteRestControllerTest extends AbstractControllerTest {
     @Test
     void update() throws Exception {
         setСhangeVoteTime(TIME_TEST_IN);
-        Vote updated = getUpdated();
-        perform(MockMvcRequestBuilders.put(REST_URL + VOTE1_ID)
+        Vote updated = VoteTestData.getUpdated();
+        perform(MockMvcRequestBuilders.put(REST_URL)
                 .param("restaurantId", String.valueOf(RESTAURANT1_ID))
+                .param("voteId", String.valueOf(VOTE1_ID))
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(userHttpBasic(ADMIN))
                 .content(JsonUtil.writeValue(updated)))
@@ -106,20 +107,22 @@ class ProfileVoteRestControllerTest extends AbstractControllerTest {
     void updateOverTime() throws Exception {
         DateTimeUtil.setСhangeVoteTime(TIME_TEST_OUT);
         Vote updated = VoteTestData.getUpdated();
-        perform(MockMvcRequestBuilders.put(REST_URL + VOTE1_ID)
+        perform(MockMvcRequestBuilders.put(REST_URL)
                 .param("restaurantId", String.valueOf(RESTAURANT1_ID))
+                .param("voteId", String.valueOf(VOTE1_ID))
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(userHttpBasic(ADMIN))
                 .content(JsonUtil.writeValue(updated)))
-                .andExpect(status().isUnprocessableEntity());
+                .andExpect(status().isMethodNotAllowed());
     }
 
     @Test
     void updateNotOwn() throws Exception {
         DateTimeUtil.setСhangeVoteTime(TIME_TEST_IN);
         Vote updated = VoteTestData.getUpdated();
-        perform(MockMvcRequestBuilders.put(REST_URL + VOTE3_ID)
+        perform(MockMvcRequestBuilders.put(REST_URL)
                 .param("restaurantId", String.valueOf(RESTAURANT1_ID))
+                .param("voteId", String.valueOf(VOTE3_ID))
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(userHttpBasic(ADMIN))
                 .content(JsonUtil.writeValue(updated)))
@@ -130,8 +133,9 @@ class ProfileVoteRestControllerTest extends AbstractControllerTest {
     void updateIllegalArgument() throws Exception {
         DateTimeUtil.setСhangeVoteTime(TIME_TEST_IN);
         Vote updated = VoteTestData.getUpdated();
-        perform(MockMvcRequestBuilders.put(REST_URL + NOT_FOUND)
+        perform(MockMvcRequestBuilders.put(REST_URL)
                 .param("restaurantId", String.valueOf(RESTAURANT1_ID))
+                .param("voteId", String.valueOf(NOT_FOUND))
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(userHttpBasic(ADMIN))
                 .content(JsonUtil.writeValue(updated)))
@@ -140,7 +144,7 @@ class ProfileVoteRestControllerTest extends AbstractControllerTest {
 
     @Test
     void create() throws Exception {
-        Vote newVote = getNew();
+        Vote newVote = VoteTestData.getNew();
         ResultActions action = perform(MockMvcRequestBuilders.post(REST_URL)
                 .param("restaurantId", String.valueOf(RESTAURANT2_ID))
                 .contentType(MediaType.APPLICATION_JSON)

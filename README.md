@@ -21,8 +21,8 @@ If it is after 11:00 then it is too late, vote can't be changed
 Each restaurant provides new menu each day.
 
 
-Технологии /инструменты / фреймворки Java Enterprise:Maven/ Spring/ Security/ JPA(Hibernate)/ REST(Jackson).
-==========================================================================================================
+Java Enterprise: Maven/ Spring/ Security/ JPA(Hibernate)/ REST(Jackson).
+=======================================================================
 - основные классы приложения: [Dish, Restaurant, User, Vote]
 - все данные хранятся в базе данных [HSQLDB]
 - для обслуживания запросов анонимных пользователей (anonymous) и авторизованных (profile) 
@@ -39,11 +39,10 @@ Each restaurant provides new menu each day.
               `/rest/admin/**'`  - 'ADMIN'
               `/rest/profile/**` - 'USER'
               `/anonymous/**`    - свободный доступ для просмотра актуальных меню
-- тестирование REST контроллеров [Junit5] через матчеры 
-- логирование
-- `curl` - команды тестирования голосований:
+- тестирование REST контроллеров [Junit5]
+- обработка ошибок [ExceptionInfoHandler, GlobalExceptionHandler] 
 
-#### curl (`topjava_graduation`).
+- `curl` - команды тестирования голосований:
 
 #### getAllMenusThisDay
 `curl -L -X GET 'http://localhost:8080/topjava/anonymous' \
@@ -54,7 +53,7 @@ Each restaurant provides new menu each day.
  -H 'Authorization: Basic Og=='`
 
 
-#### profile votes get (by voteId)
+#### profile votes get
 `curl -L -X GET 'http://localhost:8080/topjava/rest/profile/votes/100016' \
  -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
 
@@ -63,11 +62,11 @@ Each restaurant provides new menu each day.
  -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
 
 #### profile votes getByRestaurantAuth
-`curl -L -X GET 'http://localhost:8080/topjava/rest/profile/votes/restaurants/100002' \
+`curl -L -X GET 'http://localhost:8080/topjava/rest/profile/votes/restaurant?restaurantId=100002' \
  -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
 
-#### profile votes getByDateForAuth for authUser
-`curl -L -X GET 'http://localhost:8080/topjava/rest/profile/votes/date?date=2020-06-30' \
+#### profile votes getByDateForAuth
+`curl -L -X GET 'http://localhost:8080/topjava/rest/profile/votes/date?localDate=2020-06-30' \
  -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu`
 
 #### profile votes getBetween 
@@ -75,15 +74,8 @@ Each restaurant provides new menu each day.
  -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu`
 
 #### profile votes update 
-`curl -L -X PUT 'http://localhost:8080/topjava/rest/profile/votes/100016' \
- -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu' \
- -H 'Content-Type: application/json' \
- --data-raw '{
-     "id": 100016,
-     "date": "2020-06-29",
-     "restaurantId": 100003,
-     "userId": 100000
- }'`
+`curl -L -X PUT 'http://localhost:8080/topjava/rest/profile/votes?voteId=100015&restaurantId=100003' \
+ -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu`
 
 #### profile votes create
 `curl -L -X POST 'http://localhost:8080/topjava/rest/profile/votes?restaurantId=100002' \
@@ -107,15 +99,15 @@ Each restaurant provides new menu each day.
  -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
 
 #### profile menus getByRestaurantIdAndDate
-`curl -L -X GET 'http://localhost:8080/topjava/rest/profile/menus/menu/100002?date=2020-07-30' \
+`curl -L -X GET 'http://localhost:8080/topjava/rest/profile/menus/menu/100002?localDate=2020-07-30' \
  -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
 
 #### profile menus getByRestaurantNameAndDate
-`curl -L -X GET 'http://localhost:8080/topjava/rest/profile/menus/menu?restaurantName=%D0%9F%D1%80%D0%B0%D0%B3%D0%B0&date=2020-07-30' \
+`curl -L -X GET 'http://localhost:8080/topjava/rest/profile/menus/menu?restaurantName=%D0%9F%D1%80%D0%B0%D0%B3%D0%B0&localDate=2020-07-30' \
  -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
 
 #### profile menus getAllByDate
-`curl -L -X GET 'http://localhost:8080/topjava/rest/profile/menus/date?date=2020-07-30' \
+`curl -L -X GET 'http://localhost:8080/topjava/rest/profile/menus/date?localDate=2020-07-30' \
  -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
 
 
@@ -132,11 +124,11 @@ Each restaurant provides new menu each day.
  -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
 
 #### admin votes getAllByDate
-`curl -L -X GET 'http://localhost:8080/topjava/rest/admin/votes/date?date=2020-07-29' \
+`curl -L -X GET 'http://localhost:8080/topjava/rest/admin/votes/date?localDate=2020-07-29' \
  -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
 
 #### admin votes getByDateForUser
-`curl -L -X GET 'http://localhost:8080/topjava/rest/admin/votes/date?date=2020-07-29' \
+`curl -L -X GET 'http://localhost:8080/topjava/rest/admin/votes/date?localDate=2020-07-29' \
  -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
  
 #### admin votes getAllForUser
@@ -148,15 +140,8 @@ Each restaurant provides new menu each day.
  -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
 
 #### admin votes update 
-`curl -L -X PUT 'http://localhost:8080/topjava/rest/admin/votes/100015' \
- -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu' \
- -H 'Content-Type: application/json' \
- --data-raw '{
-          "id": 100015,
-          "date": "2020-06-28",
-          "restaurantId": 100003,
-          "userId": 100000
-      }'`
+`curl -L -X PUT 'http://localhost:8080/topjava/rest/admin/votes?voteId=100015&restaurantId=100003' \
+ -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu`
 
 #### admin votes create
 `curl -L -X POST 'http://localhost:8080/topjava/rest/admin/votes?restaurantId=100002' \
@@ -180,7 +165,7 @@ Each restaurant provides new menu each day.
  -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu`
 
 #### admin restaurants getByIdWithDishesOfDate
-`curl -L -X GET 'http://localhost:8080/topjava/rest/admin/restaurants/100003/date?date=2020-07-30' \
+`curl -L -X GET 'http://localhost:8080/topjava/rest/admin/restaurants/100003/date?localDate=2020-07-30' \
  -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
 
 #### admin restaurants getAllWithDishes
@@ -188,7 +173,7 @@ Each restaurant provides new menu each day.
  -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
  
 #### admin restaurants getAllWithDishesOfDate
-`curl -L -X GET 'http://localhost:8080/topjava/rest/admin/restaurants/menus?date=2020-07-30' \
+`curl -L -X GET 'http://localhost:8080/topjava/rest/admin/restaurants/menus?localDate=2020-07-30' \
  -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
  
 #### admin restaurants create
@@ -221,43 +206,21 @@ Each restaurant provides new menu each day.
  -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
 
 #### admin dishes getById
-`curl -L -X GET 'http://localhost:8080/topjava/rest/admin/dishes/100010/restaurants/100003' \
- -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
-
-#### admin dishes getAllByRestaurantId
-`curl -L -X GET 'http://localhost:8080/topjava/rest/admin/dishes/restaurants/100003' \
+`curl -L -X GET 'http://localhost:8080/topjava/rest/admin/dishes/100010?restaurantId=100003' \
  -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
 
 #### admin dishes getAllByRestaurantIdAndDate
 `curl -L -X GET 'http://localhost:8080/topjava/rest/admin/dishes/menus?restaurantId=100003&date=2020-07-30' \
  -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
 
-#### admin dishes createListOfMenu
-`curl -L -X POST 'http://localhost:8080/topjava/rest/admin/dishes/restaurants/100002' \
- -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu' \
- -H 'Content-Type: application/json' \
- --data-raw '[{
-         "id": "",
-         "name": "Новая еда 1",
-         "date": "2020-07-29",
-         "price": 0.1
-     },
-     {
-         "id": "",
-         "name": "Новая еда 2",
-         "date": "2020-07-29",
-         "price": 0.2
-     }
- ]'`
-
-#### admin dishes createLimit
+#### admin dishes create
 `curl -L -X POST 'http://localhost:8080/topjava/rest/admin/dishes?restaurantId=100002' \
  -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu' \
  -H 'Content-Type: application/json' \
  --data-raw '{
          "id": "",
          "name": "Новая еда",
-         "date": "2020-07-29",
+         "localDate": "2020-07-29",
          "price": 0.2
      }'`
 
@@ -268,16 +231,12 @@ Each restaurant provides new menu each day.
  --data-raw '{
          "id": 100005,
          "name": "Updated Чай",
-         "date": "2020-06-29",
+         "localDate": "2020-06-29",
          "price": 0.2
      }'`
  
 #### admin dishes delete
-`curl -L -X DELETE 'http://localhost:8080/topjava/rest/admin/dishes/100014/restaurants/100003?date=2020-07-30' \
- -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
-
-#### admin dishes deleteListOfMenu 
-`curl -L -X DELETE 'http://localhost:8080/topjava/rest/admin/dishes/restaurants/100002?date=2020-07-30' \
+`curl -L -X DELETE 'http://localhost:8080/topjava/rest/admin/dishes/100014/restaurants/100003' \
  -H 'Authorization: Basic YWRtaW5AZ21haWwuY29tOmFkbWlu'`
 
 

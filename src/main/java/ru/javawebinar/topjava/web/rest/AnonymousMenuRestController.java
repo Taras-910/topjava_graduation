@@ -29,13 +29,13 @@ public class AnonymousMenuRestController {
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public List<Menu> getAllMenusThisDay() {
-        log.info("getAllMenus");
+        log.info("getAllMenus for {}", thisDay);
         return toListMenus(restaurantController.getAllWithDishesOfDate(thisDay), null);
     }
 
     @GetMapping(value = "/restaurants/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Menu getMenuByRestaurantIdThisDay(@PathVariable(name = "id") int restaurantId) {
-        log.info("getMenu by restaurant id {}", restaurantId);
+        log.info("getMenu by restaurant id {} for {}", restaurantId, thisDay);
         return toMenu(restaurantController.getByIdWithDishesOfDate(restaurantId, thisDay),false);
     }
 }

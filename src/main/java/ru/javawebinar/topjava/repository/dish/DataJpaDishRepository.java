@@ -21,24 +21,14 @@ public class DataJpaDishRepository implements DishRepository {
     }
 
     @Override
-    public Dish save(Dish dish, int restaurantId) throws IllegalArgumentException{
+    public Dish save(Dish dish, int restaurantId) {
         Restaurant restaurant = restaurantRepository.getOne(restaurantId);
         dish.setRestaurant(restaurant);
-        return dish.isNew() || get(dish.id(), restaurant.id()) != null ? dishRepository.save(dish) : null; }
-
-    @Override
-    public List<Dish> saveAll(List<Dish> dishes, int restaurantId) {
-        Restaurant restaurant = restaurantRepository.findById(restaurantId).orElse(null);
-        if (restaurant == null) {
-            return null;
+        if(dish.isNew()){
+            return dishRepository.save(dish);
         }
-        dishes.forEach(dish ->  dish.setRestaurant(restaurant));
-        return dishRepository.saveAll(dishes);
-    }
-
-    @Override
-    public boolean deleteListOfMenu(int restaurantId, Date localDate) {
-        return dishRepository.deleteListOfMenu(restaurantId, localDate) != 0;
+        Dish storedDish = Optional.ofNullable(dishRepository.get(dish.id(), restaurantId)).orElse(null);
+        return storedDish != null ? dishRepository.save(dish) : null;
     }
 
     @Override
@@ -52,13 +42,15 @@ public class DataJpaDishRepository implements DishRepository {
     }
 
     @Override
+    public List<Dish> getAll() {
+        return dishRepository.findAll();
+    }
+
+    @Override
     public List<Dish> getByRestaurantAndDate(int restaurantId, Date localDate) {
         List<Dish> dishes = Optional.ofNullable(dishRepository.getByRestaurantAndDate(restaurantId, localDate)).orElse(null);
         return dishes.isEmpty() ? null : dishes;
     }
 
-    @Override
-    public List<Dish> getAll() {
-        return dishRepository.findAll();
-    }
+
 }

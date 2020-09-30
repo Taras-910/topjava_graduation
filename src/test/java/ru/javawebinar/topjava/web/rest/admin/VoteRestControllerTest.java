@@ -77,7 +77,7 @@ class VoteRestControllerTest extends AbstractControllerTest {
     @Test
     void getAllByDate() throws Exception {
         perform(MockMvcRequestBuilders.get(REST_URL + "date")
-                .param("date", "2020-06-30")
+                .param("localDate", "2020-06-30")
                 .with(userHttpBasic(ADMIN))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -125,21 +125,38 @@ class VoteRestControllerTest extends AbstractControllerTest {
 
     @Test
     void update() throws Exception {
-        DateTimeUtil.setСhangeVoteTime(TIME_TEST_IN);
+        setСhangeVoteTime(TIME_TEST_IN);
         Vote updated = VoteTestData.getUpdated();
-        perform(MockMvcRequestBuilders.put(REST_URL + VOTE1_ID)
+        perform(MockMvcRequestBuilders.put(REST_URL)
+                .param("restaurantId", String.valueOf(RESTAURANT2_ID))
+                .param("voteId", String.valueOf(VOTE1_ID))
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(userHttpBasic(ADMIN))
                 .content(JsonUtil.writeValue(updated)))
+                .andDo(print())
                 .andExpect(status().isOk());
-        VOTE_MATCHER.assertMatch(controller.getById(VOTE1_ID), updated);
     }
 
     @Test
     void updateOverTime() throws Exception {
         DateTimeUtil.setСhangeVoteTime(TIME_TEST_OUT);
         Vote updated = VoteTestData.getUpdated();
-        perform(MockMvcRequestBuilders.put(REST_URL + VOTE1_ID)
+        perform(MockMvcRequestBuilders.put(REST_URL)
+                .param("restaurantId", String.valueOf(RESTAURANT2_ID))
+                .param("voteId", String.valueOf(VOTE1_ID))
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(ADMIN))
+                .content(JsonUtil.writeValue(updated)))
+                .andExpect(status().isMethodNotAllowed());
+    }
+
+    @Test
+    void updateNotOwn() throws Exception {
+        DateTimeUtil.setСhangeVoteTime(TIME_TEST_IN);
+        Vote updated = VoteTestData.getUpdated();
+        perform(MockMvcRequestBuilders.put(REST_URL)
+                .param("restaurantId", String.valueOf(RESTAURANT2_ID))
+                .param("voteId", String.valueOf(VOTE3_ID))
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(userHttpBasic(ADMIN))
                 .content(JsonUtil.writeValue(updated)))
@@ -147,26 +164,18 @@ class VoteRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    void updateNotOwn() throws Exception {
-        DateTimeUtil.setСhangeVoteTime(TIME_TEST_IN);
-        Vote updated = VoteTestData.getUpdated();
-        perform(MockMvcRequestBuilders.put(REST_URL + VOTE3_ID)
-                .contentType(MediaType.APPLICATION_JSON)
-                .with(userHttpBasic(ADMIN))
-                .content(JsonUtil.writeValue(updated)))
-                .andExpect(status().isConflict());
-    }
-
-    @Test
     void updateIllegalArgument() throws Exception {
         DateTimeUtil.setСhangeVoteTime(TIME_TEST_IN);
         Vote updated = VoteTestData.getUpdated();
-        perform(MockMvcRequestBuilders.put(REST_URL + NOT_FOUND)
+        perform(MockMvcRequestBuilders.put(REST_URL)
+                .param("restaurantId", String.valueOf(RESTAURANT2_ID))
+                .param("voteId", String.valueOf(NOT_FOUND))
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(userHttpBasic(ADMIN))
                 .content(JsonUtil.writeValue(updated)))
-                .andExpect(status().isConflict());
+                .andExpect(status().isUnprocessableEntity());
     }
+
 
     @Test
     void create() throws Exception {
@@ -232,6 +241,6 @@ class VoteRestControllerTest extends AbstractControllerTest {
                 .param("restaurantId", valueOf(RESTAURANT1_ID))
                 .with(userHttpBasic(ADMIN))
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isUnprocessableEntity());
+                .andExpect(status().isMethodNotAllowed());
     }
 }

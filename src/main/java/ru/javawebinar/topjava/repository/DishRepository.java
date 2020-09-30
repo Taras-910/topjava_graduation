@@ -9,10 +9,6 @@ public interface DishRepository {
 
     Dish save(Dish dish, int restaurantId);
 
-    List<Dish> saveAll(List<Dish> dishes, int restaurantId);
-
-    boolean deleteListOfMenu(int restaurantId, Date date);
-
     boolean delete(int id, int restaurantId);
 
     Dish get(int id, int restaurantId);

@@ -3,8 +3,6 @@ package ru.javawebinar.topjava.util.json;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectReader;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.List;
@@ -13,7 +11,6 @@ import java.util.Map;
 import static ru.javawebinar.topjava.util.json.JacksonObjectMapper.getMapper;
 
 public class JsonUtil {
-    private static Logger log = LoggerFactory.getLogger(JsonUtil.class);
 
     public static <T> List<T> readValues(String json, Class<T> clazz) {
         ObjectReader reader = getMapper().readerFor(clazz);
