@@ -1,5 +1,6 @@
 package ru.javawebinar.topjava.to;
 
+import io.swagger.annotations.ApiModelProperty;
 import ru.javawebinar.topjava.model.Dish;
 
 import javax.validation.constraints.NotNull;
@@ -8,6 +9,7 @@ import java.util.List;
 public class Menu {
 
     @NotNull
+    @ApiModelProperty(hidden = true)
     Integer restaurantId;
 
     @NotNull

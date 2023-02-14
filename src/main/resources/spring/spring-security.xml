@@ -20,6 +20,10 @@
     <beans:bean class="org.springframework.security.crypto.factory.PasswordEncoderFactories" id="passwordEncoder" factory-method="createDelegatingPasswordEncoder"/>
 
     <http>
+        <intercept-url pattern="/swagger-ui.html" access="permitAll()"/>
+        <intercept-url pattern="/swagger-resources/**" access="permitAll()"/>
+        <intercept-url pattern="/v2/api-docs/**" access="permitAll()"/>
+
         <intercept-url pattern="/admin/**" access="hasRole('ADMIN')"/>
         <intercept-url pattern="/profile/**" access="hasAnyRole('USER','ADMIN')"/>
         <intercept-url pattern="/rest/**" access="isAuthenticated()"/>
@@ -32,18 +36,6 @@
         <authentication-provider user-service-ref="userService">
             <!--<password-encoder ref="noopEncoder"/>-->
             <password-encoder ref="passwordEncoder"/>
-
-            <!--
-                        <jdbc-user-service data-source-ref="dataSource"
-                                           users-by-username-query="SELECT email, password, enabled FROM users WHERE email = ?"
-                                           authorities-by-username-query="
-                                                                   SELECT u.email, r.role FROM users u, user_roles r WHERE u.id = r.user_id AND u.email = ?"
-                        />
-                        <user-service>
-                            <user name="user@yandex.ru" password="password" authorities="ROLE_USER"/>
-                            <user name="admin@gmail.com" password="admin" authorities="ROLE_ADMIN"/>
-                        </user-service>
-            -->
         </authentication-provider>
     </authentication-manager>
 </beans:beans>
